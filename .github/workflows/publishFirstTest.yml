@@ -1,0 +1,30 @@
+name: Publish First Test Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - FirstTest/**
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v5
+      
+      - uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: |
+          docker build . -t ghcr.io/${{ github.repository_owner }}/named-query-first-test
+          docker push ghcr.io/${{ github.repository_owner }}/named-query-first-test
