@@ -26,5 +26,5 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
-          docker build . -t ghcr.io/${{ github.repository_owner }}/named-query-first-test
+          docker build ./FirstTest -t ghcr.io/${{ github.repository_owner }}/named-query-first-test
           docker push ghcr.io/${{ github.repository_owner }}/named-query-first-test
