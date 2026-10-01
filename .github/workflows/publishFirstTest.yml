@@ -34,7 +34,7 @@ jobs:
       - uses: docker/build-push-action@v7
         name: Build and push
         with:
-          context: /FirstTest
+          context: ./FirstTest
           push: true
           tags: ${{ github.repository_owner }}/named-query-first-test:latest
           build-contexts: endpoint-definition-folder=./FirstTest/exampleResources
