@@ -1,7 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-ARG RESOURCES
 COPY Web /src
-COPY $RESOURCES/ /src/Resources/
+COPY --from=endpoint-definition-folder . /src/Resources/
 RUN dotnet publish /src -o /app
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled
