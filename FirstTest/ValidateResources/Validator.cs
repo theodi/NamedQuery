@@ -11,8 +11,7 @@ internal static class Validator
 
 	private static void ManifestExists()
 	{
-		var manifest = Web.Resources.Manifest;
-		if (string.IsNullOrEmpty(manifest))
+		if (Resources.Info("manifest.ttl") is null)
 		{
 			throw new MsBuildCanonicalErrorException(ManifestName, "Manifest file not found in endpoint definition folder");
 		}
