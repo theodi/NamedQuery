@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -9,5 +9,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\**\*.*" />
   </ItemGroup>
+
+  <Target Name="ValidateEndpointDefinitions" AfterTargets="Publish">
+    <Exec Command="dotnet run --project '$(MSBuildThisFileDirectory)../ValidateResources/ValidateResources.csproj' --configuration $(Configuration)" />
+  </Target>
 
 </Project>
