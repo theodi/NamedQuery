@@ -6,6 +6,7 @@ COPY ValidateResources /src/ValidateResources
 # E.g. `docker build --build-context resources=PATH`
 COPY --from=endpoint-definition-folder . /src/Web/Resources/
 
+# On failure, check for lines starting with `ValidateResources : error :` above for endpoint definition folder validation errors
 RUN dotnet publish /src/Web -o /app
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled
