@@ -1,6 +1,8 @@
+using ValidateResources;
+
 try
 {
-	new ValidateResources.Validator().Validate();
+	Validator.Validate();
 	return 0;
 }
 catch (Exception e)

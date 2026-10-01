@@ -1,8 +1,8 @@
 ﻿namespace ValidateResources;
 
-public class Validator
+internal static class Validator
 {
-	public void Validate()
+	internal static void Validate()
 	{
 		var manifest = Web.Resources.Manifest;
 		if (string.IsNullOrEmpty(manifest))
