@@ -1,0 +1,2 @@
+endpoint1.sparql
+endpoint2.sparql
