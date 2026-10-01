@@ -4,6 +4,11 @@ internal static class Validator
 {
 	internal static void Validate()
 	{
+		ManifestExists();
+	}
+
+	private static void ManifestExists()
+	{
 		var manifest = Web.Resources.Manifest;
 		if (string.IsNullOrEmpty(manifest))
 		{
