@@ -1,0 +1,1 @@
+- Publish to DockerHub an image with default sample SPARQL & definitions so people know what they're aiming at when building docker.

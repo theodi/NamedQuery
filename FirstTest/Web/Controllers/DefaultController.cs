@@ -10,11 +10,11 @@ public class DefaultController
 	[HttpGet]
 	public IEnumerable<string> Get()
 	{
-		var sparqlFiles = Resources.String(ManifestName).Split(Environment.NewLine);
+		var sparqlFiles = Resources.String(ManifestName)?.Split(Environment.NewLine) ?? throw new Exception("Manifest not found");
 
 		foreach (var sparqlFile in sparqlFiles)
 		{
-			yield return Resources.String(sparqlFile);
+			yield return Resources.String(sparqlFile) ?? throw new Exception($"SPARQL file not found: {sparqlFile}");
 		}
 	}
 }
