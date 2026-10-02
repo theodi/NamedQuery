@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- TODO: Replace this reminder with description of naming algorithm -->
+    <!-- Each file under Resources becomes an embedded resource named as the path of the file, e.g. `endpoint1/query.sparql`. Separators are normalised to `/` (MSBuild uses `\` on Windows) and nothing else is changed -->
     <EmbeddedResource Include="Resources\**\*.*" LogicalName="$([System.String]::Copy('%(RecursiveDir)').Replace('\', '/'))%(Filename)%(Extension)" />
   </ItemGroup>
 
@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <Target Name="ValidateEndpointDefinitions" AfterTargets="Publish">
-    <!-- TODO: Replace this reminder with description of validation mechanism -->
+    <!-- After publishing, runs the ValidateResources project in this solution, which references this project and reads its embedded Resources. Failures are written in MSBuild canonical error format and exit non-zero, which fails the publish and the Docker build. -->
     <Exec Command="dotnet run --project &quot;$(MSBuildThisFileDirectory)../ValidateResources/ValidateResources.csproj&quot; --configuration $(Configuration)" />
   </Target>
 
