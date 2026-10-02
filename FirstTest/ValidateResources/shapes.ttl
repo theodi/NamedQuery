@@ -10,15 +10,8 @@ _:prefixes :declare [
 [
 	:targetSubjectsOf nq:path, nq:sparql ;
     :path nq:path ;
-    :nodeKind :Literal ;
-    :message "Endpoint path must be literal" ;
-] .
-
-[
-	:targetSubjectsOf nq:path, nq:sparql ;
-    :path nq:path ;
     :datatype xsd:string ;
-    :message "Endpoint path must be string" ;
+    :message "Endpoint path must be string literal" ;
 ] .
 
 [
@@ -36,17 +29,26 @@ _:prefixes :declare [
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
-    :path nq:sparql ;
-    :nodeKind :Literal ;
-    :message "Endpoint SPARQL must be literal" ;
+	:targetSubjectsOf nq:path ;
+    :sparql [
+        :message "Endpoint path must be unique" ;
+        :prefixes _:prefixes ;
+        :select "SELECT $this ?value { $this nq:path ?value . ?other nq:path ?value . FILTER (?other != $this) }" ;
+    ] ;
 ] .
 
 [
 	:targetSubjectsOf nq:path, nq:sparql ;
     :path nq:sparql ;
     :datatype xsd:anyURI ;
-    :message "Endpoint SPARQL must be URI" ;
+    :message "Endpoint SPARQL must be xsd:anyURI literal" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:sparql ;
+    :pattern "^\\./.+" ;
+    :message "Endpoint SPARQL must start with './'" ;
 ] .
 
 [
