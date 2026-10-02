@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <Target Name="ValidateEndpointDefinitions" AfterTargets="Publish">
-    <Exec Command="dotnet run --project '$(MSBuildThisFileDirectory)../ValidateResources/ValidateResources.csproj' --configuration $(Configuration)" />
+    <Exec Command="dotnet run --project &quot;$(MSBuildThisFileDirectory)../ValidateResources/ValidateResources.csproj&quot; --configuration $(Configuration)" />
   </Target>
 
 </Project>
