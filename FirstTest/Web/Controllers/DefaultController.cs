@@ -8,6 +8,7 @@ namespace Web.Controllers;
 public class DefaultController
 {
 	private const string ManifestName = "manifest.ttl";
+	private static readonly Uri FakeBase = new("http://resources/");
 
 	[HttpGet]
 	public IEnumerable<string> Get()
@@ -19,7 +20,10 @@ public class DefaultController
 		var sparqlFiles = graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri($"http://example.org/namedquery/sparql")))
 			.Select(triple => triple.Object)
 			.OfType<ILiteralNode>()
-			.Select(literal => new Uri(new("file:///"), literal.Value).AbsolutePath.TrimStart('/'));
+			.Select(literal => literal.Value)
+			.Select(value => new Uri(value, UriKind.Relative))
+			.Select(relative => new Uri(FakeBase, relative))
+			.Select(absolute => absolute.GetComponents(UriComponents.Path, UriFormat.Unescaped));
 
 		foreach (var sparqlFile in sparqlFiles)
 		{
