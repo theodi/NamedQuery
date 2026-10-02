@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- TODO: Replace this reminder with description of naming algorithm -->
     <EmbeddedResource Include="Resources\**\*.*" LogicalName="$([System.String]::Copy('%(RecursiveDir)').Replace('\', '/'))%(Filename)%(Extension)" />
   </ItemGroup>
 
@@ -15,6 +16,7 @@
   </ItemGroup>
 
   <Target Name="ValidateEndpointDefinitions" AfterTargets="Publish">
+    <!-- TODO: Replace this reminder with description of validation mechanism -->
     <Exec Command="dotnet run --project &quot;$(MSBuildThisFileDirectory)../ValidateResources/ValidateResources.csproj&quot; --configuration $(Configuration)" />
   </Target>
 
