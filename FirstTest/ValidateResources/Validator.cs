@@ -20,7 +20,7 @@ internal static class Validator
 		ManifestConformsToShapes();
 		SparqlIsRelativeUri();
 		SparqlFilesExist();
-		// TODO: nq:sparql files are valid sparql
+		SparqlFilesValid();
 	}
 
 	private static void ManifestExists()
@@ -100,5 +100,37 @@ internal static class Validator
 		if (missing.Count == 0) return;
 
 		throw new MsBuildCanonicalErrorException(ManifestName, $"Endpoint SPARQL file not found: {string.Join("; ", missing)}");
+	}
+
+	private static void SparqlFilesValid()
+	{
+		using var graph = new Graph();
+		new TurtleParser().Load(graph, Resources.Reader(ManifestName));
+
+		var paths = graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
+			.Select(triple => triple.Object)
+			.OfType<ILiteralNode>()
+			.Select(literal => literal.Value)
+			.Select(value => new Uri(value, UriKind.Relative))
+			.Select(relative => new Uri(FakeBase, relative))
+			.Select(absolute => absolute.GetComponents(UriComponents.Path, UriFormat.Unescaped));
+
+		foreach (var path in paths)
+		{
+			try
+			{
+				new SparqlQueryParser().Parse(Resources.Reader(path));
+			}
+			catch (RdfParseException e)
+			{
+				throw new MsBuildCanonicalErrorException(path, $"Endpoint SPARQL is not valid SPARQL: {e.Message}", e)
+				{
+					Line = e.HasPositionInformation ? e.StartLine : null,
+					Column = e.HasPositionInformation ? e.StartPosition : null,
+					EndLine = e.HasPositionInformation ? e.EndLine : null,
+					EndColumn = e.HasPositionInformation ? e.EndPosition : null
+				};
+			}
+		}
 	}
 }
