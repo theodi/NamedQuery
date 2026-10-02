@@ -1,0 +1,73 @@
+PREFIX : <http://www.w3.org/ns/shacl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX nq: <http://example.org/namedquery/>
+
+_:prefixes :declare [
+    :prefix "nq" ;
+    :namespace "http://example.org/namedquery/"^^xsd:anyURI ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:path ;
+    :nodeKind :Literal ;
+    :message "Endpoint path must be literal" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:path ;
+    :datatype xsd:string ;
+    :message "Endpoint path must be string" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:path ;
+    :minCount 1 ;
+    :message "Endpoint must have at least one path" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:path ;
+    :maxCount 1 ;
+    :message "Endpoint must have at most one path" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:sparql ;
+    :nodeKind :Literal ;
+    :message "Endpoint SPARQL must be literal" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:sparql ;
+    :datatype xsd:anyURI ;
+    :message "Endpoint SPARQL must be URI" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:sparql ;
+    :minCount 1 ;
+    :message "Endpoint must have at least one SPARQL" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:sparql ;
+    :maxCount 1 ;
+    :message "Endpoint must have at most one SPARQL" ;
+] .
+
+[
+	:targetNode [] ;
+    :sparql [
+        :message "Manifest must have at least one endpoint" ;
+        :prefixes _:prefixes ;
+        :select "SELECT $this { FILTER NOT EXISTS { ?endpoint nq:path | nq:sparql ?value } }" ;
+    ] ;
+] .
