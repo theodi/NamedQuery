@@ -17,6 +17,9 @@ internal static class Validator
 		ManifestExists();
 		ManifestIsValidTurtle();
 		ManifestConformsToShapes();
+		// TODO: nq:sparql is relative uri
+		// TODO: nq:sparql files exist
+		// TODO: nq:sparql files are valid sparql
 	}
 
 	private static void ManifestExists()
