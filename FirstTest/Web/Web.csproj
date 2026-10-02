@@ -10,6 +10,10 @@
     <EmbeddedResource Include="Resources\**\*.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="dotNetRdf.Core" Version="3.5.2" />
+  </ItemGroup>
+
   <Target Name="ValidateEndpointDefinitions" AfterTargets="Publish">
     <Exec Command="dotnet run --project '$(MSBuildThisFileDirectory)../ValidateResources/ValidateResources.csproj' --configuration $(Configuration)" />
   </Target>
