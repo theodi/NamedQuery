@@ -1,4 +1,5 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+COPY Directory.Packages.props /src/
 COPY Web /src/Web
 COPY ValidateResources /src/ValidateResources
 
