@@ -17,7 +17,7 @@ internal static class Validator
 		ManifestExists();
 		ManifestIsValidTurtle();
 		ManifestConformsToShapes();
-		// TODO: nq:sparql is relative uri
+		SparqlIsRelativeUri();
 		// TODO: nq:sparql files exist
 		// TODO: nq:sparql files are valid sparql
 	}
@@ -62,5 +62,22 @@ internal static class Validator
 
 		var violations = report.Results.Select(result => $"{result.FocusNode}: {result.Message?.Value ?? result.SourceConstraintComponent.ToString()}");
 		throw new MsBuildCanonicalErrorException(ManifestName, $"Manifest does not conform to shapes: {string.Join("; ", violations)}");
+	}
+
+	private static void SparqlIsRelativeUri()
+	{
+		using var graph = new Graph();
+		new TurtleParser().Load(graph, Resources.Reader(ManifestName));
+
+		var invalid = graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
+			.Select(triple => triple.Object)
+			.OfType<ILiteralNode>()
+			.Select(literal => literal.Value)
+			.Where(value => !Uri.TryCreate(value, UriKind.Relative, out _))
+			.ToList();
+
+		if (invalid.Count == 0) return;
+
+		throw new MsBuildCanonicalErrorException(ManifestName, $"Endpoint SPARQL must be relative URI: {string.Join("; ", invalid)}");
 	}
 }
