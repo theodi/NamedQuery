@@ -1,2 +1,2 @@
 # LocalDevelopmentEndpointDefinitions/endpoint1.sparql
-SELECT * {}
+SELECT * { ?s ?p ?o . } LIMIT 10
