@@ -11,6 +11,7 @@
     <Project Path="Test/DockerTest/DockerTest.csproj" />
     <Project Path="Test/Test/Test.csproj" />
   </Folder>
+  <Project Path="dotNetRDF.Wrapping/dotNetRDF.Wrapping.csproj" />
   <Project Path="ValidateResources/ValidateResources.csproj" Id="0674954f-4f9e-4718-90bc-cda6f69c728b" />
   <Project Path="Web/Web.csproj" />
 </Solution>
