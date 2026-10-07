@@ -8,6 +8,7 @@
       Docker overrides via `EndpointDefinitionFolder` environment variable
     -->
     <EndpointDefinitionFolder Condition="'$(EndpointDefinitionFolder)' == ''">LocalDevelopmentEndpointDefinitions</EndpointDefinitionFolder>
+    <UserSecretsId>ba0f017d-79bf-4e11-84f2-b74043048f37</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
