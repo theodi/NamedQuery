@@ -1,0 +1,12 @@
+PREFIX : <http://example.org/namedquery/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+[
+    :path "endpoint1" ;
+    :sparql "./endpoint1.sparql"^^xsd:anyURI ;
+] .
+
+[
+    :path "endpoint2" ;
+    :sparql "./endpoint2.sparql"^^xsd:anyURI ;
+] .

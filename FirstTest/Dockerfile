@@ -5,7 +5,10 @@ COPY ValidateResources /src/ValidateResources
 
 # Requires named build context when building (https://docs.docker.com/build/concepts/context/#named-contexts)
 # E.g. `docker build --build-context endpoint-definition-folder=PATH`
-COPY --from=endpoint-definition-folder . /src/Web/Resources/
+COPY --from=endpoint-definition-folder . /endpoint-definitions/
+
+# Communicate endpoint definition folder to build so files become DLL embedded resources
+ENV EndpointDefinitionFolder=/endpoint-definitions
 
 # On failure, check for lines starting with `ValidateResources : error :` above for endpoint definition folder validation errors
 RUN dotnet publish /src/Web -o /app

@@ -6,13 +6,23 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!--
+      Folder containing endpoint definitions.
+      Used in embedded resource declaration below.
+      Defaults to local development definitions in project.
+      Docker overrides via `EndpointDefinitionFolder` environment variable
+    -->
+    <EndpointDefinitionFolder Condition="'$(EndpointDefinitionFolder)' == ''">LocalDevelopmentEndpointDefinitions</EndpointDefinitionFolder>
+  </PropertyGroup>
+
   <ItemGroup>
     <!--
-      Each file in Resources becomes embedded resource named as the path of the file,
+      Each file in endpoint definition folder becomes embedded resource named as the path of the file,
       e.g. `endpoint1/query.sparql`.
       Separators normalised to `/`, all else unchanged.
     -->
-    <EmbeddedResource Include="Resources\**\*.*" LogicalName="$([System.String]::Copy('%(RecursiveDir)').Replace('\', '/'))%(Filename)%(Extension)" />
+    <EmbeddedResource Include="$(EndpointDefinitionFolder)\**\*.*" LogicalName="$([System.String]::Copy('%(RecursiveDir)').Replace('\', '/'))%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

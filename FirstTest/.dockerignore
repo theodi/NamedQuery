@@ -1,2 +1,6 @@
 **/bin/
 **/obj/
+
+# Endpoint definitions for local development excluded from image.
+# Actual definitions copied from `endpoint-definition-folder` named build context.
+Web/LocalDevelopmentEndpointDefinitions/

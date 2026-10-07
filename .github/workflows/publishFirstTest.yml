@@ -31,4 +31,4 @@ jobs:
           context: ./FirstTest
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/named-query-first-test:latest
-          build-contexts: endpoint-definition-folder=./FirstTest/exampleResources
+          build-contexts: endpoint-definition-folder=./FirstTest/ExampleEndpointDefinitions

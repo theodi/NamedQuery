@@ -1,7 +1,7 @@
 # Build
 
 ```shell
-docker build --build-context endpoint-definition-folder=exampleResources -t named-query-first-test .
+docker build --build-context endpoint-definition-folder=ExampleEndpointDefinitions -t named-query-first-test .
 ```
 
 # Run
