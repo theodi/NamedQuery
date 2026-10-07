@@ -3,46 +3,46 @@ namespace ValidateResources;
 /// <seealso href="https://learn.microsoft.com/visualstudio/msbuild/msbuild-diagnostic-format-for-tasks"/>
 internal class MsBuildCanonicalErrorException(string origin, string text, Exception? innerException = null) : Exception(text, innerException)
 {
-	internal string Origin { get; } = origin;
+    internal enum MsBuildCategory
+    {
+        Error,
+        Warning
+    }
 
-	internal int? Line { get; init; }
+    internal string Origin { get; } = origin;
 
-	internal int? Column { get; init; }
+    internal int? Line { get; init; }
 
-	internal int? EndLine { get; init; }
+    internal int? Column { get; init; }
 
-	internal int? EndColumn { get; init; }
+    internal int? EndLine { get; init; }
 
-	internal string? Subcategory { get; init; }
+    internal int? EndColumn { get; init; }
 
-	internal MsBuildCategory Category { get; init; } = MsBuildCategory.Error;
+    internal string? Subcategory { get; init; }
 
-	internal string? Code { get; init; }
+    internal MsBuildCategory Category { get; init; } = MsBuildCategory.Error;
 
-	public override string ToString()
-	{
-		var location = (Line, Column, EndLine, EndColumn) switch
-		{
-			({ } line, { } column, { } endLine, { } endColumn) => $"({line},{column},{endLine},{endColumn})",
-			({ } line, { } column, _, _)  => $"({line},{column})",
-			({ } line, _, _, _) => $"({line})",
-			_ => ""
-		};
+    internal string? Code { get; init; }
 
-		var category = Category switch
-		{
-			MsBuildCategory.Warning => "warning",
-			_ => "error"
-		};
+    public override string ToString()
+    {
+        var location = (Line, Column, EndLine, EndColumn) switch
+        {
+            ({ } line, { } column, { } endLine, { } endColumn) => $"({line},{column},{endLine},{endColumn})",
+            ({ } line, { } column, _, _) => $"({line},{column})",
+            ({ } line, _, _, _) => $"({line})",
+            _ => ""
+        };
 
-		var classification = string.Join(" ", new[] { Subcategory, category, Code }.Where(part => !string.IsNullOrEmpty(part)));
+        var category = Category switch
+        {
+            MsBuildCategory.Warning => "warning",
+            _ => "error"
+        };
 
-		return $"{Origin}{location} : {classification} : {Message}";
-	}
+        var classification = string.Join(" ", new[] { Subcategory, category, Code }.Where(part => !string.IsNullOrEmpty(part)));
 
-	internal enum MsBuildCategory
-	{
-		Error,
-		Warning
-	}
+        return $"{Origin}{location} : {classification} : {Message}";
+    }
 }

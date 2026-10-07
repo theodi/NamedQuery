@@ -5,9 +5,9 @@ namespace Web.Model;
 
 public partial class Manifest : WrapperGraph
 {
-	protected Manifest(IGraph original) : base(original) { }
+    protected Manifest(IGraph original) : base(original) { }
 
-	public static Manifest Wrap(IGraph graph) => new(graph);
+    public IEnumerable<Endpoint> Endpoints => this.SubjectsOf(Vocabulary.Path, Endpoint.Wrap);
 
-	public IEnumerable<Endpoint> Endpoints => this.SubjectsOf(Vocabulary.Path, Endpoint.Wrap);
+    public static Manifest Wrap(IGraph graph) => new(graph);
 }

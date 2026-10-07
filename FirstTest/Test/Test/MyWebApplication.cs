@@ -2,7 +2,7 @@ namespace Test;
 
 internal class MyWebApplication : WebApplicationFactory<Program>
 {
-	private HttpClient? client;
+    private HttpClient? client;
 
-	internal HttpClient Client => client ??= CreateClient();
+    internal HttpClient Client => client ??= CreateClient();
 }
