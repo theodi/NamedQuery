@@ -6,7 +6,7 @@ docker build --build-context endpoint-definition-folder=ExampleEndpointDefinitio
 
 # Run
 ```shell
-docker run --rm -p 8080:8080 named-query-first-test
+docker run --rm -p 8080:8080 -e Options__SparqlEndpoint=https://example.com/sparql named-query-first-test
 ```
 
 # Test
