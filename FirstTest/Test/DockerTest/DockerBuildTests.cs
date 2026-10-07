@@ -51,7 +51,7 @@ public sealed class DockerBuildTests
 
 	private static ComposeBuilder Compose(string service) => new ComposeBuilder("docker:29-cli")
 		.WithComposeFile(Path.Combine(CommonDirectoryPath.GetProjectDirectory().DirectoryPath, "compose.yml"))
-		.WithCopyFilesInContainer("../../Dockerfile", "../../.dockerignore", "../../Directory.Packages.props", "../../Web", "../../ValidateResources", "Fixtures")
+		.WithCopyFilesInContainer("../../Dockerfile", "../../.dockerignore", "../../Directory.Packages.props", "../../Web", "../../dotNetRDF.Wrapping", "../../ValidateResources", "Fixtures")
 		.WithService(service)
 		.WithPull(false)
 		.WithComposeUpOption("--build")

@@ -1,6 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 COPY Directory.Packages.props /src/
 COPY Web /src/Web
+COPY dotNetRDF.Wrapping /src/dotNetRDF.Wrapping
 COPY ValidateResources /src/ValidateResources
 
 # Requires named build context when building (https://docs.docker.com/build/concepts/context/#named-contexts)

@@ -29,6 +29,10 @@
     <PackageReference Include="dotNetRdf.Core" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\dotNetRDF.Wrapping\dotNetRDF.Wrapping.csproj" />
+  </ItemGroup>
+
   <Target Name="ValidateEndpointDefinitions" AfterTargets="Publish">
     <!-- After publishing, runs the ValidateResources project in this solution, which references this project and reads its embedded Resources. Failures are written in MSBuild canonical error format and exit non-zero, which fails the publish and the Docker build. -->
     <Exec Command="dotnet run --project &quot;$(MSBuildThisFileDirectory)../ValidateResources/ValidateResources.csproj&quot; --configuration $(Configuration)" />
