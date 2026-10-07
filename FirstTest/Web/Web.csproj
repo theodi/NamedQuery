@@ -7,7 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Each file under Resources becomes an embedded resource named as the path of the file, e.g. `endpoint1/query.sparql`. Separators are normalised to `/` (MSBuild uses `\` on Windows) and nothing else is changed -->
+    <!--
+      Each file in Resources becomes embedded resource named as the path of the file,
+      e.g. `endpoint1/query.sparql`.
+      Separators normalised to `/`, all else unchanged.
+    -->
     <EmbeddedResource Include="Resources\**\*.*" LogicalName="$([System.String]::Copy('%(RecursiveDir)').Replace('\', '/'))%(Filename)%(Extension)" />
   </ItemGroup>
 
