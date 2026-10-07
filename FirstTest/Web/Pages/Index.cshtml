@@ -1,0 +1,17 @@
+@page
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{endpoints}</title>
+</head>
+<body>
+    <ul>
+        @foreach (var endpoint in Web.Resources.Manifest.Endpoints)
+        {
+            <li>
+                <a href="@endpoint.Path">@endpoint.Path</a>
+            </li>
+        }
+    </ul>
+</body>
+</html>
