@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Solution Items/">
+    <File Path="../.gitattributes" />
     <File Path="../.github/workflows/publishFirstTest.yml" />
     <File Path="../.github/workflows/testFirstTest.yml" />
     <File Path=".editorconfig" />
