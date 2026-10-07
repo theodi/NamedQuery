@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 
@@ -26,7 +27,9 @@ public sealed class DockerBuildTests
 
         var response = await client.GetAsync("", TestContext.CancellationToken);
 
-        response.Should().Be200Ok().And.BeAs(new[] { "ASK { <urn:example:docker-test> ?p ?o }" });
+        response.Should().Be200Ok();
+        var results = await response.Content.ReadFromJsonAsync<string[]>(TestContext.CancellationToken);
+        results.Should().ContainSingle().Which.Should().MatchRegex("\"boolean\"\\s*:\\s*true");
     }
 
     [TestMethod]

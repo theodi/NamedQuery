@@ -1,9 +1,15 @@
 services:
+  sparql:
+    build: Fixtures/Sparql
   valid:
     build:
       context: ../..
       additional_contexts:
         endpoint-definition-folder: Fixtures/Valid
+    environment:
+      Options__SparqlEndpoint: http://sparql:7878/query
+    depends_on:
+      - sparql
   invalid:
     build:
       context: ../..
