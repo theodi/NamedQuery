@@ -1,0 +1,14 @@
+services:
+  valid:
+    build:
+      context: ../..
+      additional_contexts:
+        endpoint-definition-folder: Fixtures/Valid
+  invalid:
+    build:
+      context: ../..
+      additional_contexts:
+        endpoint-definition-folder: Fixtures/Invalid
+  missing:
+    build:
+      context: ../..

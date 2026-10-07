@@ -8,3 +8,11 @@ docker build --build-context endpoint-definition-folder=ExampleEndpointDefinitio
 ```shell
 docker run --rm -p 8080:8080 named-query-first-test
 ```
+
+# Test
+
+Docker tests require a running Docker daemon.
+
+```shell
+dotnet test --solution FirstTest.slnx
+```

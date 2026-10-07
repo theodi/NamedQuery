@@ -1,0 +1,7 @@
+PREFIX : <http://example.org/namedquery/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+[
+    :path "docker-test" ;
+    :sparql "./queries/docker-test.sparql"^^xsd:anyURI ;
+] .

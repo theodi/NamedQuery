@@ -1,0 +1,1 @@
+ASK { <urn:example:docker-test> ?p ?o }
