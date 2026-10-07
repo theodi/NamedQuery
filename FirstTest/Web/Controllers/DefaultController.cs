@@ -1,23 +1,21 @@
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
+using VDS.RDF.Query;
+using VDS.RDF.Writing;
 
 namespace Web.Controllers;
 
 [Route("/")]
-public class DefaultController
+public class DefaultController(ISparqlQueryClient sparql)
 {
-    private static readonly Uri FakeBase = new("http://resources/");
-
     [HttpGet]
-    public IEnumerable<string> Get()
+    public async IAsyncEnumerable<string> GetAsync([EnumeratorCancellation] CancellationToken ct)
     {
-        var sparqlFiles = Resources.Manifest.Endpoints
-            .Select(endpoint => endpoint.Sparql)
-            .Select(relative => new Uri(FakeBase, relative))
-            .Select(absolute => absolute.GetComponents(UriComponents.Path, UriFormat.Unescaped));
-
-        foreach (var sparqlFile in sparqlFiles)
+        foreach (var endpoint in Resources.Manifest.Endpoints)
         {
-            yield return Resources.String(sparqlFile) ?? throw new Exception($"SPARQL file not found: {sparqlFile}");
+            var results = await sparql.QueryWithResultSetAsync(endpoint.Query, ct);
+
+            yield return VDS.RDF.Writing.StringWriter.Write(results, new SparqlJsonWriter());
         }
     }
 }
