@@ -11,7 +11,7 @@ public sealed class ManifestTests
     [TestMethod]
     public void EnumeratesEndpoints()
     {
-        manifest.Endpoints.Select(endpoint => endpoint.Path).Should().BeEquivalentTo("endpoint1", "endpoint2");
+        manifest.Endpoints.Select(endpoint => endpoint.Path).Should().BeEquivalentTo("endpoint1", "endpoint2", "endpoint3/something");
     }
 
     [TestMethod]

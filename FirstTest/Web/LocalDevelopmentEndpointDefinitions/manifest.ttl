@@ -10,3 +10,8 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     :path "endpoint2" ;
     :sparql "./endpoint2.sparql"^^xsd:anyURI ;
 ] .
+
+[
+    :path "endpoint3/something" ;
+    :sparql "./endpoint3.sparql"^^xsd:anyURI ;
+] .

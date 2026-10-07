@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 
@@ -15,7 +14,7 @@ public sealed class DockerBuildTests
     public async Task ValidContextIsServed()
     {
         await using var compose = Compose("valid")
-            .WithExposedService("valid", Port, Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(request => request.ForPort(Port)))
+            .WithExposedService("valid", Port, Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(request => request.ForPort(Port).ForPath("/docker-test")))
             .Build();
 
         await compose.StartAsync(TestContext.CancellationToken);
@@ -25,11 +24,11 @@ public sealed class DockerBuildTests
             BaseAddress = new UriBuilder(Uri.UriSchemeHttp, compose.GetServiceHost("valid", Port), compose.GetServicePort("valid", Port)).Uri
         };
 
-        var response = await client.GetAsync("", TestContext.CancellationToken);
+        var response = await client.GetAsync("docker-test", TestContext.CancellationToken);
 
         response.Should().Be200Ok();
-        var results = await response.Content.ReadFromJsonAsync<string[]>(TestContext.CancellationToken);
-        results.Should().ContainSingle().Which.Should().MatchRegex("\"boolean\"\\s*:\\s*true");
+        var results = await response.Content.ReadAsStringAsync(TestContext.CancellationToken);
+        results.Should().MatchRegex("\"boolean\"\\s*:\\s*true");
     }
 
     [TestMethod]

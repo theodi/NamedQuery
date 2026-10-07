@@ -1,21 +1,22 @@
-using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
 using VDS.RDF.Query;
 using VDS.RDF.Writing;
 
 namespace Web.Controllers;
 
-[Route("/")]
-public class DefaultController(ISparqlQueryClient sparql)
+[Route("/{**path}")]
+public class DefaultController(ISparqlQueryClient sparql) : ControllerBase
 {
     [HttpGet]
-    public async IAsyncEnumerable<string> GetAsync([EnumeratorCancellation] CancellationToken ct)
+    public async Task<ActionResult<string>> GetAsync(string path, CancellationToken ct)
     {
-        foreach (var endpoint in Resources.Manifest.Endpoints)
+        if (Resources.Manifest[path] is not { } endpoint)
         {
-            var results = await sparql.QueryWithResultSetAsync(endpoint.Query, ct);
-
-            yield return VDS.RDF.Writing.StringWriter.Write(results, new SparqlJsonWriter());
+            return NotFound();
         }
+
+        var results = await sparql.QueryWithResultSetAsync(endpoint.Query, ct);
+
+        return VDS.RDF.Writing.StringWriter.Write(results, new SparqlJsonWriter());
     }
 }
