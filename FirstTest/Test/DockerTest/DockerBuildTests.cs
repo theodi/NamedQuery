@@ -28,7 +28,7 @@ public sealed class DockerBuildTests
 
         response.Should().Be200Ok();
         var results = await response.Content.ReadAsStringAsync(TestContext.CancellationToken);
-        results.Should().MatchRegex("\"boolean\"\\s*:\\s*true");
+        results.Should().Contain("<boolean>true</boolean>");
     }
 
     [TestMethod]

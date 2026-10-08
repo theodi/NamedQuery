@@ -4,8 +4,11 @@ namespace Test;
 
 internal class SparqlStub : HttpMessageHandler
 {
-    internal const string Response = """{"head":{},"boolean":true}""";
-
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) =>
-        Task.FromResult(new HttpResponseMessage { Content = new StringContent(Response, Encoding.UTF8, "application/sparql-results+json") });
+        Task.FromResult(new HttpResponseMessage
+        {
+            Content = request.Headers.Accept.ToString().Contains("sparql-results")
+                ? new StringContent("""{"head":{},"boolean":true}""", Encoding.UTF8, "application/sparql-results+json")
+                : new StringContent("<urn:example:s> <urn:example:p> <urn:example:o> .", Encoding.UTF8, "text/turtle"),
+        });
 }
