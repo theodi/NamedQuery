@@ -1,0 +1,2 @@
+# LocalDevelopmentEndpointDefinitions/endpoint5.sparql
+CONSTRUCT WHERE { ?s ?p ?o } LIMIT 10

@@ -15,3 +15,14 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     :path "endpoint3/something" ;
     :sparql "./endpoint3.sparql"^^xsd:anyURI ;
 ] .
+
+[
+    :path "endpoint4" ;
+    :sparql "./endpoint4.sparql"^^xsd:anyURI ;
+] .
+
+[
+    :path "endpoint5" ;
+    :sparql "./endpoint5.sparql"^^xsd:anyURI ;
+    :frame "./endpoint5.jsonld"^^xsd:anyURI ;
+] .
