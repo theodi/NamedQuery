@@ -5,6 +5,7 @@ using VDS.RDF.Writing;
 namespace Web.Controllers;
 
 [Route("/{**path}")]
+[AllowSynchronousIO]
 public class DefaultController(ISparqlQueryClient sparql) : ControllerBase
 {
     [HttpGet]
