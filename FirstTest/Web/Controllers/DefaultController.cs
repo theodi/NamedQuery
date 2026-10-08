@@ -8,9 +8,9 @@ namespace Web.Controllers;
 public class DefaultController
 {
     [HttpGet]
-    [ResolveEndpoint(Order = 0)]
-    [RequireEndpoint(Order = 1)]
-    [ProcessQuery(Order = 2)]
-    [SetContent(Order = 3)]
+    [PopulateEndpointInContext(Order = 0)]
+    [Respond404IfMissingEndpoint(Order = 1)]
+    [ExecuteSparql(Order = 2)]
+    [Respond200QueryResult(Order = 3)]
     public void Get() { }
 }

@@ -4,7 +4,7 @@ using Web.Model;
 
 namespace Web.Filters;
 
-internal class ResolveEndpointAttribute : TypeFilterAttribute<ResolveEndpointAttribute.Filter>
+internal class PopulateEndpointInContextAttribute : TypeFilterAttribute<PopulateEndpointInContextAttribute.Filter>
 {
     internal class Filter(Context context) : IActionFilter
     {

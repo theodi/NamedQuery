@@ -5,7 +5,7 @@ using Web.Model;
 
 namespace Web.Filters;
 
-internal class ProcessQueryAttribute : TypeFilterAttribute<ProcessQueryAttribute.Filter>
+internal class ExecuteSparqlAttribute : TypeFilterAttribute<ExecuteSparqlAttribute.Filter>
 {
     internal class Filter(ISparqlQueryClient sparql, Context context) : IAsyncActionFilter
     {

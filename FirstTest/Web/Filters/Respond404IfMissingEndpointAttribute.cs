@@ -4,7 +4,7 @@ using Web.Model;
 
 namespace Web.Filters;
 
-internal class RequireEndpointAttribute : TypeFilterAttribute<RequireEndpointAttribute.Filter>
+internal class Respond404IfMissingEndpointAttribute : TypeFilterAttribute<Respond404IfMissingEndpointAttribute.Filter>
 {
     internal class Filter(Context context) : IActionFilter
     {
