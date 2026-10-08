@@ -5,8 +5,8 @@ namespace Web.Controllers;
 
 [Route("/{**path}")]
 [AllowSynchronousIO]
-[ResolveEndpoint]
-[RequireEndpoint]
+[ResolveEndpoint(Order = 0)]
+[RequireEndpoint(Order = 1)]
 public class DefaultController(ISparqlQueryClient sparql, EndpointContext endpointContext) : ControllerBase
 {
     [HttpGet]
