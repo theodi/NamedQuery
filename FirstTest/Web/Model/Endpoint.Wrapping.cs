@@ -11,5 +11,7 @@ public partial class Endpoint : GraphWrapperNode
 
     public Uri? Sparql => this.Singular(Vocabulary.Sparql, ValueMappings.As<Uri>);
 
+    public Uri? Frame => this.Singular(Vocabulary.Frame, ValueMappings.As<Uri>);
+
     public static Endpoint Wrap(GraphWrapperNode node) => new(node, node.Graph);
 }

@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Reflection;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -32,6 +34,12 @@ public static class Resources
         using var reader = Reader(name);
         return reader?.ReadToEnd();
     }
+
+    internal static JToken? Token(string name) => Reader(name) switch
+    {
+        null => null,
+        var value => JToken.ReadFrom(new JsonTextReader(value))
+    };
 
     private static Stream? Stream(string name) => Assembly.GetExecutingAssembly().GetManifestResourceStream(name);
 }

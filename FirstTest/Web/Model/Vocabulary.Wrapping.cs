@@ -11,5 +11,7 @@ internal static class Vocabulary
 
     internal static IUriNode Sparql { get; } = Node("sparql");
 
+    internal static IUriNode Frame { get; } = Node("frame");
+
     private static IUriNode Node(string name) => Factory.CreateUriNode(UriFactory.Create($"{Base}{name}"));
 }
