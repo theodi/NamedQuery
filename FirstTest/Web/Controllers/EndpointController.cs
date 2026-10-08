@@ -5,7 +5,7 @@ namespace Web.Controllers;
 
 [Route("/{**path}")]
 [AllowSynchronousIO]
-public class DefaultController
+public class EndpointController
 {
     [HttpGet]
     [PopulateEndpointInContext(Order = 0)]
