@@ -15,6 +15,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 builder.Services.AddOptions<Options>().BindConfiguration(Options.SectionName).ValidateDataAnnotations().ValidateOnStart();
 builder.Services.AddHttpClient<DotNetRDF.ISparqlQueryClient, SparqlQueryClient>();
+builder.Services.AddScoped<EndpointContext>();
 
 var app = builder.Build();
 app.UseCors();

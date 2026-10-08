@@ -5,12 +5,13 @@ namespace Web.Controllers;
 
 [Route("/{**path}")]
 [AllowSynchronousIO]
-public class DefaultController(ISparqlQueryClient sparql) : ControllerBase
+[ResolveEndpoint]
+public class DefaultController(ISparqlQueryClient sparql, EndpointContext endpointContext) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAsync(string path, CancellationToken ct)
+    public async Task<IActionResult> GetAsync(CancellationToken ct)
     {
-        if (Resources.Manifest[path] is not { } endpoint)
+        if (endpointContext.Endpoint is not { } endpoint)
         {
             return NotFound();
         }
