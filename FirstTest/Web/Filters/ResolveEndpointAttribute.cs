@@ -1,20 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Web.Model;
 
 namespace Web.Filters;
 
 internal class ResolveEndpointAttribute : TypeFilterAttribute<ResolveEndpointAttribute.Filter>
 {
-    internal class Filter(EndpointContext endpointContext) : IActionFilter
+    internal class Filter(Context context) : IActionFilter
     {
-        void IActionFilter.OnActionExecuting(ActionExecutingContext context)
+        void IActionFilter.OnActionExecuting(ActionExecutingContext action)
         {
-            if (context.RouteData.Values["path"] is string path)
+            if (action.RouteData.Values["path"] is string path)
             {
-                endpointContext.Endpoint = Resources.Manifest[path];
+                context.Endpoint = Resources.Manifest[path];
             }
         }
 
-        void IActionFilter.OnActionExecuted(ActionExecutedContext context) { }
+        void IActionFilter.OnActionExecuted(ActionExecutedContext _) { }
     }
 }

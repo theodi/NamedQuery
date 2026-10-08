@@ -25,7 +25,7 @@ internal class JsonLdFormatter : TextOutputFormatter
     {
         using var streamWriter = new StreamWriter(context.HttpContext.Response.Body, selectedEncoding);
 
-        var container = (ResponseContainer)context.Object!;
+        var container = (Response)context.Object!;
 
         var ts = new TripleStore();
         ts.Add(container.Graph);
@@ -44,5 +44,5 @@ internal class JsonLdFormatter : TextOutputFormatter
         }
     }
 
-    protected override bool CanWriteType(Type? type) => type!.IsAssignableFrom(typeof(ResponseContainer));
+    protected override bool CanWriteType(Type? type) => type!.IsAssignableFrom(typeof(Response));
 }

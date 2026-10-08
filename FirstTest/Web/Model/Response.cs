@@ -3,7 +3,7 @@ using VDS.RDF;
 
 namespace Web.Model;
 
-internal class ResponseContainer
+internal class Response
 {
     internal required JToken? Frame { get; set; }
 

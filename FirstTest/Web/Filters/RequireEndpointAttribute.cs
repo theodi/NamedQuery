@@ -1,20 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Web.Model;
 
 namespace Web.Filters;
 
 internal class RequireEndpointAttribute : TypeFilterAttribute<RequireEndpointAttribute.Filter>
 {
-    internal class Filter(EndpointContext endpointContext) : IActionFilter
+    internal class Filter(Context context) : IActionFilter
     {
-        void IActionFilter.OnActionExecuting(ActionExecutingContext context)
+        void IActionFilter.OnActionExecuting(ActionExecutingContext action)
         {
-            if (endpointContext.Endpoint is null)
+            if (context.Endpoint is null)
             {
-                context.Result = new NotFoundResult();
+                action.Result = new NotFoundResult();
             }
         }
 
-        void IActionFilter.OnActionExecuted(ActionExecutedContext context) { }
+        void IActionFilter.OnActionExecuted(ActionExecutedContext _) { }
     }
 }

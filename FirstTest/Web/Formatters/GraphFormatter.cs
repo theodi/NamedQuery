@@ -27,7 +27,7 @@ internal class GraphFormatter : TextOutputFormatter
     {
         using var streamWriter = new StreamWriter(context.HttpContext.Response.Body, selectedEncoding);
 
-        var graph = ((ResponseContainer)context.Object!).Graph;
+        var graph = ((Response)context.Object!).Graph;
 
         var datasetWriter = MimeTypesHelper
             .GetDefinitions(context.ContentType.ToString())
@@ -55,5 +55,5 @@ internal class GraphFormatter : TextOutputFormatter
         return Task.CompletedTask;
     }
 
-    protected override bool CanWriteType(Type? type) => type!.IsAssignableFrom(typeof(ResponseContainer));
+    protected override bool CanWriteType(Type? type) => type!.IsAssignableFrom(typeof(Response));
 }

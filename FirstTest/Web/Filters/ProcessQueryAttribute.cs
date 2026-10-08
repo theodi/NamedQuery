@@ -1,23 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using VDS.RDF.Query;
+using Web.Model;
 
 namespace Web.Filters;
 
 internal class ProcessQueryAttribute : TypeFilterAttribute<ProcessQueryAttribute.Filter>
 {
-    internal class Filter(ISparqlQueryClient sparql, EndpointContext endpointContext) : IAsyncActionFilter
+    internal class Filter(ISparqlQueryClient sparql, Context context) : IAsyncActionFilter
     {
-        async Task IAsyncActionFilter.OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        async Task IAsyncActionFilter.OnActionExecutionAsync(ActionExecutingContext action, ActionExecutionDelegate next)
         {
-            var endpoint = endpointContext.Endpoint!;
-            var ct = context.HttpContext.RequestAborted;
+            var endpoint = context.Endpoint!;
+            var ct = action.HttpContext.RequestAborted;
 
-            endpointContext.Result = endpoint.QueryType switch
+            context.Result = endpoint.QueryType switch
             {
                 SparqlQueryType.Construct or
                 SparqlQueryType.Describe or
-                SparqlQueryType.DescribeAll => new Model.ResponseContainer
+                SparqlQueryType.DescribeAll => new Response
                 {
                     Graph = await sparql.QueryWithResultGraphAsync(endpoint.Query, ct),
                     Frame = endpoint.JsonLdFrame

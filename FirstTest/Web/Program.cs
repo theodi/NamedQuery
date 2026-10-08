@@ -1,5 +1,6 @@
 using Web;
 using Web.Formatters;
+using Web.Model;
 using DotNetRDF = VDS.RDF.Query;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +16,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 builder.Services.AddOptions<Options>().BindConfiguration(Options.SectionName).ValidateDataAnnotations().ValidateOnStart();
 builder.Services.AddHttpClient<DotNetRDF.ISparqlQueryClient, SparqlQueryClient>();
-builder.Services.AddScoped<EndpointContext>();
+builder.Services.AddScoped<Context>();
 
 var app = builder.Build();
 app.UseCors();

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Web;
+namespace Web.Model;
 
 public class Options
 {
