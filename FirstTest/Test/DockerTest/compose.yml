@@ -15,6 +15,11 @@ services:
       context: ../..
       additional_contexts:
         endpoint-definition-folder: Fixtures/Invalid
+  colliding:
+    build:
+      context: ../..
+      additional_contexts:
+        endpoint-definition-folder: Fixtures/Colliding
   missing:
     build:
       context: ../..

@@ -1,0 +1,7 @@
+PREFIX : <http://example.org/namedquery/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+[
+    :path "Index" ;
+    :sparql "./queries/colliding.sparql"^^xsd:anyURI ;
+] .

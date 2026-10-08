@@ -42,6 +42,16 @@ public sealed class DockerBuildTests
     }
 
     [TestMethod]
+    public async Task CollidingContextFailsBuild()
+    {
+        await using var compose = Compose("colliding").Build();
+
+        var start = () => compose.StartAsync(TestContext.CancellationToken);
+
+        (await start.Should().ThrowAsync<ExecFailedException>()).Which.Message.Should().Contain("Endpoint paths collide with built-in routes: Index");
+    }
+
+    [TestMethod]
     public async Task MissingContextFailsBuild()
     {
         await using var compose = Compose("missing").Build();

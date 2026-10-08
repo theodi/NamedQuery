@@ -1,9 +1,17 @@
 ﻿using System.Reflection;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Template;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Parsing.Handlers;
 using VDS.RDF.Shacl;
 using Web;
+using Web.Controllers;
 
 namespace ValidateResources;
 
@@ -21,6 +29,7 @@ internal static class Validator
         SparqlIsRelativeUri();
         SparqlFilesExist();
         SparqlFilesValid();
+        EndpointPathsDoNotCollideWithWebRoutes();
     }
 
     private static void ManifestExists()
@@ -132,5 +141,34 @@ internal static class Validator
                 };
             }
         }
+    }
+
+    private static void EndpointPathsDoNotCollideWithWebRoutes()
+    {
+        Environment.SetEnvironmentVariable($"ASPNETCORE_TEST_CONTENTROOT_{typeof(EndpointController).Assembly.GetName().Name!.ToUpperInvariant().Replace('.', '_')}", AppContext.BaseDirectory);
+
+        using var factory = new WebApplicationFactory<EndpointController>().WithWebHostBuilder(builder => builder
+            .UseSetting("Options:SparqlEndpoint", "http://localhost/")
+            .ConfigureLogging(logging => logging.ClearProviders()));
+
+        var routes = factory.Services.GetRequiredService<EndpointDataSource>().Endpoints
+            .OfType<RouteEndpoint>()
+            .Where(route => route.Metadata.GetMetadata<ControllerActionDescriptor>()?.ControllerTypeInfo != typeof(EndpointController))
+            .ToList();
+
+        var collisions = Resources.Manifest.Endpoints
+            .Select(endpoint => endpoint.Path)
+            .OfType<string>()
+            .SelectMany(path => routes
+                .Where(route => new TemplateMatcher(new RouteTemplate(route.RoutePattern), new RouteValueDictionary(route.RoutePattern.Defaults)).TryMatch($"/{path}", []))
+                .Select(route => $"{path} ({route.DisplayName})"))
+            .ToList();
+
+        if (collisions.Count == 0)
+        {
+            return;
+        }
+
+        throw new MsBuildCanonicalErrorException(ManifestName, $"Endpoint paths collide with built-in routes: {string.Join("; ", collisions)}");
     }
 }
