@@ -31,7 +31,7 @@ internal class SparqlFormatter : TextOutputFormatter
             .First();
 
         var results = (SparqlResultSet)context.Object!;
-        using var streamWriter = new StreamWriter(context.HttpContext.Response.Body);
+        using var streamWriter = new StreamWriter(context.HttpContext.Response.Body, selectedEncoding);
         writer.Save(results, streamWriter);
         return Task.CompletedTask;
     }

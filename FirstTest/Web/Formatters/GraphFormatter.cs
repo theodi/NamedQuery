@@ -25,7 +25,7 @@ internal class GraphFormatter : TextOutputFormatter
 
     public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
     {
-        using var streamWriter = new StreamWriter(context.HttpContext.Response.Body);
+        using var streamWriter = new StreamWriter(context.HttpContext.Response.Body, selectedEncoding);
 
         var graph = ((ResponseContainer)context.Object!).Graph;
 
