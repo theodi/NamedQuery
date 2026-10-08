@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using VDS.RDF.Query;
-using VDS.RDF.Writing;
 
 namespace Web.Controllers;
 
@@ -9,15 +8,26 @@ namespace Web.Controllers;
 public class DefaultController(ISparqlQueryClient sparql) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<string>> GetAsync(string path, CancellationToken ct)
+    public async Task<IActionResult> GetAsync(string path, CancellationToken ct)
     {
         if (Resources.Manifest[path] is not { } endpoint)
         {
             return NotFound();
         }
 
-        var results = await sparql.QueryWithResultSetAsync(endpoint.Query, ct);
+        object results = endpoint.QueryType switch
+        {
+            SparqlQueryType.Construct or
+            SparqlQueryType.Describe or
+            SparqlQueryType.DescribeAll => new Model.ResponseContainer
+            {
+                Graph = await sparql.QueryWithResultGraphAsync(endpoint.Query, ct),
+                Frame = endpoint.JsonLdFrame
+            },
 
-        return VDS.RDF.Writing.StringWriter.Write(results, new SparqlJsonWriter());
+            _ => await sparql.QueryWithResultSetAsync(endpoint.Query, ct),
+        };
+
+        return Ok(results);
     }
 }
