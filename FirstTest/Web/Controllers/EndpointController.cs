@@ -5,6 +5,7 @@ namespace Web.Controllers;
 
 [Route("/{**path}")]
 [AllowSynchronousIO]
+[FormatFilter]
 public class EndpointController
 {
     [HttpGet]

@@ -1,13 +1,22 @@
 using Web;
 using Web.Formatters;
 using Web.Model;
+using static VDS.RDF.MimeTypesHelper;
 using DotNetRDF = VDS.RDF.Query;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(options =>
 {
+    options.FormatterMappings.SetMediaTypeMappingForFormat(DefaultCsvExtension, Csv[0]);
+    options.FormatterMappings.SetMediaTypeMappingForFormat(DefaultJsonLdExtension, JsonLd[0]);
+    options.FormatterMappings.SetMediaTypeMappingForFormat(DefaultTurtleExtension, Turtle[0]);
+    options.FormatterMappings.SetMediaTypeMappingForFormat(DefaultRdfXmlExtension, RdfXml[0]);
+    options.FormatterMappings.SetMediaTypeMappingForFormat(DefaultNTriplesExtension, NTriples[0]);
+    options.FormatterMappings.SetMediaTypeMappingForFormat(DefaultHtmlExtension, Html[0]);
+
     options.RespectBrowserAcceptHeader = true;
     options.ReturnHttpNotAcceptable = true;
+
     options.OutputFormatters.Insert(0, new SparqlFormatter());
     options.OutputFormatters.Insert(0, new GraphFormatter());
     options.OutputFormatters.Insert(0, new JsonLdFormatter());
