@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Web;
+namespace Web.Filters;
 
 internal class SetContentAttribute : TypeFilterAttribute<SetContentAttribute.Filter>
 {

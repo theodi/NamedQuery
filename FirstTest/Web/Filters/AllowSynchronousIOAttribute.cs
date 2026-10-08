@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Web;
+namespace Web.Filters;
 
 public class AllowSynchronousIOAttribute : ActionFilterAttribute
 {

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using VDS.RDF.Query;
 
-namespace Web;
+namespace Web.Filters;
 
 internal class ProcessQueryAttribute : TypeFilterAttribute<ProcessQueryAttribute.Filter>
 {
