@@ -12,7 +12,6 @@ internal class AddModelErrorIfMissingParameterAttribute : TypeFilterAttribute<Ad
         {
             var missing = context.Endpoint!.Parameters
                 .Select(parameter => parameter.Name)
-                .OfType<string>()
                 .Where(name => !action.HttpContext.Request.Query.ContainsKey(name));
 
             foreach (var name in missing)
