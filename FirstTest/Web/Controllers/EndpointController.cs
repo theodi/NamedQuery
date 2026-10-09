@@ -12,7 +12,8 @@ public class EndpointController
     [PopulateEndpointInContext(Order = 0)]
     [Respond404IfMissingEndpoint(Order = 1)]
     [AddModelErrorIfMissingParameter(Order = 2)]
-    [ExecuteSparql(Order = 3)]
-    [Respond200QueryResult(Order = 4)]
+    [Respond400IfInvalidModelState(Order = 3)]
+    [ExecuteSparql(Order = 4)]
+    [Respond200QueryResult(Order = 5)]
     public void Get() { }
 }
