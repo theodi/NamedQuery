@@ -1,2 +1,3 @@
 - Publish to DockerHub an image with default sample SPARQL & definitions so people know what they're aiming at when building docker.
 - Take manifest in any format, not just Turtle.
+- Validate at build that parametrized sparql query is still valid sparql after parameter substitution based on example.
