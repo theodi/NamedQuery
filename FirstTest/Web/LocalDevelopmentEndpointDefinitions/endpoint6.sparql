@@ -1,6 +1,6 @@
 # LocalDevelopmentEndpointDefinitions/endpoint6.sparql
 SELECT * {
-    BIND($value AS ?value)
+    BIND($value AS ?o)
 
-    ?s ?p ?value .
+    ?s ?p ?o .
 }
