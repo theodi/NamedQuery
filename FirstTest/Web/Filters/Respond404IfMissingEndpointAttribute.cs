@@ -6,16 +6,16 @@ namespace Web.Filters;
 
 internal class Respond404IfMissingEndpointAttribute : TypeFilterAttribute<Respond404IfMissingEndpointAttribute.Filter>
 {
-    internal class Filter(Context context) : IActionFilter
+    internal class Filter(Context context) : IResourceFilter
     {
-        void IActionFilter.OnActionExecuting(ActionExecutingContext action)
+        void IResourceFilter.OnResourceExecuting(ResourceExecutingContext resource)
         {
             if (context.Endpoint is null)
             {
-                action.Result = new NotFoundResult();
+                resource.Result = new NotFoundResult();
             }
         }
 
-        void IActionFilter.OnActionExecuted(ActionExecutedContext _) { }
+        void IResourceFilter.OnResourceExecuted(ResourceExecutedContext _) { }
     }
 }
