@@ -19,7 +19,7 @@ public sealed class ManifestTests
     {
         manifest["endpoint6"]!.Parameters.Should().ContainSingle().Which.Should().Match<Parameter>(parameter =>
             parameter.Name == "value" &&
-            parameter.DatatypeInternal == new Uri("http://www.w3.org/2001/XMLSchema#string"));
+            parameter.Datatype == new Uri("http://www.w3.org/2001/XMLSchema#string"));
     }
 
     [TestMethod]

@@ -9,7 +9,7 @@ public partial class Parameter : GraphWrapperNode
 
     public string? Name => this.Singular(Vocabulary.Name, ValueMappings.As<string>);
 
-    public Uri? Datatype =>this.Singular(Vocabulary.Datatype, ValueMappings.As<Uri>);
+    private Uri? DatatypeInternal => this.Singular(Vocabulary.Datatype, ValueMappings.As<Uri>);
 
     public static Parameter Wrap(INode node, IGraph graph) => new(node, graph);
 

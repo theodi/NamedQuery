@@ -4,5 +4,5 @@ namespace Web.Model;
 
 public partial class Parameter
 {
-    public Uri DatatypeInternal => Datatype ?? new Uri(XmlSpecsHelper.XmlSchemaDataTypeString);
+    public Uri Datatype => DatatypeInternal ?? new Uri(XmlSpecsHelper.XmlSchemaDataTypeString);
 }
