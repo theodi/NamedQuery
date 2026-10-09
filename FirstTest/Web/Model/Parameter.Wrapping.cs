@@ -7,7 +7,7 @@ public partial class Parameter : GraphWrapperNode
 {
     protected Parameter(INode node, IGraph graph) : base(node, graph) { }
 
-    public string? Name => this.Singular(Vocabulary.Name, ValueMappings.As<string>);
+    public string Name => this.Singular(Vocabulary.Name, ValueMappings.As<string>, throwWhenMissing: true);
 
     private Uri? DatatypeInternal => this.Singular(Vocabulary.Datatype, ValueMappings.As<Uri>);
 
