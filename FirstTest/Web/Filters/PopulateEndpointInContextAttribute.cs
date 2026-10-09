@@ -6,16 +6,16 @@ namespace Web.Filters;
 
 internal class PopulateEndpointInContextAttribute : TypeFilterAttribute<PopulateEndpointInContextAttribute.Filter>
 {
-    internal class Filter(Context context) : IActionFilter
+    internal class Filter(Context context) : IResourceFilter
     {
-        void IActionFilter.OnActionExecuting(ActionExecutingContext action)
+        void IResourceFilter.OnResourceExecuting(ResourceExecutingContext resource)
         {
-            if (action.RouteData.Values["path"] is string path)
+            if (resource.RouteData.Values["path"] is string path)
             {
                 context.Endpoint = Resources.Manifest[path];
             }
         }
 
-        void IActionFilter.OnActionExecuted(ActionExecutedContext _) { }
+        void IResourceFilter.OnResourceExecuted(ResourceExecutedContext _) { }
     }
 }
