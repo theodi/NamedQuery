@@ -26,3 +26,11 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     :sparql "./endpoint5.sparql"^^xsd:anyURI ;
     :frame "./endpoint5.jsonld"^^xsd:anyURI ;
 ] .
+
+[
+    :path "endpoint6" ;
+    :sparql "./endpoint6.sparql"^^xsd:anyURI ;
+    :parameter [
+        :name "value" ;
+    ] ;
+] .

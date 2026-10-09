@@ -1,0 +1,6 @@
+# LocalDevelopmentEndpointDefinitions/endpoint6.sparql
+SELECT * {
+    BIND($value AS ?value)
+
+    ?s ?p ?value .
+}

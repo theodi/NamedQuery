@@ -11,7 +11,21 @@ public sealed class ManifestTests
     [TestMethod]
     public void EnumeratesEndpoints()
     {
-        manifest.Endpoints.Select(endpoint => endpoint.Path).Should().BeEquivalentTo("endpoint1", "endpoint2", "endpoint3/something", "endpoint4", "endpoint5");
+        manifest.Endpoints.Select(endpoint => endpoint.Path).Should().BeEquivalentTo("endpoint1", "endpoint2", "endpoint3/something", "endpoint4", "endpoint5", "endpoint6");
+    }
+
+    [TestMethod]
+    public void ReadsParameters()
+    {
+        manifest["endpoint6"]!.Parameters.Should().ContainSingle().Which.Should().Match<Parameter>(parameter =>
+            parameter.Name == "value" &&
+            parameter.DatatypeInternal == new Uri("http://www.w3.org/2001/XMLSchema#string"));
+    }
+
+    [TestMethod]
+    public void EndpointWithoutParametersHasNone()
+    {
+        manifest["endpoint1"]!.Parameters.Should().BeEmpty();
     }
 
     [TestMethod]

@@ -13,5 +13,11 @@ internal static class Vocabulary
 
     internal static IUriNode Frame { get; } = Node("frame");
 
+    internal static IUriNode Parameter { get; } = Node("parameter");
+
+    internal static IUriNode Name { get; } = Node("name");
+
+    internal static IUriNode Datatype { get; } = Node("datatype");
+
     private static IUriNode Node(string name) => Factory.CreateUriNode(UriFactory.Create($"{Base}{name}"));
 }

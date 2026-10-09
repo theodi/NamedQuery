@@ -13,5 +13,7 @@ public partial class Endpoint : GraphWrapperNode
 
     public Uri? Frame => this.Singular(Vocabulary.Frame, ValueMappings.As<Uri>);
 
+    public ISet<Parameter> Parameters => this.Objects(Vocabulary.Parameter, Parameter.Wrap, Parameter.Wrap);
+
     public static Endpoint Wrap(GraphWrapperNode node) => new(node, node.Graph);
 }
