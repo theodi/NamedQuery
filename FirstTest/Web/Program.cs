@@ -1,5 +1,7 @@
 using Web;
+using Web.Constraints;
 using Web.Formatters;
+using Web.Middleware;
 using Web.Model;
 using static VDS.RDF.MimeTypesHelper;
 using DotNetRDF = VDS.RDF.Query;
@@ -26,8 +28,12 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.Al
 builder.Services.AddOptions<Options>().BindConfiguration(Options.SectionName).ValidateDataAnnotations().ValidateOnStart();
 builder.Services.AddHttpClient<DotNetRDF.ISparqlQueryClient, SparqlQueryClient>();
 builder.Services.AddScoped<Context>();
+builder.Services.AddRouting(options => options.SetParameterPolicy<ManifestEndpointConstraint>("endpoint"));
+builder.Services.AddTransient<PopulateEndpointInContextMiddleware>();
 
 var app = builder.Build();
+app.UseMiddleware<PopulateEndpointInContextMiddleware>();
+app.UseRouting();
 app.UseCors();
 app.MapControllers();
 app.MapRazorPages();
