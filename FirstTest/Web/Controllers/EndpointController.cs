@@ -11,7 +11,8 @@ public class EndpointController
     [HttpGet]
     [PopulateEndpointInContext(Order = 0)]
     [Respond404IfMissingEndpoint(Order = 1)]
-    [ExecuteSparql(Order = 2)]
-    [Respond200QueryResult(Order = 3)]
+    [AddModelErrorIfMissingParameter(Order = 2)]
+    [ExecuteSparql(Order = 3)]
+    [Respond200QueryResult(Order = 4)]
     public void Get() { }
 }
