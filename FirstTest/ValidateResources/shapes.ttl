@@ -66,6 +66,90 @@ _:prefixes :declare [
 ] .
 
 [
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:name ;
+    :datatype xsd:string ;
+    :message "Endpoint name must be string literal" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:name ;
+    :minCount 1 ;
+    :message "Endpoint must have at least one name" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:name ;
+    :maxCount 1 ;
+    :message "Endpoint must have at most one name" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:description ;
+    :datatype xsd:string ;
+    :message "Endpoint description must be string literal" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:description ;
+    :minCount 1 ;
+    :message "Endpoint must have at least one description" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:description ;
+    :maxCount 1 ;
+    :message "Endpoint must have at most one description" ;
+] .
+
+[
+	:targetObjectsOf nq:parameter ;
+    :path nq:description ;
+    :datatype xsd:string ;
+    :message "Parameter description must be string literal" ;
+] .
+
+[
+	:targetObjectsOf nq:parameter ;
+    :path nq:description ;
+    :minCount 1 ;
+    :message "Parameter must have at least one description" ;
+] .
+
+[
+	:targetObjectsOf nq:parameter ;
+    :path nq:description ;
+    :maxCount 1 ;
+    :message "Parameter must have at most one description" ;
+] .
+
+[
+	:targetObjectsOf nq:parameter ;
+    :path nq:example ;
+    :datatype xsd:string ;
+    :message "Parameter example must be string literal" ;
+] .
+
+[
+	:targetObjectsOf nq:parameter ;
+    :path nq:example ;
+    :minCount 1 ;
+    :message "Parameter must have at least one example" ;
+] .
+
+[
+	:targetObjectsOf nq:parameter ;
+    :path nq:example ;
+    :maxCount 1 ;
+    :message "Parameter must have at most one example" ;
+] .
+
+[
 	:targetNode [] ;
     :sparql [
         :message "Manifest must have at least one endpoint" ;
