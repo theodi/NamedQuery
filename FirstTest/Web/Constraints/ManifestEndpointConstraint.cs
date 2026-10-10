@@ -4,6 +4,8 @@ namespace Web.Constraints;
 
 internal class ManifestEndpointConstraint : IRouteConstraint
 {
+    internal const string Name = "ManifestEndpoint";
+
     bool IRouteConstraint.Match(HttpContext? http, IRouter? _, string routeKey, RouteValueDictionary routeValues, RouteDirection routeDirection)
     {
         if (routeDirection != RouteDirection.IncomingRequest)

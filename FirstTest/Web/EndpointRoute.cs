@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Routing.Template;
 using System.Diagnostics.CodeAnalysis;
-using Web.Controllers;
+using Web.Constraints;
 
 namespace Web;
 
 internal static class EndpointRoute
 {
-    internal const string Template = "/{**path:endpoint}";
+    internal const string Template = $$"""/{**path:{{ManifestEndpointConstraint.Name}}}""";
 
     private static readonly RouteTemplate routeTemplate = TemplateParser.Parse(Template);
     private static readonly TemplateMatcher templateMatcher = new(routeTemplate, []);
