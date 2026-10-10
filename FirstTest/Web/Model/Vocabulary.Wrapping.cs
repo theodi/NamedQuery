@@ -19,5 +19,9 @@ internal static class Vocabulary
 
     internal static IUriNode Datatype { get; } = Node("datatype");
 
+    internal static IUriNode Description { get; } = Node("description");
+
+    internal static IUriNode Example { get; } = Node("example");
+
     private static IUriNode Node(string name) => Factory.CreateUriNode(UriFactory.Create($"{Base}{name}"));
 }

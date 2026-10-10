@@ -23,6 +23,22 @@ public sealed class ManifestTests
     }
 
     [TestMethod]
+    public void ReadsEndpointDocumentation()
+    {
+        manifest["endpoint6"]!.Should().Match<Endpoint>(endpoint =>
+            endpoint.Name == "Triples by object" &&
+            endpoint.Description == "Selects triples whose object is the supplied value.");
+    }
+
+    [TestMethod]
+    public void ReadsParameterDocumentation()
+    {
+        manifest["endpoint6"]!.Parameters.Should().ContainSingle().Which.Should().Match<Parameter>(parameter =>
+            parameter.Description == "Literal object to match." &&
+            parameter.Example == "example");
+    }
+
+    [TestMethod]
     public void EndpointWithoutParametersHasNone()
     {
         manifest["endpoint1"]!.Parameters.Should().BeEmpty();
