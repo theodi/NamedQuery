@@ -11,7 +11,7 @@ COPY --from=endpoint-definition-folder . /endpoint-definitions/
 # Communicate endpoint definition folder to build so files become DLL embedded resources
 ENV EndpointDefinitionFolder=/endpoint-definitions
 
-# On failure, check for lines starting with `ValidateResources : error :` above for endpoint definition folder validation errors
+# On failure, check for lines with `: error :` above for endpoint definition folder validation errors
 RUN dotnet publish /src/Web -o /app
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled
