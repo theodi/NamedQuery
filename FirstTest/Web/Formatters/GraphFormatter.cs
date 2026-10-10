@@ -9,19 +9,18 @@ internal class GraphFormatter : TextOutputFormatter
 {
     public GraphFormatter()
     {
-        var writers = MimeTypesHelper.Definitions
-           .Where(static definition => definition.CanWriteRdfDatasets || definition.CanWriteRdf)
-           .Select(static definition => definition.CanonicalMimeType)
-           .Distinct();
-
-
-        foreach (var mime in writers)
+        foreach (var mime in MediaTypes)
         {
             SupportedMediaTypes.Add(mime);
         }
 
         SupportedEncodings.Add(Encoding.UTF8);
     }
+
+    internal static IEnumerable<string> MediaTypes => MimeTypesHelper.Definitions
+        .Where(static definition => definition.CanWriteRdfDatasets || definition.CanWriteRdf)
+        .Select(static definition => definition.CanonicalMimeType)
+        .Distinct();
 
     public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
     {

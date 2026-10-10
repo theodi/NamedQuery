@@ -9,18 +9,18 @@ internal class SparqlFormatter : TextOutputFormatter
 {
     public SparqlFormatter()
     {
-        var writers = MimeTypesHelper.Definitions
-           .Where(static definition => definition.CanWriteSparqlResults)
-           .Select(static definition => definition.CanonicalMimeType)
-           .Distinct();
-
-        foreach (var mime in writers)
+        foreach (var mime in MediaTypes)
         {
             SupportedMediaTypes.Add(mime);
         }
 
         SupportedEncodings.Add(Encoding.UTF8);
     }
+
+    internal static IEnumerable<string> MediaTypes => MimeTypesHelper.Definitions
+        .Where(static definition => definition.CanWriteSparqlResults)
+        .Select(static definition => definition.CanonicalMimeType)
+        .Distinct();
 
     public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
     {

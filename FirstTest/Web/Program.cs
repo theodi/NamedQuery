@@ -1,5 +1,7 @@
+using Swashbuckle.AspNetCore.SwaggerUI;
 using Web;
 using Web.Constraints;
+using Web.Controllers;
 using Web.Formatters;
 using Web.Middleware;
 using Web.Model;
@@ -19,11 +21,14 @@ builder.Services.AddControllers(options =>
     options.RespectBrowserAcceptHeader = true;
     options.ReturnHttpNotAcceptable = true;
 
+    options.OutputFormatters.Insert(0, new OpenApiYamlFormatter());
+    options.OutputFormatters.Insert(0, new OpenApiJsonFormatter());
     options.OutputFormatters.Insert(0, new SparqlFormatter());
     options.OutputFormatters.Insert(0, new GraphFormatter());
     options.OutputFormatters.Insert(0, new JsonLdFormatter());
 });
 builder.Services.AddRazorPages();
+builder.Services.Configure<SwaggerUIOptions>(options => options.SwaggerEndpoint(OpenApiController.Route, OpenApiController.Name));
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 builder.Services.AddOptions<Options>().BindConfiguration(Options.SectionName).ValidateDataAnnotations().ValidateOnStart();
 builder.Services.AddHttpClient<DotNetRDF.ISparqlQueryClient, SparqlQueryClient>();
@@ -33,6 +38,7 @@ builder.Services.AddTransient<PopulateEndpointInContextMiddleware>();
 
 var app = builder.Build();
 app.UseMiddleware<PopulateEndpointInContextMiddleware>();
+app.UseSwaggerUI();
 app.UseRouting();
 app.UseCors();
 app.MapControllers();
