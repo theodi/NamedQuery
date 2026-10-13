@@ -54,5 +54,5 @@ internal class GraphFormatter : TextOutputFormatter
         return Task.CompletedTask;
     }
 
-    protected override bool CanWriteType(Type? type) => type!.IsAssignableFrom(typeof(Response));
+    protected override bool CanWriteType(Type? type) => typeof(Response).IsAssignableFrom(type);
 }

@@ -36,5 +36,5 @@ internal class SparqlFormatter : TextOutputFormatter
         return Task.CompletedTask;
     }
 
-    protected override bool CanWriteType(Type? type) => type!.IsAssignableFrom(typeof(SparqlResultSet));
+    protected override bool CanWriteType(Type? type) => typeof(SparqlResultSet).IsAssignableFrom(type);
 }

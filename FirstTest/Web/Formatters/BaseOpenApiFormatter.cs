@@ -23,5 +23,5 @@ internal abstract class BaseOpenApiFormatter : TextOutputFormatter
             format,
             context.HttpContext.RequestAborted);
 
-    protected override bool CanWriteType(Type? type) => type!.IsAssignableFrom(typeof(OpenApiDocument));
+    protected override bool CanWriteType(Type? type) => typeof(OpenApiDocument).IsAssignableFrom(type);
 }
