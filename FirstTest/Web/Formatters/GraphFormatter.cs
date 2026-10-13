@@ -20,7 +20,7 @@ internal class GraphFormatter : TextOutputFormatter
     internal static IEnumerable<string> MediaTypes => MimeTypesHelper.Definitions
         .Where(static definition => definition.CanWriteRdfDatasets || definition.CanWriteRdf)
         .Select(static definition => definition.CanonicalMimeType)
-        .Distinct();
+        .Except(MimeTypesHelper.JsonLd);
 
     public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
     {

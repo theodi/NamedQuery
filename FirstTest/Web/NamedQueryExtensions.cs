@@ -24,11 +24,11 @@ public static class NamedQueryExtensions
             options.RespectBrowserAcceptHeader = true;
             options.ReturnHttpNotAcceptable = true;
 
-            options.OutputFormatters.Insert(0, new OpenApiYamlFormatter());
-            options.OutputFormatters.Insert(0, new OpenApiJsonFormatter());
-            options.OutputFormatters.Insert(0, new SparqlFormatter());
-            options.OutputFormatters.Insert(0, new GraphFormatter());
             options.OutputFormatters.Insert(0, new JsonLdFormatter());
+            options.OutputFormatters.Insert(1, new GraphFormatter());
+            options.OutputFormatters.Insert(2, new SparqlFormatter());
+            options.OutputFormatters.Insert(3, new OpenApiJsonFormatter());
+            options.OutputFormatters.Insert(4, new OpenApiYamlFormatter());
         }).AddApplicationPart(typeof(NamedQueryExtensions).Assembly);
         services.AddRazorPages();
         services.Configure<SwaggerUIOptions>(options => options.SwaggerEndpoint(OpenApiController.Route, OpenApiController.Name));
