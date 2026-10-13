@@ -15,14 +15,14 @@ internal class ExecuteSparqlAttribute : TypeFilterAttribute<ExecuteSparqlAttribu
             var query = context.Query!;
             var ct = action.HttpContext.RequestAborted;
 
-            context.Result = endpoint.QueryType switch
+            context.Result = Resources.QueryType(endpoint) switch
             {
                 SparqlQueryType.Construct or
                 SparqlQueryType.Describe or
                 SparqlQueryType.DescribeAll => new Response
                 {
                     Graph = await sparql.QueryWithResultGraphAsync(query, ct),
-                    Frame = endpoint.JsonLdFrame
+                    Frame = Resources.JsonLdFrame(endpoint)
                 },
 
                 _ => await sparql.QueryWithResultSetAsync(query, ct),

@@ -16,7 +16,7 @@ internal class ParametrizeSparqlAttribute : TypeFilterAttribute<ParametrizeSparq
         {
             var endpoint = context.Endpoint!;
             var values = action.HttpContext.Request.Query;
-            var sparql = new SparqlParameterizedString(endpoint.Query);
+            var sparql = new SparqlParameterizedString(Resources.Query(endpoint));
 
             foreach (var parameter in endpoint.Parameters)
             {

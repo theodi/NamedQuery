@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System.Reflection;
 using VDS.RDF;
 using VDS.RDF.Parsing;
+using VDS.RDF.Query;
 
 namespace Web;
 
@@ -29,13 +30,23 @@ public static class Resources
         var stream => new StreamReader(stream)
     };
 
-    internal static string? String(string name)
+    public static string Query(Model.Endpoint endpoint) => String(endpoint.SparqlResourceName) ?? throw new Exception($"SPARQL file not found: {endpoint.SparqlResourceName}");
+
+    public static JToken? JsonLdFrame(Model.Endpoint endpoint) => endpoint.FrameResourceName switch
+    {
+        null => null,
+        var name => Token(name)
+    };
+
+    public static SparqlQueryType QueryType(Model.Endpoint endpoint) => new SparqlQueryParser().ParseFromString(Query(endpoint)).QueryType;
+
+    private static string? String(string name)
     {
         using var reader = Reader(name);
         return reader?.ReadToEnd();
     }
 
-    internal static JToken? Token(string name) => Reader(name) switch
+    private static JToken? Token(string name) => Reader(name) switch
     {
         null => null,
         var value => JToken.ReadFrom(new JsonTextReader(value))

@@ -78,7 +78,7 @@ public class OpenApiController
     {
         var responses = new OpenApiResponses
         {
-            ["200"] = endpoint.QueryType switch
+            ["200"] = Resources.QueryType(endpoint) switch
             {
                 SparqlQueryType.Construct or
                 SparqlQueryType.Describe or
@@ -101,7 +101,7 @@ public class OpenApiController
 
                 Underlying SPARQL query:
                 ```sparql
-                {endpoint.Query.Trim()}
+                {Resources.Query(endpoint).Trim()}
                 ```
                 """,
             Parameters = [.. endpoint.Parameters.Select(Parameter)],

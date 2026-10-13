@@ -65,6 +65,6 @@ public sealed class ManifestTests
     [TestMethod]
     public void ReadsQuery()
     {
-        manifest["endpoint2"]!.Query.Should().StartWith("# LocalDevelopmentEndpointDefinitions/endpoint2.sparql").And.EndWith("ASK {}");
+        Resources.Query(manifest["endpoint2"]!).Should().StartWith("# LocalDevelopmentEndpointDefinitions/endpoint2.sparql").And.EndWith("ASK {}");
     }
 }
