@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Web.Formatters;
 
-internal abstract class BaseOpenApiFormatter : TextOutputFormatter
+internal abstract class OpenApiFormatterBase : TextOutputFormatter
 {
     private readonly string format;
 
-    protected BaseOpenApiFormatter(string mediaType, string format)
+    protected OpenApiFormatterBase(string mediaType, string format)
     {
         this.format = format;
 
