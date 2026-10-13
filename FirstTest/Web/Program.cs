@@ -1,3 +1,4 @@
+using Microsoft.Extensions.FileProviders;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Web;
 using Web.Constraints;
@@ -30,7 +31,7 @@ builder.Services.AddControllers(options =>
 builder.Services.AddRazorPages();
 builder.Services.Configure<SwaggerUIOptions>(options => options.SwaggerEndpoint(OpenApiController.Route, OpenApiController.Name));
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
-builder.Services.AddOptions<Options>().BindConfiguration(Options.SectionName).ValidateDataAnnotations().ValidateOnStart();
+builder.Services.AddOptions<Options>().BindConfiguration(Options.SectionName).Configure(options => options.Definitions = new ManifestEmbeddedFileProvider(typeof(Program).Assembly)).ValidateDataAnnotations().ValidateOnStart();
 builder.Services.AddHttpClient<DotNetRDF.ISparqlQueryClient, SparqlQueryClient>();
 builder.Services.AddScoped<Context>();
 builder.Services.AddSingleton<Resources>();

@@ -8,20 +8,22 @@
       Docker overrides via `EndpointDefinitionFolder` environment variable
     -->
     <EndpointDefinitionFolder Condition="'$(EndpointDefinitionFolder)' == ''">LocalDevelopmentEndpointDefinitions</EndpointDefinitionFolder>
+    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
     <UserSecretsId>ba0f017d-79bf-4e11-84f2-b74043048f37</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <!--
-      Each file in endpoint definition folder becomes embedded resource named as the path of the file,
-      e.g. `endpoint1/query.sparql`.
-      Separators normalised to `/`, all else unchanged.
+      Each file in endpoint definition folder becomes embedded file named as the path of the file,
+      e.g. `endpoint1/query.sparql`,
+      served by `ManifestEmbeddedFileProvider` regardless of where the folder is.
     -->
-    <EmbeddedResource Include="$(EndpointDefinitionFolder)\**\*.*" LogicalName="$([System.String]::Copy('%(RecursiveDir)').Replace('\', '/'))%(Filename)%(Extension)" />
+    <EmbeddedResource Include="$(EndpointDefinitionFolder)\**\*.*" Link="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="dotNetRdf.Core" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />
     <PackageReference Include="Microsoft.OpenApi" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
   </ItemGroup>

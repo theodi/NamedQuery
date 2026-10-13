@@ -1,13 +1,14 @@
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Reflection;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 
 namespace Web;
 
-public class Resources
+public class Resources(IOptions<Model.Options> options)
 {
     private const string ManifestName = "manifest.ttl";
 
@@ -22,7 +23,11 @@ public class Resources
         }
     }
 
-    public ManifestResourceInfo? Info(string name) => Assembly.GetExecutingAssembly().GetManifestResourceInfo(name);
+    public IFileInfo? Info(string name) => options.Value.Definitions.GetFileInfo(name) switch
+    {
+        { Exists: false } => null,
+        var file => file
+    };
 
     public StreamReader? Reader(string name) => Stream(name) switch
     {
@@ -52,5 +57,5 @@ public class Resources
         var value => JToken.ReadFrom(new JsonTextReader(value))
     };
 
-    private Stream? Stream(string name) => Assembly.GetExecutingAssembly().GetManifestResourceStream(name);
+    private Stream? Stream(string name) => Info(name)?.CreateReadStream();
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -20,7 +21,7 @@ internal static class Validator
     private const string ManifestName = "manifest.ttl";
     private const string ShapesName = "ValidateResources.shapes.ttl";
     private static readonly Uri FakeBase = new("http://resources/");
-    private static readonly Resources resources = new();
+    private static readonly Resources resources = new(Microsoft.Extensions.Options.Options.Create(new Web.Model.Options { SparqlEndpoint = new("http://localhost/"), Definitions = new ManifestEmbeddedFileProvider(typeof(EndpointController).Assembly) }));
 
     internal static void Validate()
     {
