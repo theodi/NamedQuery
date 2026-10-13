@@ -2,7 +2,6 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using Web.Constraints;
 using Web.Controllers;
 using Web.Formatters;
-using Web.Middleware;
 using Web.Model;
 using static VDS.RDF.MimeTypesHelper;
 using DotNetRDF = VDS.RDF.Query;
@@ -39,14 +38,12 @@ public static class NamedQueryExtensions
         services.AddScoped<Context>();
         services.AddSingleton<Resources>();
         services.AddRouting(options => options.SetParameterPolicy<ManifestEndpointConstraint>(ManifestEndpointConstraint.Name));
-        services.AddTransient<PopulateEndpointInContextMiddleware>();
 
         return services;
     }
 
     public static WebApplication UseNamedQuery(this WebApplication app)
     {
-        app.UseMiddleware<PopulateEndpointInContextMiddleware>();
         app.UseSwaggerUI();
         app.UseRouting();
         app.UseCors();
