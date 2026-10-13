@@ -7,15 +7,15 @@ public partial class Endpoint : GraphWrapperNode
 {
     protected Endpoint(INode node, IGraph graph) : base(node, graph) { }
 
-    public string? Path => this.Singular(Vocabulary.Path, ValueMappings.As<string>);
+    public string Path => this.Singular(Vocabulary.Path, ValueMappings.As<string>, throwWhenMissing: true)!;
 
-    public Uri? Sparql => this.Singular(Vocabulary.Sparql, ValueMappings.As<Uri>);
+    public Uri Sparql => this.Singular(Vocabulary.Sparql, ValueMappings.As<Uri>, throwWhenMissing: true)!;
 
     public Uri? Frame => this.Singular(Vocabulary.Frame, ValueMappings.As<Uri>);
 
-    public string? Name => this.Singular(Vocabulary.Name, ValueMappings.As<string>);
+    public string Name => this.Singular(Vocabulary.Name, ValueMappings.As<string>, throwWhenMissing: true)!;
 
-    public string? Description => this.Singular(Vocabulary.Description, ValueMappings.As<string>);
+    public string Description => this.Singular(Vocabulary.Description, ValueMappings.As<string>, throwWhenMissing: true)!;
 
     public ISet<Parameter> Parameters => this.Objects(Vocabulary.Parameter, Parameter.Wrap, Parameter.Wrap);
 

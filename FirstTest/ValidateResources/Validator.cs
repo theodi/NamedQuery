@@ -166,7 +166,6 @@ internal static class Validator
 
         var collisions = resources.Manifest.Endpoints
             .Select(endpoint => endpoint.Path)
-            .OfType<string>()
             .SelectMany(path => routes
                 .Where(route => new TemplateMatcher(new RouteTemplate(route.RoutePattern), new RouteValueDictionary(route.RoutePattern.Defaults)).TryMatch($"/{path}", []))
                 .Select(route => $"{path} ({route.DisplayName})"))
