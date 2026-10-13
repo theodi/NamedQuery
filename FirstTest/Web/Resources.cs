@@ -7,11 +7,11 @@ using VDS.RDF.Query;
 
 namespace Web;
 
-public static class Resources
+public class Resources
 {
     private const string ManifestName = "manifest.ttl";
 
-    public static Model.Manifest Manifest
+    public Model.Manifest Manifest
     {
         get
         {
@@ -22,35 +22,35 @@ public static class Resources
         }
     }
 
-    public static ManifestResourceInfo? Info(string name) => Assembly.GetExecutingAssembly().GetManifestResourceInfo(name);
+    public ManifestResourceInfo? Info(string name) => Assembly.GetExecutingAssembly().GetManifestResourceInfo(name);
 
-    public static StreamReader? Reader(string name) => Stream(name) switch
+    public StreamReader? Reader(string name) => Stream(name) switch
     {
         null => null,
         var stream => new StreamReader(stream)
     };
 
-    public static string Query(Model.Endpoint endpoint) => String(endpoint.SparqlResourceName) ?? throw new Exception($"SPARQL file not found: {endpoint.SparqlResourceName}");
+    public string Query(Model.Endpoint endpoint) => String(endpoint.SparqlResourceName) ?? throw new Exception($"SPARQL file not found: {endpoint.SparqlResourceName}");
 
-    public static JToken? JsonLdFrame(Model.Endpoint endpoint) => endpoint.FrameResourceName switch
+    public JToken? JsonLdFrame(Model.Endpoint endpoint) => endpoint.FrameResourceName switch
     {
         null => null,
         var name => Token(name)
     };
 
-    public static SparqlQueryType QueryType(Model.Endpoint endpoint) => new SparqlQueryParser().ParseFromString(Query(endpoint)).QueryType;
+    public SparqlQueryType QueryType(Model.Endpoint endpoint) => new SparqlQueryParser().ParseFromString(Query(endpoint)).QueryType;
 
-    private static string? String(string name)
+    private string? String(string name)
     {
         using var reader = Reader(name);
         return reader?.ReadToEnd();
     }
 
-    private static JToken? Token(string name) => Reader(name) switch
+    private JToken? Token(string name) => Reader(name) switch
     {
         null => null,
         var value => JToken.ReadFrom(new JsonTextReader(value))
     };
 
-    private static Stream? Stream(string name) => Assembly.GetExecutingAssembly().GetManifestResourceStream(name);
+    private Stream? Stream(string name) => Assembly.GetExecutingAssembly().GetManifestResourceStream(name);
 }

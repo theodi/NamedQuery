@@ -1,8 +1,10 @@
 @page
 @using Microsoft.Extensions.Options
 @using Swashbuckle.AspNetCore.SwaggerUI
+@using Web
 @using Web.Controllers
 @inject IOptions<SwaggerUIOptions> SwaggerUi
+@inject Resources Resources
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,7 +29,7 @@
         <li>
             <span>{endpoints}</span>
             <ul>
-                @foreach (var endpoint in Web.Resources.Manifest.Endpoints)
+                @foreach (var endpoint in Resources.Manifest.Endpoints)
                 {
                     <li>
                         <a href="@endpoint.Path">@endpoint.Path</a>

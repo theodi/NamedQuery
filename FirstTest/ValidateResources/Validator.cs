@@ -20,6 +20,7 @@ internal static class Validator
     private const string ManifestName = "manifest.ttl";
     private const string ShapesName = "ValidateResources.shapes.ttl";
     private static readonly Uri FakeBase = new("http://resources/");
+    private static readonly Resources resources = new();
 
     internal static void Validate()
     {
@@ -34,7 +35,7 @@ internal static class Validator
 
     private static void ManifestExists()
     {
-        if (Resources.Info("manifest.ttl") is null)
+        if (resources.Info("manifest.ttl") is null)
         {
             throw new MsBuildCanonicalErrorException(ManifestName, "Manifest file not found in endpoint definition folder");
         }
@@ -44,7 +45,7 @@ internal static class Validator
     {
         try
         {
-            new TurtleParser().Load(new NullHandler(), Resources.Reader("manifest.ttl"));
+            new TurtleParser().Load(new NullHandler(), resources.Reader("manifest.ttl"));
         }
         catch (RdfParseException e)
         {
@@ -61,7 +62,7 @@ internal static class Validator
     private static void ManifestConformsToShapes()
     {
         var dataGraph = new Graph();
-        new TurtleParser().Load(dataGraph, Resources.Reader(ManifestName));
+        new TurtleParser().Load(dataGraph, resources.Reader(ManifestName));
 
         var shapesGraph = new ShapesGraph(new Graph());
         using var shapesReader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(ShapesName)!);
@@ -77,7 +78,7 @@ internal static class Validator
     private static void SparqlIsRelativeUri()
     {
         using var graph = new Graph();
-        new TurtleParser().Load(graph, Resources.Reader(ManifestName));
+        new TurtleParser().Load(graph, resources.Reader(ManifestName));
 
         var invalid = graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
             .Select(triple => triple.Object)
@@ -94,7 +95,7 @@ internal static class Validator
     private static void SparqlFilesExist()
     {
         using var graph = new Graph();
-        new TurtleParser().Load(graph, Resources.Reader(ManifestName));
+        new TurtleParser().Load(graph, resources.Reader(ManifestName));
 
         var missing = graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
             .Select(triple => triple.Object)
@@ -103,7 +104,7 @@ internal static class Validator
             .Select(value => new Uri(value, UriKind.Relative))
             .Select(relative => new Uri(FakeBase, relative))
             .Select(absolute => absolute.GetComponents(UriComponents.Path, UriFormat.Unescaped))
-            .Where(path => Resources.Info(path) is null)
+            .Where(path => resources.Info(path) is null)
             .ToList();
 
         if (missing.Count == 0) return;
@@ -114,7 +115,7 @@ internal static class Validator
     private static void SparqlFilesValid()
     {
         using var graph = new Graph();
-        new TurtleParser().Load(graph, Resources.Reader(ManifestName));
+        new TurtleParser().Load(graph, resources.Reader(ManifestName));
 
         var paths = graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
             .Select(triple => triple.Object)
@@ -128,7 +129,7 @@ internal static class Validator
         {
             try
             {
-                new SparqlQueryParser().Parse(Resources.Reader(path));
+                new SparqlQueryParser().Parse(resources.Reader(path));
             }
             catch (RdfParseException e)
             {
@@ -156,7 +157,7 @@ internal static class Validator
             .Where(route => route.Metadata.GetMetadata<ControllerActionDescriptor>()?.ControllerTypeInfo != typeof(EndpointController))
             .ToList();
 
-        var collisions = Resources.Manifest.Endpoints
+        var collisions = resources.Manifest.Endpoints
             .Select(endpoint => endpoint.Path)
             .OfType<string>()
             .SelectMany(path => routes

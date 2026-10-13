@@ -8,7 +8,7 @@ namespace Web.Filters;
 
 internal class ParametrizeSparqlAttribute : TypeFilterAttribute<ParametrizeSparqlAttribute.Filter>
 {
-    internal class Filter(Context context) : IActionFilter
+    internal class Filter(Context context, Resources resources) : IActionFilter
     {
         private static readonly NodeFactory factory = new();
 
@@ -16,7 +16,7 @@ internal class ParametrizeSparqlAttribute : TypeFilterAttribute<ParametrizeSparq
         {
             var endpoint = context.Endpoint!;
             var values = action.HttpContext.Request.Query;
-            var sparql = new SparqlParameterizedString(Resources.Query(endpoint));
+            var sparql = new SparqlParameterizedString(resources.Query(endpoint));
 
             foreach (var parameter in endpoint.Parameters)
             {

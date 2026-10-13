@@ -11,7 +11,7 @@ using Web.Model;
 namespace Web.Controllers;
 
 [AllowSynchronousIO]
-public class OpenApiController
+public class OpenApiController(Resources resources)
 {
     internal const string Route = "/openapi.json";
     internal const string Name = "";
@@ -22,20 +22,20 @@ public class OpenApiController
 
     [HttpGet(Route, Name = nameof(GetJson))]
     [Produces(OpenApiJsonFormatter.MediaType)]
-    public OpenApiDocument GetJson() => Document();
+    public OpenApiDocument GetJson() => Document(resources);
 
     [HttpGet("/openapi.yaml", Name = nameof(GetYaml))]
     [Produces(OpenApiYamlFormatter.MediaType)]
-    public OpenApiDocument GetYaml() => Document();
+    public OpenApiDocument GetYaml() => Document(resources);
 
-    private static OpenApiDocument Document() => new()
+    private static OpenApiDocument Document(Resources resources) => new()
     {
         Info = new()
         {
             Title = "Named Query", // TODO: Don't hardcode
             Version = "1", // TODO: Don't hardcode
         },
-        Paths = Paths(Resources.Manifest),
+        Paths = Paths(resources),
         Components = new()
         {
             Responses = new Dictionary<string, IOpenApiResponse>
@@ -56,17 +56,17 @@ public class OpenApiController
         },
     };
 
-    private static OpenApiPaths Paths(Manifest manifest)
+    private static OpenApiPaths Paths(Resources resources)
     {
         var paths = new OpenApiPaths();
 
-        foreach (var endpoint in manifest.Endpoints)
+        foreach (var endpoint in resources.Manifest.Endpoints)
         {
             paths.Add($"/{endpoint.Path}", new OpenApiPathItem
             {
                 Operations = new()
                 {
-                    [HttpMethod.Get] = Operation(endpoint),
+                    [HttpMethod.Get] = Operation(endpoint, resources),
                 },
             });
         }
@@ -74,11 +74,11 @@ public class OpenApiController
         return paths;
     }
 
-    private static OpenApiOperation Operation(Model.Endpoint endpoint)
+    private static OpenApiOperation Operation(Model.Endpoint endpoint, Resources resources)
     {
         var responses = new OpenApiResponses
         {
-            ["200"] = Resources.QueryType(endpoint) switch
+            ["200"] = resources.QueryType(endpoint) switch
             {
                 SparqlQueryType.Construct or
                 SparqlQueryType.Describe or
@@ -101,7 +101,7 @@ public class OpenApiController
 
                 Underlying SPARQL query:
                 ```sparql
-                {Resources.Query(endpoint).Trim()}
+                {resources.Query(endpoint).Trim()}
                 ```
                 """,
             Parameters = [.. endpoint.Parameters.Select(Parameter)],

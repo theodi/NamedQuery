@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Web;
 using Web.Model;
 
@@ -6,18 +7,18 @@ namespace Test;
 [TestClass]
 public sealed class ManifestTests
 {
-    private static readonly Manifest manifest = Resources.Manifest;
+    private static readonly Resources resources = new MyWebApplication().Services.GetRequiredService<Resources>();
 
     [TestMethod]
     public void EnumeratesEndpoints()
     {
-        manifest.Endpoints.Select(endpoint => endpoint.Path).Should().BeEquivalentTo("endpoint1", "endpoint2", "endpoint3/something", "endpoint4", "endpoint5", "endpoint6");
+        resources.Manifest.Endpoints.Select(endpoint => endpoint.Path).Should().BeEquivalentTo("endpoint1", "endpoint2", "endpoint3/something", "endpoint4", "endpoint5", "endpoint6");
     }
 
     [TestMethod]
     public void ReadsParameters()
     {
-        manifest["endpoint6"]!.Parameters.Should().ContainSingle().Which.Should().Match<Parameter>(parameter =>
+        resources.Manifest["endpoint6"]!.Parameters.Should().ContainSingle().Which.Should().Match<Parameter>(parameter =>
             parameter.Name == "value" &&
             parameter.Datatype == new Uri("http://www.w3.org/2001/XMLSchema#string"));
     }
@@ -25,7 +26,7 @@ public sealed class ManifestTests
     [TestMethod]
     public void ReadsEndpointDocumentation()
     {
-        manifest["endpoint6"]!.Should().Match<Endpoint>(endpoint =>
+        resources.Manifest["endpoint6"]!.Should().Match<Endpoint>(endpoint =>
             endpoint.Name == "Triples by object" &&
             endpoint.Description == "Selects triples whose object is the supplied value.");
     }
@@ -33,7 +34,7 @@ public sealed class ManifestTests
     [TestMethod]
     public void ReadsParameterDocumentation()
     {
-        manifest["endpoint6"]!.Parameters.Should().ContainSingle().Which.Should().Match<Parameter>(parameter =>
+        resources.Manifest["endpoint6"]!.Parameters.Should().ContainSingle().Which.Should().Match<Parameter>(parameter =>
             parameter.Description == "Literal object to match." &&
             parameter.Example == "example");
     }
@@ -41,30 +42,30 @@ public sealed class ManifestTests
     [TestMethod]
     public void EndpointWithoutParametersHasNone()
     {
-        manifest["endpoint1"]!.Parameters.Should().BeEmpty();
+        resources.Manifest["endpoint1"]!.Parameters.Should().BeEmpty();
     }
 
     [TestMethod]
     public void FindsEndpointByPath()
     {
-        manifest["endpoint1"].Should().NotBeNull().And.Subject.As<Endpoint>().Path.Should().Be("endpoint1");
+        resources.Manifest["endpoint1"].Should().NotBeNull().And.Subject.As<Endpoint>().Path.Should().Be("endpoint1");
     }
 
     [TestMethod]
     public void UnknownPathIsNull()
     {
-        manifest["unknown"].Should().BeNull();
+        resources.Manifest["unknown"].Should().BeNull();
     }
 
     [TestMethod]
     public void ResolvesSparqlResourceName()
     {
-        manifest["endpoint1"]!.SparqlResourceName.Should().Be("endpoint1.sparql");
+        resources.Manifest["endpoint1"]!.SparqlResourceName.Should().Be("endpoint1.sparql");
     }
 
     [TestMethod]
     public void ReadsQuery()
     {
-        Resources.Query(manifest["endpoint2"]!).Should().StartWith("# LocalDevelopmentEndpointDefinitions/endpoint2.sparql").And.EndWith("ASK {}");
+        resources.Query(resources.Manifest["endpoint2"]!).Should().StartWith("# LocalDevelopmentEndpointDefinitions/endpoint2.sparql").And.EndWith("ASK {}");
     }
 }

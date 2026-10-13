@@ -33,6 +33,7 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.Al
 builder.Services.AddOptions<Options>().BindConfiguration(Options.SectionName).ValidateDataAnnotations().ValidateOnStart();
 builder.Services.AddHttpClient<DotNetRDF.ISparqlQueryClient, SparqlQueryClient>();
 builder.Services.AddScoped<Context>();
+builder.Services.AddSingleton<Resources>();
 builder.Services.AddRouting(options => options.SetParameterPolicy<ManifestEndpointConstraint>(ManifestEndpointConstraint.Name));
 builder.Services.AddTransient<PopulateEndpointInContextMiddleware>();
 
