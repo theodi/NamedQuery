@@ -1,29 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <!--
-      Folder containing endpoint definitions.
-      Used in embedded resource declaration below.
-      Defaults to local development definitions in project.
-      Docker overrides via `EndpointDefinitionFolder` environment variable
-    -->
-    <EndpointDefinitionFolder Condition="'$(EndpointDefinitionFolder)' == ''">LocalDevelopmentEndpointDefinitions</EndpointDefinitionFolder>
-    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
-    <UserSecretsId>ba0f017d-79bf-4e11-84f2-b74043048f37</UserSecretsId>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
   <ItemGroup>
-    <!--
-      Each file in endpoint definition folder becomes embedded file named as the path of the file,
-      e.g. `endpoint1/query.sparql`,
-      served by `ManifestEmbeddedFileProvider` regardless of where the folder is.
-    -->
-    <EmbeddedResource Include="$(EndpointDefinitionFolder)\**\*.*" Link="%(RecursiveDir)%(Filename)%(Extension)" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="dotNetRdf.Core" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />
     <PackageReference Include="Microsoft.OpenApi" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
   </ItemGroup>
@@ -31,10 +17,5 @@
   <ItemGroup>
     <ProjectReference Include="..\dotNetRDF.Wrapping\dotNetRDF.Wrapping.csproj" />
   </ItemGroup>
-
-  <Target Name="ValidateEndpointDefinitions" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
-    <!-- After building, runs the ValidateResources project in this solution, which references this project and reads its embedded Resources. BuildProjectReferences=false makes it use this build's output instead of building this project again. Failures are written in MSBuild canonical error format and exit non-zero, which fails the build, the publish and the Docker build. -->
-    <Exec Command="dotnet run --project &quot;$(MSBuildThisFileDirectory)../ValidateResources/ValidateResources.csproj&quot; --configuration $(Configuration) --property:BuildProjectReferences=false" />
-  </Target>
 
 </Project>

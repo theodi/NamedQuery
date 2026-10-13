@@ -1,11 +1,12 @@
-﻿using System.Reflection;
+﻿extern alias App;
+
+using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -13,6 +14,7 @@ using VDS.RDF.Parsing.Handlers;
 using VDS.RDF.Shacl;
 using Web;
 using Web.Controllers;
+using AppProgram = App::Program;
 
 namespace ValidateResources;
 
@@ -21,7 +23,8 @@ internal static class Validator
     private const string ManifestName = "manifest.ttl";
     private const string ShapesName = "ValidateResources.shapes.ttl";
     private static readonly Uri FakeBase = new("http://resources/");
-    private static readonly Resources resources = new(Microsoft.Extensions.Options.Options.Create(new Web.Model.Options { SparqlEndpoint = new("http://localhost/"), Definitions = new ManifestEmbeddedFileProvider(typeof(EndpointController).Assembly) }));
+    private static readonly WebApplicationFactory<AppProgram> factory = Factory();
+    private static readonly Resources resources = factory.Services.GetRequiredService<Resources>();
 
     internal static void Validate()
     {
@@ -145,14 +148,17 @@ internal static class Validator
         }
     }
 
-    private static void EndpointPathsDoNotCollideWithWebRoutes()
+    private static WebApplicationFactory<AppProgram> Factory()
     {
-        Environment.SetEnvironmentVariable($"ASPNETCORE_TEST_CONTENTROOT_{typeof(EndpointController).Assembly.GetName().Name!.ToUpperInvariant().Replace('.', '_')}", AppContext.BaseDirectory);
+        Environment.SetEnvironmentVariable($"ASPNETCORE_TEST_CONTENTROOT_{typeof(AppProgram).Assembly.GetName().Name!.ToUpperInvariant().Replace('.', '_')}", AppContext.BaseDirectory);
 
-        using var factory = new WebApplicationFactory<EndpointController>().WithWebHostBuilder(builder => builder
+        return new WebApplicationFactory<AppProgram>().WithWebHostBuilder(builder => builder
             .UseSetting("Options:SparqlEndpoint", "http://localhost/")
             .ConfigureLogging(logging => logging.ClearProviders()));
+    }
 
+    private static void EndpointPathsDoNotCollideWithWebRoutes()
+    {
         var routes = factory.Services.GetRequiredService<EndpointDataSource>().Endpoints
             .OfType<RouteEndpoint>()
             .Where(route => route.Metadata.GetMetadata<ControllerActionDescriptor>()?.ControllerTypeInfo != typeof(EndpointController))

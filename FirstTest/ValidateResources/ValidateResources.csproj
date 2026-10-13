@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Web\Web.csproj" />
+    <ProjectReference Include="..\App\App.csproj" Aliases="App" />
   </ItemGroup>
 
   <ItemGroup>

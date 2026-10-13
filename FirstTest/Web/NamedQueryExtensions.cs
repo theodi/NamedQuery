@@ -30,7 +30,7 @@ public static class NamedQueryExtensions
             options.OutputFormatters.Insert(0, new SparqlFormatter());
             options.OutputFormatters.Insert(0, new GraphFormatter());
             options.OutputFormatters.Insert(0, new JsonLdFormatter());
-        });
+        }).AddApplicationPart(typeof(NamedQueryExtensions).Assembly);
         services.AddRazorPages();
         services.Configure<SwaggerUIOptions>(options => options.SwaggerEndpoint(OpenApiController.Route, OpenApiController.Name));
         services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));

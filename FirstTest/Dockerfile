@@ -1,5 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 COPY Directory.Build.props Directory.Packages.props .editorconfig /src/
+COPY App /src/App
 COPY Web /src/Web
 COPY dotNetRDF.Wrapping /src/dotNetRDF.Wrapping
 COPY ValidateResources /src/ValidateResources
@@ -12,10 +13,10 @@ COPY --from=endpoint-definition-folder . /endpoint-definitions/
 ENV EndpointDefinitionFolder=/endpoint-definitions
 
 # On failure, check for lines with `: error :` above for endpoint definition folder validation errors
-RUN dotnet publish /src/Web -o /app
+RUN dotnet publish /src/App -o /app
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled
 WORKDIR /app
 COPY --from=build /app .
 
-ENTRYPOINT ["dotnet", "Web.dll"]
+ENTRYPOINT ["dotnet", "App.dll"]

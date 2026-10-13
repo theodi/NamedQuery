@@ -1,13 +1,22 @@
 <Project Sdk="MSTest.Sdk/4.4.1">
 
+  <PropertyGroup>
+    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="FluentAssertions" />
     <PackageReference Include="FluentAssertions.Web.v8" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Web\Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="EndpointDefinitions\**\*.*" TargetPath="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>
