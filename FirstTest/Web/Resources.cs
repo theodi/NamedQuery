@@ -23,25 +23,13 @@ public class Resources(IOptions<Model.Options> options)
         }
     }
 
-    public IFileInfo? Info(string name) => options.Value.Definitions.GetFileInfo(name) switch
-    {
-        { Exists: false } => null,
-        var file => file
-    };
+    public IFileInfo? Info(string name) => options.Value.Definitions.GetFileInfo(name) is { Exists: true } file ? file : null;
 
-    public StreamReader? Reader(string name) => Stream(name) switch
-    {
-        null => null,
-        var stream => new StreamReader(stream)
-    };
+    public StreamReader? Reader(string name) => Stream(name) is { } stream ? new StreamReader(stream) : null;
 
     public string Query(Model.Endpoint endpoint) => String(endpoint.SparqlResourceName) ?? throw new Exception($"SPARQL file not found: {endpoint.SparqlResourceName}");
 
-    public JToken? JsonLdFrame(Model.Endpoint endpoint) => endpoint.FrameResourceName switch
-    {
-        null => null,
-        var name => Token(name)
-    };
+    public JToken? JsonLdFrame(Model.Endpoint endpoint) => endpoint.FrameResourceName is { } name ? Token(name) : null;
 
     public SparqlQueryType QueryType(Model.Endpoint endpoint) => new SparqlQueryParser().ParseFromString(Query(endpoint)).QueryType;
 
@@ -51,11 +39,7 @@ public class Resources(IOptions<Model.Options> options)
         return reader?.ReadToEnd();
     }
 
-    private JToken? Token(string name) => Reader(name) switch
-    {
-        null => null,
-        var value => JToken.ReadFrom(new JsonTextReader(value))
-    };
+    private JToken? Token(string name) => Reader(name) is { } reader ? JToken.ReadFrom(new JsonTextReader(reader)) : null;
 
     private Stream? Stream(string name) => Info(name)?.CreateReadStream();
 }
