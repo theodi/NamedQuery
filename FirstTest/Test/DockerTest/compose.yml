@@ -7,7 +7,7 @@ services:
       additional_contexts:
         endpoint-definition-folder: Fixtures/Valid
     environment:
-      Options__SparqlEndpoint: http://sparql:7878/query
+      NamedQuery__SparqlEndpoint: http://sparql:7878/query
     depends_on:
       - sparql
   invalid:

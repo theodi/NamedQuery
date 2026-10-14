@@ -5,10 +5,11 @@ using Newtonsoft.Json.Linq;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
+using Web.Model;
 
 namespace Web;
 
-public class Resources(IOptions<Model.Options> options)
+public class Resources(IOptions<NamedQueryOptions> options)
 {
     private const string ManifestName = "manifest.ttl";
 

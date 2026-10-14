@@ -153,7 +153,7 @@ internal static class Validator
         Environment.SetEnvironmentVariable($"ASPNETCORE_TEST_CONTENTROOT_{typeof(AppProgram).Assembly.GetName().Name!.ToUpperInvariant().Replace('.', '_')}", AppContext.BaseDirectory);
 
         return new WebApplicationFactory<AppProgram>().WithWebHostBuilder(builder => builder
-            .UseSetting("Options:SparqlEndpoint", "http://localhost/")
+            .UseSetting("NamedQuery:SparqlEndpoint", "http://localhost/")
             .ConfigureLogging(logging => logging.ClearProviders()));
     }
 

@@ -3,9 +3,9 @@ using Microsoft.Extensions.FileProviders;
 
 namespace Web.Model;
 
-public class Options
+public class NamedQueryOptions
 {
-    public const string SectionName = "Options";
+    public const string SectionName = "NamedQuery";
 
     [Required]
     public required Uri SparqlEndpoint { get; set; }

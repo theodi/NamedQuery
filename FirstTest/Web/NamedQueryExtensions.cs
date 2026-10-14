@@ -10,7 +10,7 @@ namespace Web;
 
 public static class NamedQueryExtensions
 {
-    public static IServiceCollection AddNamedQuery(this IServiceCollection services, Action<Options> configure)
+    public static IServiceCollection AddNamedQuery(this IServiceCollection services, Action<NamedQueryOptions> configure)
     {
         services.AddControllers(options =>
         {
@@ -33,7 +33,7 @@ public static class NamedQueryExtensions
         services.AddRazorPages();
         services.Configure<SwaggerUIOptions>(options => options.SwaggerEndpoint(OpenApiController.Route, OpenApiController.Name));
         services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
-        services.AddOptions<Options>().BindConfiguration(Options.SectionName).Configure(configure).ValidateDataAnnotations().ValidateOnStart();
+        services.AddOptions<NamedQueryOptions>().BindConfiguration(NamedQueryOptions.SectionName).Configure(configure).ValidateDataAnnotations().ValidateOnStart();
         services.AddHttpClient<DotNetRDF.ISparqlQueryClient, SparqlQueryClient>();
         services.AddScoped<Context>();
         services.AddSingleton<Resources>();

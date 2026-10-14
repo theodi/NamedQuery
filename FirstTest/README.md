@@ -6,7 +6,7 @@ docker build --build-context endpoint-definition-folder=ExampleEndpointDefinitio
 
 # Run
 ```shell
-docker run --rm -p 8080:8080 -e Options__SparqlEndpoint=https://example.com/sparql named-query-first-test
+docker run --rm -p 8080:8080 -e NamedQuery__SparqlEndpoint=https://example.com/sparql named-query-first-test
 ```
 
 # Run locally
@@ -14,7 +14,7 @@ docker run --rm -p 8080:8080 -e Options__SparqlEndpoint=https://example.com/spar
 Serves the endpoint definitions in `App/LocalDevelopmentEndpointDefinitions`.
 
 ```shell
-dotnet run --project App -- --Options:SparqlEndpoint=https://example.com/sparql
+dotnet run --project App -- --NamedQuery:SparqlEndpoint=https://example.com/sparql
 ```
 
 # Test

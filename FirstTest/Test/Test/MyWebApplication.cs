@@ -17,7 +17,7 @@ internal class MyWebApplication
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
-        builder.Configuration["Options:SparqlEndpoint"] = "http://sparql.test/";
+        builder.Configuration["NamedQuery:SparqlEndpoint"] = "http://sparql.test/";
         builder.Services.AddNamedQuery(options => options.Definitions = new ManifestEmbeddedFileProvider(typeof(MyWebApplication).Assembly));
         builder.Services.ConfigureHttpClientDefaults(client => client.ConfigurePrimaryHttpMessageHandler(() => new SparqlStub()));
 
