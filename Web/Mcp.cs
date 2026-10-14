@@ -22,13 +22,13 @@ internal class Mcp(Resources resources, QueryService queryService)
     internal ValueTask<ListToolsResult> ListTools(RequestContext<ListToolsRequestParams> _, CancellationToken __) =>
         ValueTask.FromResult(new ListToolsResult
         {
-            Tools = [.. resources.Manifest.Endpoints.Select(Tool)],
+            Tools = [.. resources.Manifest.Node.Endpoint.Select(Tool)],
         });
 
     internal async ValueTask<CallToolResult> CallTool(RequestContext<CallToolRequestParams> request, CancellationToken ct)
     {
         var name = request.Params!.Name;
-        var endpoint = resources.Manifest.Endpoints.SingleOrDefault(endpoint => endpoint.ToolName == name)
+        var endpoint = resources.Manifest.Node.Endpoint.SingleOrDefault(endpoint => endpoint.ToolName == name)
             ?? throw new McpProtocolException($"Unknown tool: {name}", McpErrorCode.InvalidParams);
 
         var arguments = (request.Params.Arguments ?? new Dictionary<string, JsonElement>()).ToDictionary(

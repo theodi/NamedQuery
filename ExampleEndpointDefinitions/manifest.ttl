@@ -2,15 +2,18 @@ PREFIX : <http://example.org/namedquery/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 [
-    :path "endpoint1" ;
-    :sparql "./endpoint1.sparql"^^xsd:anyURI ;
-    :name "Empty selection" ;
-    :description "Selects an empty pattern, which yields a single empty solution." ;
-] .
-
-[
-    :path "endpoint2" ;
-    :sparql "./endpoint2.sparql"^^xsd:anyURI ;
-    :name "Always true" ;
-    :description "Asks an empty pattern, which is always true." ;
+    :name "Named Query example endpoints" ;
+    :endpoint
+        [
+            :path "endpoint1" ;
+            :sparql "./endpoint1.sparql"^^xsd:anyURI ;
+            :name "Empty selection" ;
+            :description "Selects an empty pattern, which yields a single empty solution." ;
+        ],
+        [
+            :path "endpoint2" ;
+            :sparql "./endpoint2.sparql"^^xsd:anyURI ;
+            :name "Always true" ;
+            :description "Asks an empty pattern, which is always true." ;
+        ] ;
 ] .

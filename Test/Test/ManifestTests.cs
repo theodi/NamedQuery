@@ -12,7 +12,13 @@ public sealed class ManifestTests
     [TestMethod]
     public void EnumeratesEndpoints()
     {
-        resources.Manifest.Endpoints.Select(endpoint => endpoint.Path).Should().BeEquivalentTo("endpoint1", "endpoint2", "endpoint3/something", "endpoint4", "endpoint5", "endpoint6");
+        resources.Manifest.Node.Endpoint.Select(endpoint => endpoint.Path).Should().BeEquivalentTo("endpoint1", "endpoint2", "endpoint3/something", "endpoint4", "endpoint5", "endpoint6");
+    }
+
+    [TestMethod]
+    public void ReadsName()
+    {
+        resources.Manifest.Node.Name.Should().Be("test endpoints");
     }
 
     [TestMethod]

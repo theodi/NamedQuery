@@ -34,7 +34,7 @@
     <li>
         <span>{endpoints}</span>
         <ul>
-            @foreach (var endpoint in Resources.Manifest.Endpoints)
+            @foreach (var endpoint in Resources.Manifest.Node.Endpoint)
             {
                 <li>
                     <a href="@endpoint.Path">@endpoint.Path</a>

@@ -2,49 +2,48 @@ PREFIX : <http://example.org/namedquery/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 [
-    :path "endpoint1" ;
-    :sparql "./endpoint1.sparql"^^xsd:anyURI ;
-    :name "Any ten triples" ;
-    :description "Selects up to ten arbitrary triples." ;
-] .
-
-[
-    :path "endpoint2" ;
-    :sparql "./endpoint2.sparql"^^xsd:anyURI ;
-    :name "Always true" ;
-    :description "Asks an empty pattern, which is always true." ;
-] .
-
-[
-    :path "endpoint3/something" ;
-    :sparql "./endpoint3.sparql"^^xsd:anyURI ;
-    :name "Always true at a nested path" ;
-    :description "Asks an empty pattern, which is always true, from a multi-segment path." ;
-] .
-
-[
-    :path "endpoint4" ;
-    :sparql "./endpoint4.sparql"^^xsd:anyURI ;
-    :name "Graph of ten triples" ;
-    :description "Constructs a graph of up to ten arbitrary triples." ;
-] .
-
-[
-    :path "endpoint5" ;
-    :sparql "./endpoint5.sparql"^^xsd:anyURI ;
-    :frame "./endpoint5.jsonld"^^xsd:anyURI ;
-    :name "Framed graph of ten triples" ;
-    :description "Constructs a graph of up to ten arbitrary triples, framed when served as JSON-LD." ;
-] .
-
-[
-    :path "endpoint6" ;
-    :sparql "./endpoint6.sparql"^^xsd:anyURI ;
-    :name "Triples by object" ;
-    :description "Selects triples whose object is the supplied value." ;
-    :parameter [
-        :name "value" ;
-        :description "Literal object to match." ;
-        :example "example" ;
-    ] ;
+    :name "test endpoints" ;
+    :endpoint
+        [
+            :path "endpoint1" ;
+            :sparql "./endpoint1.sparql"^^xsd:anyURI ;
+            :name "Any ten triples" ;
+            :description "Selects up to ten arbitrary triples." ;
+        ],
+        [
+            :path "endpoint2" ;
+            :sparql "./endpoint2.sparql"^^xsd:anyURI ;
+            :name "Always true" ;
+            :description "Asks an empty pattern, which is always true." ;
+        ],
+        [
+            :path "endpoint3/something" ;
+            :sparql "./endpoint3.sparql"^^xsd:anyURI ;
+            :name "Always true at a nested path" ;
+            :description "Asks an empty pattern, which is always true, from a multi-segment path." ;
+        ],
+        [
+            :path "endpoint4" ;
+            :sparql "./endpoint4.sparql"^^xsd:anyURI ;
+            :name "Graph of ten triples" ;
+            :description "Constructs a graph of up to ten arbitrary triples." ;
+        ],
+        [
+            :path "endpoint5" ;
+            :sparql "./endpoint5.sparql"^^xsd:anyURI ;
+            :frame "./endpoint5.jsonld"^^xsd:anyURI ;
+            :name "Framed graph of ten triples" ;
+            :description "Constructs a graph of up to ten arbitrary triples, framed when served as JSON-LD." ;
+        ],
+        [
+            :path "endpoint6" ;
+            :sparql "./endpoint6.sparql"^^xsd:anyURI ;
+            :name "Triples by object" ;
+            :description "Selects triples whose object is the supplied value." ;
+            :parameter [
+                :name "value" ;
+                :description "Literal object to match." ;
+                :example "example" ;
+            ] ;
+        ] ;
 ] .

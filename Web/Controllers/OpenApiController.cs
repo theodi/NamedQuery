@@ -34,7 +34,7 @@ public class OpenApiController(Resources resources)
     {
         Info = new()
         {
-            Title = "Named Query", // TODO: Don't hardcode
+            Title = resources.Manifest.Node.Name,
             Version = "1", // TODO: Don't hardcode
         },
         Paths = Paths(),
@@ -70,7 +70,7 @@ public class OpenApiController(Resources resources)
     {
         var paths = new OpenApiPaths();
 
-        foreach (var endpoint in resources.Manifest.Endpoints)
+        foreach (var endpoint in resources.Manifest.Node.Endpoint)
         {
             paths.Add($"/{endpoint.Path}", new OpenApiPathItem
             {

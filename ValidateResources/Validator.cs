@@ -85,7 +85,7 @@ internal static class Validator
             return [];
         }
 
-        return resources.Manifest.Endpoints
+        return resources.Manifest.Node.Endpoint
             .Select(endpoint => endpoint.SparqlResourceName)
             .Where(path => resources.Info(path) is null)
             .Select(path => new Diagnostic(ManifestName, $"Endpoint SPARQL file not found: {path}"));
@@ -98,7 +98,7 @@ internal static class Validator
             return [];
         }
 
-        return resources.Manifest.Endpoints
+        return resources.Manifest.Node.Endpoint
             .Select(endpoint => endpoint.SparqlResourceName)
             .SelectMany(SparqlFileValid);
     }
@@ -142,7 +142,7 @@ internal static class Validator
             .Where(route => route.Metadata.GetMetadata<ControllerActionDescriptor>()?.ControllerTypeInfo != typeof(EndpointController))
             .ToList();
 
-        return resources.Manifest.Endpoints
+        return resources.Manifest.Node.Endpoint
             .Select(endpoint => endpoint.Path)
             .SelectMany(path => routes
                 .Where(route => new TemplateMatcher(new RouteTemplate(route.RoutePattern), new RouteValueDictionary(route.RoutePattern.Defaults)).TryMatch($"/{path}", []))
@@ -163,7 +163,7 @@ internal static class Validator
             .Select(attribute => (FormatFilter)attribute.CreateInstance(factory.Services))
             .ToList();
 
-        return resources.Manifest.Endpoints
+        return resources.Manifest.Node.Endpoint
             .SelectMany(endpoint => endpoint.Parameters
                 .Where(parameter => formatFilters.Any(filter => ReadsAsFormat(filter, parameter.Name)))
                 .Select(parameter => new Diagnostic(ManifestName, $"Endpoint parameter collides with format query string parameter: {parameter.Name} ({endpoint.Path})")));
@@ -176,7 +176,7 @@ internal static class Validator
             return [];
         }
 
-        return resources.Manifest.Endpoints
+        return resources.Manifest.Node.Endpoint
             .GroupBy(endpoint => endpoint.ToolName)
             .Where(group => group.Count() > 1)
             .Select(group => new Diagnostic(ManifestName, $"Endpoint paths collide as MCP tool name: {group.Key} ({string.Join(", ", group.Select(endpoint => endpoint.Path))})"));

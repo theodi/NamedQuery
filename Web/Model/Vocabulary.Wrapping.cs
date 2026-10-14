@@ -7,6 +7,8 @@ internal static class Vocabulary
     private const string Base = "http://example.org/namedquery/";
     private static readonly NodeFactory Factory = new();
 
+    internal static IUriNode Endpoint { get; } = Node("endpoint");
+
     internal static IUriNode Path { get; } = Node("path");
 
     internal static IUriNode Sparql { get; } = Node("sparql");

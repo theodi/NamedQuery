@@ -150,6 +150,43 @@ _:prefixes :declare [
 ] .
 
 [
+	:targetSubjectsOf nq:endpoint ;
+    :path nq:name ;
+    :datatype xsd:string ;
+    :message "Manifest name must be string literal" ;
+] .
+
+[
+	:targetSubjectsOf nq:endpoint ;
+    :path nq:name ;
+    :minCount 1 ;
+    :message "Manifest must have at least one name" ;
+] .
+
+[
+	:targetSubjectsOf nq:endpoint ;
+    :path nq:name ;
+    :maxCount 1 ;
+    :message "Manifest must have at most one name" ;
+] .
+
+[
+	:targetNode [] ;
+    :sparql [
+        :message "Manifest must have exactly one manifest node" ;
+        :prefixes _:prefixes ;
+        :select "SELECT $this { FILTER (NOT EXISTS { ?manifest nq:endpoint ?endpoint } || EXISTS { ?manifest nq:endpoint ?endpoint . ?other nq:endpoint ?otherEndpoint . FILTER (?other != ?manifest) }) }" ;
+    ] ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path [ :inversePath nq:endpoint ] ;
+    :minCount 1 ;
+    :message "Endpoint must be in manifest endpoints" ;
+] .
+
+[
 	:targetNode [] ;
     :sparql [
         :message "Manifest must have at least one endpoint" ;

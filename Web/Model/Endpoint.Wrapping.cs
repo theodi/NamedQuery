@@ -19,5 +19,7 @@ public partial class Endpoint : GraphWrapperNode
 
     public ISet<Parameter> Parameters => this.Objects(Vocabulary.Parameter, Parameter.Wrap, Parameter.Wrap);
 
-    public static Endpoint Wrap(GraphWrapperNode node) => new(node, node.Graph);
+    public static Endpoint Wrap(INode node, IGraph graph) => new(node, graph);
+
+    public static Endpoint Wrap(GraphWrapperNode node) => Wrap(node, node.Graph);
 }
