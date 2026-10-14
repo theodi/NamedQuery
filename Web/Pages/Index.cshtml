@@ -5,38 +5,33 @@
 @using Web.Controllers
 @inject IOptions<SwaggerUIOptions> SwaggerUi
 @inject Resources Resources
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{home}</title>
-</head>
-<body>
-    <ul>
-        <li>
-            <span>{openapi}</span>
-            <ul>
+@{
+    ViewData["Title"] = "{home}";
+}
+<ul>
+    <li>
+        <span>{openapi}</span>
+        <ul>
+            <li>
+                <a href="@Url.Content($"~/{SwaggerUi.Value.RoutePrefix}")">{ui}</a>
+            </li>
+            <li>
+                <a asp-route="@nameof(OpenApiController.GetJson)">{json}</a>
+            </li>
+            <li>
+                <a asp-route="@nameof(OpenApiController.GetYaml)">{yaml}</a>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <span>{endpoints}</span>
+        <ul>
+            @foreach (var endpoint in Resources.Manifest.Endpoints)
+            {
                 <li>
-                    <a href="@Url.Content($"~/{SwaggerUi.Value.RoutePrefix}")">{ui}</a>
+                    <a href="@endpoint.Path">@endpoint.Path</a>
                 </li>
-                <li>
-                    <a asp-route="@nameof(OpenApiController.GetJson)">{json}</a>
-                </li>
-                <li>
-                    <a asp-route="@nameof(OpenApiController.GetYaml)">{yaml}</a>
-                </li>
-            </ul>
-        </li>
-        <li>
-            <span>{endpoints}</span>
-            <ul>
-                @foreach (var endpoint in Resources.Manifest.Endpoints)
-                {
-                    <li>
-                        <a href="@endpoint.Path">@endpoint.Path</a>
-                    </li>
-                }
-            </ul>
-        </li>
-    </ul>
-</body>
-</html>
+            }
+        </ul>
+    </li>
+</ul>
