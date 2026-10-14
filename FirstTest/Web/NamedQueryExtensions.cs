@@ -45,7 +45,6 @@ public static class NamedQueryExtensions
     public static WebApplication UseNamedQuery(this WebApplication app)
     {
         app.UseSwaggerUI();
-        app.UseRouting();
         app.UseCors();
         app.MapControllers();
         app.MapRazorPages();
