@@ -1,4 +1,4 @@
-﻿extern alias App;
+extern alias App;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
