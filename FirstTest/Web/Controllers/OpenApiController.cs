@@ -49,8 +49,8 @@ public class OpenApiController(Resources resources)
                     "Results of a SELECT or ASK query, serialised in the negotiated SPARQL results format.",
                     SparqlFormatter.MediaTypes),
                 [ProblemResponse] = Response(
-                    "Missing parameter",
-                    "Validation problem details listing each required query string parameter that was not supplied.",
+                    "Invalid parameter",
+                    "Validation problem details listing each required query string parameter that was not supplied or was repeated.",
                     [MediaTypeNames.Application.ProblemJson]),
             },
         },

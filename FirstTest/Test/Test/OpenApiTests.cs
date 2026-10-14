@@ -114,7 +114,7 @@ public sealed class OpenApiTests
     [TestMethod]
     [DataRow("graph", "Graph")]
     [DataRow("results", "SPARQL results")]
-    [DataRow("problem", "Missing parameter")]
+    [DataRow("problem", "Invalid parameter")]
     public async Task SummarisesResponses(string response, string summary)
     {
         var document = await Document();

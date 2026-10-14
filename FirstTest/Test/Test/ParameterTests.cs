@@ -42,4 +42,16 @@ public sealed class ParameterTests
         problem.RootElement.GetProperty("status").GetInt32().Should().Be(400);
         problem.RootElement.GetProperty("errors").GetProperty("value")[0].GetString().Should().Be("This query string parameter is required");
     }
+
+    [TestMethod]
+    public async Task RepeatedParameterIsValidationProblem()
+    {
+        var response = await app.Client.GetAsync("endpoint6?value=a&value=b", TestContext.CancellationToken);
+
+        response.Should().Be400BadRequest();
+        response.Content.Headers.ContentType!.MediaType.Should().Be("application/problem+json");
+
+        using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.CancellationToken));
+        problem.RootElement.GetProperty("errors").GetProperty("value")[0].GetString().Should().Be("This query string parameter must not be repeated");
+    }
 }

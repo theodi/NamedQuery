@@ -16,6 +16,7 @@ public class EndpointController
     [PopulateEndpointInContext]
 
     [AddModelErrorIfMissingParameter(Order = 0)]
+    [AddModelErrorIfRepeatedParameter(Order = 0)]
     [Respond400IfInvalidModelState(Order = 1)]
     [ParametrizeSparql(Order = 2)]
     [ExecuteSparql(Order = 3)]
