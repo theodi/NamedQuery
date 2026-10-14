@@ -1,0 +1,46 @@
+@page
+@using Microsoft.Extensions.Options
+@using Web.Model
+@inject IOptions<NamedQueryOptions> Options
+@{
+    ViewData["Title"] = "{sparql}";
+}
+@section Head {
+    <link href="https://unpkg.com/@@triply/yasgui/build/yasgui.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://unpkg.com/@@triply/yasgui/build/yasgui.min.js"></script>
+    <style>
+        .yasgui .autocompleteWrapper {
+            display: none !important;
+        }
+    </style>
+}
+<div id="yasgui"></div>
+<script>
+    const prefixes = {
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#"
+    }
+    const config = {
+        requestConfig: {
+            endpoint: "@Options.Value.SparqlEndpoint",
+        },
+        yasqe: {
+            value: `${Object.entries(prefixes).map(entry => `PREFIX ${entry[0]}: <${entry[1]}>`).join("\n")}
+
+SELECT *
+WHERE {
+    ?s ?p ?o .
+}
+LIMIT 10`
+        },
+        yasr: {
+            prefixes
+        }
+    }
+
+    Yasgui.Yasqe.Autocompleters.prefixes.get = e => Object.entries(prefixes).map(entry => `${entry[0]}: <${entry[1]}>`)
+
+    const yasgui = new Yasgui(document.getElementById("yasgui"), config)
+</script>

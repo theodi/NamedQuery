@@ -24,6 +24,14 @@
         </ul>
     </li>
     <li>
+        <span>{sparql}</span>
+        <ul>
+            <li>
+                <a asp-page="/Sparql/Index">{ui}</a>
+            </li>
+        </ul>
+    </li>
+    <li>
         <span>{endpoints}</span>
         <ul>
             @foreach (var endpoint in Resources.Manifest.Endpoints)
