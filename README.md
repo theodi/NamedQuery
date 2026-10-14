@@ -24,3 +24,20 @@ Docker tests require a running Docker daemon.
 ```shell
 dotnet test --solution NamedQuery.slnx
 ```
+
+# MCP
+
+Each endpoint is also exposed as a read-only tool on the [MCP](https://modelcontextprotocol.io) server at `/mcp` (Streamable HTTP). Tool names are endpoint paths with characters other than letters, digits, `_` and `-` replaced by `_`.
+
+For example, to connect a client that only supports local servers:
+
+```json
+{
+  "mcpServers": {
+    "named-query": {
+      "command": "npx",
+      "args": ["mcp-remote", "http://localhost:8080/mcp"]
+    }
+  }
+}
+```

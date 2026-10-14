@@ -62,6 +62,16 @@ public sealed class DockerBuildTests
     }
 
     [TestMethod]
+    public async Task CollidingToolNameFailsBuild()
+    {
+        await using var compose = Compose("tool-name").Build();
+
+        var start = () => compose.StartAsync(TestContext.CancellationToken);
+
+        (await start.Should().ThrowAsync<ExecFailedException>()).Which.Message.Should().Contain("Endpoint paths collide as MCP tool name: tool_name (tool/name, tool_name)");
+    }
+
+    [TestMethod]
     public async Task MissingContextFailsBuild()
     {
         await using var compose = Compose("missing").Build();

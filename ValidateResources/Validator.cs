@@ -38,6 +38,7 @@ internal static class Validator
         .. SparqlFilesValid(),
         .. EndpointPathsDoNotCollideWithWebRoutes(),
         .. ParameterNamesDoNotCollideWithFormatFilter(),
+        .. ToolNamesDoNotCollide(),
     ];
 
     private static IEnumerable<Diagnostic> ManifestExists()
@@ -166,6 +167,19 @@ internal static class Validator
             .SelectMany(endpoint => endpoint.Parameters
                 .Where(parameter => formatFilters.Any(filter => ReadsAsFormat(filter, parameter.Name)))
                 .Select(parameter => new Diagnostic(ManifestName, $"Endpoint parameter collides with format query string parameter: {parameter.Name} ({endpoint.Path})")));
+    }
+
+    private static IEnumerable<Diagnostic> ToolNamesDoNotCollide()
+    {
+        if (ConformingManifestGraph() is null)
+        {
+            return [];
+        }
+
+        return resources.Manifest.Endpoints
+            .GroupBy(endpoint => endpoint.ToolName)
+            .Where(group => group.Count() > 1)
+            .Select(group => new Diagnostic(ManifestName, $"Endpoint paths collide as MCP tool name: {group.Key} ({string.Join(", ", group.Select(endpoint => endpoint.Path))})"));
     }
 
     private static bool ReadsAsFormat(FormatFilter filter, string name)

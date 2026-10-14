@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="dotNetRdf.Core" />
     <PackageReference Include="Microsoft.OpenApi" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
   </ItemGroup>
 

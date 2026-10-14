@@ -1,33 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using VDS.RDF;
-using VDS.RDF.Query;
 using Web.Model;
 
 namespace Web.Filters;
 
 internal class ParametrizeSparqlAttribute : TypeFilterAttribute<ParametrizeSparqlAttribute.Filter>
 {
-    internal class Filter(Context context, Resources resources) : IActionFilter
+    internal class Filter(Context context, QueryService queryService) : IActionFilter
     {
-        private static readonly NodeFactory factory = new();
-
         void IActionFilter.OnActionExecuting(ActionExecutingContext action)
         {
-            var endpoint = context.Endpoint!;
-            var values = action.HttpContext.Request.Query;
-            var sparql = new SparqlParameterizedString(resources.Query(endpoint));
+            var values = action.HttpContext.Request.Query.ToDictionary(
+                static kv => kv.Key,
+                static kv => kv.Value.ToString(),
+                StringComparer.OrdinalIgnoreCase);
 
-            foreach (var parameter in endpoint.Parameters)
-            {
-                if (values.TryGetValue(parameter.Name, out var value))
-                {
-                    var node = factory.CreateLiteralNode(value.ToString(), parameter.Datatype);
-                    sparql.SetVariable(parameter.Name, node);
-                }
-            }
-
-            context.Query = sparql.ToString();
+            context.Query = queryService.Parametrize(context.Endpoint!, values);
         }
 
         void IActionFilter.OnActionExecuted(ActionExecutedContext _) { }

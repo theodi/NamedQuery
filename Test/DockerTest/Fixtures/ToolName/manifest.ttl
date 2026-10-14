@@ -1,0 +1,16 @@
+PREFIX : <http://example.org/namedquery/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+[
+    :path "tool/name" ;
+    :sparql "./queries/tool-name.sparql"^^xsd:anyURI ;
+    :name "Tool name with slash" ;
+    :description "Uses a path whose MCP tool name collides with another endpoint." ;
+] .
+
+[
+    :path "tool_name" ;
+    :sparql "./queries/tool-name.sparql"^^xsd:anyURI ;
+    :name "Tool name with underscore" ;
+    :description "Uses a path whose MCP tool name collides with another endpoint." ;
+] .

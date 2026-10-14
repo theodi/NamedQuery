@@ -37,7 +37,13 @@ public static class NamedQueryExtensions
         services.AddHttpClient<DotNetRDF.ISparqlQueryClient, SparqlQueryClient>();
         services.AddScoped<Context>();
         services.AddSingleton<Resources>();
+        services.AddTransient<QueryService>();
+        services.AddScoped<Mcp>();
         services.AddRouting(options => options.SetParameterPolicy<ManifestEndpointConstraint>(ManifestEndpointConstraint.Name));
+        services.AddMcpServer()
+            .WithHttpTransport(options => options.Stateless = true)
+            .WithListToolsHandler((request, ct) => request.Services!.GetRequiredService<Mcp>().ListTools(request, ct))
+            .WithCallToolHandler((request, ct) => request.Services!.GetRequiredService<Mcp>().CallTool(request, ct));
 
         return services;
     }
@@ -48,6 +54,7 @@ public static class NamedQueryExtensions
         app.UseCors();
         app.MapControllers();
         app.MapRazorPages();
+        app.MapMcp(Mcp.Route);
 
         return app;
     }

@@ -25,6 +25,11 @@ services:
       context: ../..
       additional_contexts:
         endpoint-definition-folder: Fixtures/Reserved
+  tool-name:
+    build:
+      context: ../..
+      additional_contexts:
+        endpoint-definition-folder: Fixtures/ToolName
   missing:
     build:
       context: ../..
