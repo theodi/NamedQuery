@@ -21,21 +21,13 @@ internal class Respond502IfUpstreamFailureAttribute : TypeFilterAttribute<Respon
                 exception.HttpContext,
                 StatusCodes.Status502BadGateway,
                 "SPARQL endpoint failed",
-                detail: string.Join(" ---> ", Messages(exception.Exception)));
+                detail: string.Join(" ---> ", exception.Exception.Messages()));
 
             exception.Result = new JsonResult(problem)
             {
                 StatusCode = problem.Status,
                 ContentType = MediaTypeNames.Application.ProblemJson
             };
-        }
-
-        private static IEnumerable<string> Messages(Exception? exception)
-        {
-            for (; exception is not null; exception = exception.InnerException)
-            {
-                yield return exception.Message;
-            }
         }
     }
 }

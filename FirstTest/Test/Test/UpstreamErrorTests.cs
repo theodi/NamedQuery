@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Text.Json;
 
@@ -16,7 +17,7 @@ public sealed class UpstreamErrorTests
     [DataRow(null, "endpoint4", "Connection refused ---> Socket closed")]
     public async Task UpstreamFailureIsBadGateway(HttpStatusCode? status, string path, string detail)
     {
-        var app = new MyWebApplication(() => new FailingSparqlStub(status));
+        var app = new MyWebApplication(client => client.ConfigurePrimaryHttpMessageHandler(() => new FailingSparqlStub(status)));
         using var request = new HttpRequestMessage(HttpMethod.Get, path);
         request.Headers.Accept.ParseAdd("text/turtle");
 
@@ -28,5 +29,26 @@ public sealed class UpstreamErrorTests
         using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.CancellationToken));
         problem.RootElement.GetProperty("status").GetInt32().Should().Be(502);
         problem.RootElement.GetProperty("detail").GetString().Should().Be(detail);
+    }
+
+    [TestMethod]
+    [DataRow("endpoint2")]
+    [DataRow("endpoint4")]
+    public async Task UpstreamTimeoutIsGatewayTimeout(string path)
+    {
+        var app = new MyWebApplication(client => client
+            .ConfigurePrimaryHttpMessageHandler(() => new HangingSparqlStub())
+            .ConfigureHttpClient(http => http.Timeout = TimeSpan.FromMilliseconds(100)));
+        using var request = new HttpRequestMessage(HttpMethod.Get, path);
+        request.Headers.Accept.ParseAdd("text/turtle");
+
+        var response = await app.Client.SendAsync(request, TestContext.CancellationToken);
+
+        response.Should().Be504GatewayTimeout();
+        response.Content.Headers.ContentType!.MediaType.Should().Be("application/problem+json");
+
+        using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.CancellationToken));
+        problem.RootElement.GetProperty("status").GetInt32().Should().Be(504);
+        problem.RootElement.GetProperty("detail").GetString().Should().Contain("HttpClient.Timeout");
     }
 }

@@ -110,6 +110,7 @@ public sealed class OpenApiTests
         var document = await Document();
 
         document["paths"]![path]!["get"]!["responses"]!["502"]!["$ref"]!.GetValue<string>().Should().Be("#/components/responses/upstream");
+        document["paths"]![path]!["get"]!["responses"]!["504"]!["$ref"]!.GetValue<string>().Should().Be("#/components/responses/timeout");
     }
 
     [TestMethod]
@@ -126,6 +127,7 @@ public sealed class OpenApiTests
     [DataRow("results", "SPARQL results")]
     [DataRow("problem", "Invalid parameter")]
     [DataRow("upstream", "SPARQL endpoint failed")]
+    [DataRow("timeout", "SPARQL endpoint timed out")]
     public async Task SummarisesResponses(string response, string summary)
     {
         var document = await Document();
@@ -141,6 +143,7 @@ public sealed class OpenApiTests
     [DataRow("results", "application/sparql-results+json")]
     [DataRow("problem", "application/problem+json")]
     [DataRow("upstream", "application/problem+json")]
+    [DataRow("timeout", "application/problem+json")]
     public async Task DeclaresResponseMediaTypes(string response, string mediaType)
     {
         var document = await Document();

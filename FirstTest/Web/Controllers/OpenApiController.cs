@@ -20,6 +20,7 @@ public class OpenApiController(Resources resources)
     private const string ResultsResponse = "results";
     private const string ProblemResponse = "problem";
     private const string UpstreamResponse = "upstream";
+    private const string TimeoutResponse = "timeout";
 
     [HttpGet(Route, Name = nameof(GetJson))]
     [Produces(OpenApiJsonFormatter.MediaType)]
@@ -57,6 +58,10 @@ public class OpenApiController(Resources resources)
                     "SPARQL endpoint failed",
                     "Problem details reporting that the underlying SPARQL endpoint could not be reached or returned an error.",
                     [MediaTypeNames.Application.ProblemJson]),
+                [TimeoutResponse] = Response(
+                    "SPARQL endpoint timed out",
+                    "Problem details reporting that the underlying SPARQL endpoint did not respond in time.",
+                    [MediaTypeNames.Application.ProblemJson]),
             },
         },
     };
@@ -92,6 +97,7 @@ public class OpenApiController(Resources resources)
                 _ => new OpenApiResponseReference(ResultsResponse),
             },
             ["502"] = new OpenApiResponseReference(UpstreamResponse),
+            ["504"] = new OpenApiResponseReference(TimeoutResponse),
         };
 
         if (endpoint.Parameters.Count != 0)

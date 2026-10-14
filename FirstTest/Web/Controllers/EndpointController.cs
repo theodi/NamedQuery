@@ -26,5 +26,6 @@ public class EndpointController
 
     // Exception filters
     [Respond502IfUpstreamFailure]
+    [Respond504IfUpstreamTimeout]
     public void Get() { }
 }
