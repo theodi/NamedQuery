@@ -1,0 +1,14 @@
+PREFIX : <http://example.org/namedquery/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+[
+    :path "reserved" ;
+    :sparql "./queries/reserved.sparql"^^xsd:anyURI ;
+    :name "Reserved" ;
+    :description "Uses a parameter name that collides with a reserved query string parameter." ;
+    :parameter [
+        :name "format" ;
+        :description "Collides with the format filter." ;
+        :example "example" ;
+    ] ;
+] .

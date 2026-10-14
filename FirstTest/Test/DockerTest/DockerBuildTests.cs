@@ -52,6 +52,16 @@ public sealed class DockerBuildTests
     }
 
     [TestMethod]
+    public async Task ReservedParameterFailsBuild()
+    {
+        await using var compose = Compose("reserved").Build();
+
+        var start = () => compose.StartAsync(TestContext.CancellationToken);
+
+        (await start.Should().ThrowAsync<ExecFailedException>()).Which.Message.Should().Contain("Endpoint parameters collide with format query string parameter: format (reserved)");
+    }
+
+    [TestMethod]
     public async Task MissingContextFailsBuild()
     {
         await using var compose = Compose("missing").Build();

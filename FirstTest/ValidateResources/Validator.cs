@@ -2,7 +2,11 @@
 
 using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
@@ -35,6 +39,7 @@ internal static class Validator
         SparqlFilesExist();
         SparqlFilesValid();
         EndpointPathsDoNotCollideWithWebRoutes();
+        ParameterNamesDoNotCollideWithFormatFilter();
     }
 
     private static void ManifestExists()
@@ -177,5 +182,37 @@ internal static class Validator
         }
 
         throw new MsBuildCanonicalErrorException(ManifestName, $"Endpoint paths collide with built-in routes: {string.Join("; ", collisions)}");
+    }
+
+    private static void ParameterNamesDoNotCollideWithFormatFilter()
+    {
+        var formatFilters = factory.Services.GetRequiredService<EndpointDataSource>().Endpoints
+            .Single(route => route.Metadata.GetMetadata<ControllerActionDescriptor>()?.ControllerTypeInfo == typeof(EndpointController))
+            .Metadata
+            .OfType<FormatFilterAttribute>()
+            .Select(attribute => (FormatFilter)attribute.CreateInstance(factory.Services))
+            .ToList();
+
+        var collisions = resources.Manifest.Endpoints
+            .SelectMany(endpoint => endpoint.Parameters
+                .Where(parameter => formatFilters.Any(filter => ReadsAsFormat(filter, parameter.Name)))
+                .Select(parameter => $"{parameter.Name} ({endpoint.Path})"))
+            .ToList();
+
+        if (collisions.Count == 0)
+        {
+            return;
+        }
+
+        throw new MsBuildCanonicalErrorException(ManifestName, $"Endpoint parameters collide with format query string parameter: {string.Join("; ", collisions)}");
+    }
+
+    private static bool ReadsAsFormat(FormatFilter filter, string name)
+    {
+        var probe = Guid.NewGuid().ToString();
+        var http = new DefaultHttpContext();
+        http.Request.QueryString = QueryString.Create(name, probe);
+
+        return filter.GetFormat(new ActionContext(http, new RouteData(), new ActionDescriptor())) == probe;
     }
 }
