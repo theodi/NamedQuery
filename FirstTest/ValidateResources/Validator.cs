@@ -26,7 +26,6 @@ internal static class Validator
 {
     private const string ManifestName = "manifest.ttl";
     private const string ShapesName = "ValidateResources.shapes.ttl";
-    private static readonly Uri FakeBase = new("http://resources/");
     private static readonly WebApplicationFactory<AppProgram> factory = Factory();
     private static readonly Resources resources = factory.Services.GetRequiredService<Resources>();
 
@@ -80,36 +79,26 @@ internal static class Validator
 
     private static IEnumerable<Diagnostic> SparqlFilesExist()
     {
-        if (ConformingManifestGraph() is not { } graph)
+        if (ConformingManifestGraph() is null)
         {
             return [];
         }
 
-        return graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
-            .Select(triple => triple.Object)
-            .OfType<ILiteralNode>()
-            .Select(literal => literal.Value)
-            .Select(value => new Uri(value, UriKind.Relative))
-            .Select(relative => new Uri(FakeBase, relative))
-            .Select(absolute => absolute.GetComponents(UriComponents.Path, UriFormat.Unescaped))
+        return resources.Manifest.Endpoints
+            .Select(endpoint => endpoint.SparqlResourceName)
             .Where(path => resources.Info(path) is null)
             .Select(path => new Diagnostic(ManifestName, $"Endpoint SPARQL file not found: {path}"));
     }
 
     private static IEnumerable<Diagnostic> SparqlFilesValid()
     {
-        if (ConformingManifestGraph() is not { } graph)
+        if (ConformingManifestGraph() is null)
         {
             return [];
         }
 
-        return graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
-            .Select(triple => triple.Object)
-            .OfType<ILiteralNode>()
-            .Select(literal => literal.Value)
-            .Select(value => new Uri(value, UriKind.Relative))
-            .Select(relative => new Uri(FakeBase, relative))
-            .Select(absolute => absolute.GetComponents(UriComponents.Path, UriFormat.Unescaped))
+        return resources.Manifest.Endpoints
+            .Select(endpoint => endpoint.SparqlResourceName)
             .SelectMany(SparqlFileValid);
     }
 
