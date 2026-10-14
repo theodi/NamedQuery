@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Web.Model;
 
@@ -9,6 +10,8 @@ public partial class Endpoint
     public string SparqlResourceName => new Uri(FakeBase, Sparql).GetComponents(UriComponents.Path, UriFormat.Unescaped);
 
     public string? FrameResourceName => Frame is { } frame ? new Uri(FakeBase, frame).GetComponents(UriComponents.Path, UriFormat.Unescaped) : null;
+
+    public string ExampleUrl => QueryHelpers.AddQueryString(Path, Parameters.ToDictionary(static p => p.Name, static p => (string?)p.Example));
 
     public string ToolName => InvalidToolNameCharacter().Replace(Path, "_");
 
