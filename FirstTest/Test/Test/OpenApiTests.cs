@@ -103,6 +103,16 @@ public sealed class OpenApiTests
     }
 
     [TestMethod]
+    [DataRow("/endpoint1")]
+    [DataRow("/endpoint6")]
+    public async Task ReferencesUpstreamResponse(string path)
+    {
+        var document = await Document();
+
+        document["paths"]![path]!["get"]!["responses"]!["502"]!["$ref"]!.GetValue<string>().Should().Be("#/components/responses/upstream");
+    }
+
+    [TestMethod]
     public async Task ReferencesProblemResponseOnlyWithParameters()
     {
         var document = await Document();
@@ -115,6 +125,7 @@ public sealed class OpenApiTests
     [DataRow("graph", "Graph")]
     [DataRow("results", "SPARQL results")]
     [DataRow("problem", "Invalid parameter")]
+    [DataRow("upstream", "SPARQL endpoint failed")]
     public async Task SummarisesResponses(string response, string summary)
     {
         var document = await Document();
@@ -129,6 +140,7 @@ public sealed class OpenApiTests
     [DataRow("results", "application/sparql-results+xml")]
     [DataRow("results", "application/sparql-results+json")]
     [DataRow("problem", "application/problem+json")]
+    [DataRow("upstream", "application/problem+json")]
     public async Task DeclaresResponseMediaTypes(string response, string mediaType)
     {
         var document = await Document();

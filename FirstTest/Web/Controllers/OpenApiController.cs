@@ -19,6 +19,7 @@ public class OpenApiController(Resources resources)
     private const string GraphResponse = "graph";
     private const string ResultsResponse = "results";
     private const string ProblemResponse = "problem";
+    private const string UpstreamResponse = "upstream";
 
     [HttpGet(Route, Name = nameof(GetJson))]
     [Produces(OpenApiJsonFormatter.MediaType)]
@@ -51,6 +52,10 @@ public class OpenApiController(Resources resources)
                 [ProblemResponse] = Response(
                     "Invalid parameter",
                     "Validation problem details listing each required query string parameter that was not supplied or was repeated.",
+                    [MediaTypeNames.Application.ProblemJson]),
+                [UpstreamResponse] = Response(
+                    "SPARQL endpoint failed",
+                    "Problem details reporting that the underlying SPARQL endpoint could not be reached or returned an error.",
                     [MediaTypeNames.Application.ProblemJson]),
             },
         },
@@ -86,6 +91,7 @@ public class OpenApiController(Resources resources)
 
                 _ => new OpenApiResponseReference(ResultsResponse),
             },
+            ["502"] = new OpenApiResponseReference(UpstreamResponse),
         };
 
         if (endpoint.Parameters.Count != 0)

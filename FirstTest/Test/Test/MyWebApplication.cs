@@ -13,13 +13,13 @@ internal class MyWebApplication
     private readonly WebApplication app;
     private HttpClient? client;
 
-    internal MyWebApplication()
+    internal MyWebApplication(Func<HttpMessageHandler>? sparql = null)
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
         builder.Configuration["NamedQuery:SparqlEndpoint"] = "http://sparql.test/";
         builder.Services.AddNamedQuery(options => options.Definitions = new ManifestEmbeddedFileProvider(typeof(MyWebApplication).Assembly));
-        builder.Services.ConfigureHttpClientDefaults(client => client.ConfigurePrimaryHttpMessageHandler(() => new SparqlStub()));
+        builder.Services.ConfigureHttpClientDefaults(client => client.ConfigurePrimaryHttpMessageHandler(sparql ?? (() => new SparqlStub())));
 
         app = builder.Build();
         app.UseNamedQuery();
