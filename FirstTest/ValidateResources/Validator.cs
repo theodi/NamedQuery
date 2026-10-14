@@ -1,6 +1,5 @@
 ﻿extern alias App;
 
-using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +11,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Reflection;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Parsing.Handlers;
@@ -30,83 +30,78 @@ internal static class Validator
     private static readonly WebApplicationFactory<AppProgram> factory = Factory();
     private static readonly Resources resources = factory.Services.GetRequiredService<Resources>();
 
-    internal static void Validate()
-    {
-        ManifestExists();
-        ManifestIsValidTurtle();
-        ManifestConformsToShapes();
-        SparqlIsRelativeUri();
-        SparqlFilesExist();
-        SparqlFilesValid();
-        EndpointPathsDoNotCollideWithWebRoutes();
-        ParameterNamesDoNotCollideWithFormatFilter();
-    }
+    internal static IEnumerable<Diagnostic> Validate() =>
+    [
+        .. ManifestExists(),
+        .. ManifestIsValidTurtle(),
+        .. ManifestConformsToShapes(),
+        .. SparqlIsRelativeUri(),
+        .. SparqlFilesExist(),
+        .. SparqlFilesValid(),
+        .. EndpointPathsDoNotCollideWithWebRoutes(),
+        .. ParameterNamesDoNotCollideWithFormatFilter(),
+    ];
 
-    private static void ManifestExists()
+    private static IEnumerable<Diagnostic> ManifestExists()
     {
-        if (resources.Info("manifest.ttl") is null)
+        if (resources.Info(ManifestName) is null)
         {
-            throw new MsBuildCanonicalErrorException(ManifestName, "Manifest file not found in endpoint definition folder");
+            yield return new Diagnostic(ManifestName, "Manifest file not found in endpoint definition folder");
         }
     }
 
-    private static void ManifestIsValidTurtle()
+    private static IEnumerable<Diagnostic> ManifestIsValidTurtle()
     {
+        if (resources.Reader(ManifestName) is not { } reader)
+        {
+            return [];
+        }
+
         try
         {
-            new TurtleParser().Load(new NullHandler(), resources.Reader("manifest.ttl"));
+            new TurtleParser().Load(new NullHandler(), reader);
+            return [];
         }
         catch (RdfParseException e)
         {
-            throw new MsBuildCanonicalErrorException(ManifestName, $"Manifest is not valid Turtle: {e.Message}", e)
-            {
-                Line = e.HasPositionInformation ? e.StartLine : null,
-                Column = e.HasPositionInformation ? e.StartPosition : null,
-                EndLine = e.HasPositionInformation ? e.EndLine : null,
-                EndColumn = e.HasPositionInformation ? e.EndPosition : null
-            };
+            return [ParseError(ManifestName, $"Manifest is not valid Turtle: {e.Message}", e)];
         }
     }
 
-    private static void ManifestConformsToShapes()
+    private static IEnumerable<Diagnostic> ManifestConformsToShapes()
     {
-        var dataGraph = new Graph();
-        new TurtleParser().Load(dataGraph, resources.Reader(ManifestName));
+        if (ManifestGraph() is not { } dataGraph)
+        {
+            return [];
+        }
 
-        var shapesGraph = new ShapesGraph(new Graph());
-        using var shapesReader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(ShapesName)!);
-        new TurtleParser().Load(shapesGraph, shapesReader);
-
-        var report = shapesGraph.Validate(dataGraph);
-        if (report.Conforms) return;
-
-        var violations = report.Results.Select(result => $"{result.FocusNode}: {result.Message?.Value ?? result.SourceConstraintComponent.ToString()}");
-        throw new MsBuildCanonicalErrorException(ManifestName, $"Manifest does not conform to shapes: {string.Join("; ", violations)}");
+        return Shapes().Validate(dataGraph).Results
+            .Select(result => new Diagnostic(ManifestName, $"Manifest does not conform to shapes: {result.FocusNode}: {result.Message?.Value ?? result.SourceConstraintComponent.ToString()}"));
     }
 
-    private static void SparqlIsRelativeUri()
+    private static IEnumerable<Diagnostic> SparqlIsRelativeUri()
     {
-        using var graph = new Graph();
-        new TurtleParser().Load(graph, resources.Reader(ManifestName));
+        if (ManifestGraph() is not { } graph)
+        {
+            return [];
+        }
 
-        var invalid = graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
+        return graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
             .Select(triple => triple.Object)
             .OfType<ILiteralNode>()
             .Select(literal => literal.Value)
             .Where(value => !Uri.TryCreate(value, UriKind.Relative, out _))
-            .ToList();
-
-        if (invalid.Count == 0) return;
-
-        throw new MsBuildCanonicalErrorException(ManifestName, $"Endpoint SPARQL must be relative URI: {string.Join("; ", invalid)}");
+            .Select(value => new Diagnostic(ManifestName, $"Endpoint SPARQL must be relative URI: {value}"));
     }
 
-    private static void SparqlFilesExist()
+    private static IEnumerable<Diagnostic> SparqlFilesExist()
     {
-        using var graph = new Graph();
-        new TurtleParser().Load(graph, resources.Reader(ManifestName));
+        if (ConformingManifestGraph() is not { } graph)
+        {
+            return [];
+        }
 
-        var missing = graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
+        return graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
             .Select(triple => triple.Object)
             .OfType<ILiteralNode>()
             .Select(literal => literal.Value)
@@ -114,42 +109,41 @@ internal static class Validator
             .Select(relative => new Uri(FakeBase, relative))
             .Select(absolute => absolute.GetComponents(UriComponents.Path, UriFormat.Unescaped))
             .Where(path => resources.Info(path) is null)
-            .ToList();
-
-        if (missing.Count == 0) return;
-
-        throw new MsBuildCanonicalErrorException(ManifestName, $"Endpoint SPARQL file not found: {string.Join("; ", missing)}");
+            .Select(path => new Diagnostic(ManifestName, $"Endpoint SPARQL file not found: {path}"));
     }
 
-    private static void SparqlFilesValid()
+    private static IEnumerable<Diagnostic> SparqlFilesValid()
     {
-        using var graph = new Graph();
-        new TurtleParser().Load(graph, resources.Reader(ManifestName));
+        if (ConformingManifestGraph() is not { } graph)
+        {
+            return [];
+        }
 
-        var paths = graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
+        return graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
             .Select(triple => triple.Object)
             .OfType<ILiteralNode>()
             .Select(literal => literal.Value)
             .Select(value => new Uri(value, UriKind.Relative))
             .Select(relative => new Uri(FakeBase, relative))
-            .Select(absolute => absolute.GetComponents(UriComponents.Path, UriFormat.Unescaped));
+            .Select(absolute => absolute.GetComponents(UriComponents.Path, UriFormat.Unescaped))
+            .SelectMany(SparqlFileValid);
+    }
 
-        foreach (var path in paths)
+    private static IEnumerable<Diagnostic> SparqlFileValid(string path)
+    {
+        if (resources.Reader(path) is not { } reader)
         {
-            try
-            {
-                new SparqlQueryParser().Parse(resources.Reader(path));
-            }
-            catch (RdfParseException e)
-            {
-                throw new MsBuildCanonicalErrorException(path, $"Endpoint SPARQL is not valid SPARQL: {e.Message}", e)
-                {
-                    Line = e.HasPositionInformation ? e.StartLine : null,
-                    Column = e.HasPositionInformation ? e.StartPosition : null,
-                    EndLine = e.HasPositionInformation ? e.EndLine : null,
-                    EndColumn = e.HasPositionInformation ? e.EndPosition : null
-                };
-            }
+            return [];
+        }
+
+        try
+        {
+            new SparqlQueryParser().Parse(reader);
+            return [];
+        }
+        catch (RdfParseException e)
+        {
+            return [ParseError(path, $"Endpoint SPARQL is not valid SPARQL: {e.Message}", e)];
         }
     }
 
@@ -162,30 +156,32 @@ internal static class Validator
             .ConfigureLogging(logging => logging.ClearProviders()));
     }
 
-    private static void EndpointPathsDoNotCollideWithWebRoutes()
+    private static IEnumerable<Diagnostic> EndpointPathsDoNotCollideWithWebRoutes()
     {
+        if (ConformingManifestGraph() is null)
+        {
+            return [];
+        }
+
         var routes = factory.Services.GetRequiredService<EndpointDataSource>().Endpoints
             .OfType<RouteEndpoint>()
             .Where(route => route.Metadata.GetMetadata<ControllerActionDescriptor>()?.ControllerTypeInfo != typeof(EndpointController))
             .ToList();
 
-        var collisions = resources.Manifest.Endpoints
+        return resources.Manifest.Endpoints
             .Select(endpoint => endpoint.Path)
             .SelectMany(path => routes
                 .Where(route => new TemplateMatcher(new RouteTemplate(route.RoutePattern), new RouteValueDictionary(route.RoutePattern.Defaults)).TryMatch($"/{path}", []))
-                .Select(route => $"{path} ({route.DisplayName})"))
-            .ToList();
-
-        if (collisions.Count == 0)
-        {
-            return;
-        }
-
-        throw new MsBuildCanonicalErrorException(ManifestName, $"Endpoint paths collide with built-in routes: {string.Join("; ", collisions)}");
+                .Select(route => new Diagnostic(ManifestName, $"Endpoint path collides with built-in route: {path} ({route.DisplayName})")));
     }
 
-    private static void ParameterNamesDoNotCollideWithFormatFilter()
+    private static IEnumerable<Diagnostic> ParameterNamesDoNotCollideWithFormatFilter()
     {
+        if (ConformingManifestGraph() is null)
+        {
+            return [];
+        }
+
         var formatFilters = factory.Services.GetRequiredService<EndpointDataSource>().Endpoints
             .Single(route => route.Metadata.GetMetadata<ControllerActionDescriptor>()?.ControllerTypeInfo == typeof(EndpointController))
             .Metadata
@@ -193,18 +189,10 @@ internal static class Validator
             .Select(attribute => (FormatFilter)attribute.CreateInstance(factory.Services))
             .ToList();
 
-        var collisions = resources.Manifest.Endpoints
+        return resources.Manifest.Endpoints
             .SelectMany(endpoint => endpoint.Parameters
                 .Where(parameter => formatFilters.Any(filter => ReadsAsFormat(filter, parameter.Name)))
-                .Select(parameter => $"{parameter.Name} ({endpoint.Path})"))
-            .ToList();
-
-        if (collisions.Count == 0)
-        {
-            return;
-        }
-
-        throw new MsBuildCanonicalErrorException(ManifestName, $"Endpoint parameters collide with format query string parameter: {string.Join("; ", collisions)}");
+                .Select(parameter => new Diagnostic(ManifestName, $"Endpoint parameter collides with format query string parameter: {parameter.Name} ({endpoint.Path})")));
     }
 
     private static bool ReadsAsFormat(FormatFilter filter, string name)
@@ -215,4 +203,41 @@ internal static class Validator
 
         return filter.GetFormat(new ActionContext(http, new RouteData(), new ActionDescriptor())) == probe;
     }
+
+    private static Graph? ManifestGraph()
+    {
+        if (resources.Reader(ManifestName) is not { } reader)
+        {
+            return null;
+        }
+
+        try
+        {
+            var graph = new Graph();
+            new TurtleParser().Load(graph, reader);
+            return graph;
+        }
+        catch (RdfParseException)
+        {
+            return null;
+        }
+    }
+
+    private static Graph? ConformingManifestGraph() => ManifestGraph() is { } graph && Shapes().Validate(graph).Conforms ? graph : null;
+
+    private static ShapesGraph Shapes()
+    {
+        var shapesGraph = new ShapesGraph(new Graph());
+        using var shapesReader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(ShapesName)!);
+        new TurtleParser().Load(shapesGraph, shapesReader);
+        return shapesGraph;
+    }
+
+    private static Diagnostic ParseError(string origin, string text, RdfParseException e) => new(origin, text)
+    {
+        Line = e.HasPositionInformation ? e.StartLine : null,
+        Column = e.HasPositionInformation ? e.StartPosition : null,
+        EndLine = e.HasPositionInformation ? e.EndLine : null,
+        EndColumn = e.HasPositionInformation ? e.EndPosition : null
+    };
 }

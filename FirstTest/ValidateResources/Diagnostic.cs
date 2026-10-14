@@ -1,15 +1,13 @@
 namespace ValidateResources;
 
 /// <seealso href="https://learn.microsoft.com/visualstudio/msbuild/msbuild-diagnostic-format-for-tasks"/>
-internal class MsBuildCanonicalErrorException(string origin, string text, Exception? innerException = null) : Exception(text, innerException)
+internal record Diagnostic(string Origin, string Text)
 {
     internal enum MsBuildCategory
     {
         Error,
         Warning
     }
-
-    internal string Origin { get; } = origin;
 
     internal int? Line { get; init; }
 
@@ -43,6 +41,6 @@ internal class MsBuildCanonicalErrorException(string origin, string text, Except
 
         var classification = string.Join(" ", new[] { Subcategory, category, Code }.Where(part => !string.IsNullOrEmpty(part)));
 
-        return $"{Origin}{location} : {classification} : {Message}";
+        return $"{Origin}{location} : {classification} : {Text}";
     }
 }

@@ -48,7 +48,7 @@ public sealed class DockerBuildTests
 
         var start = () => compose.StartAsync(TestContext.CancellationToken);
 
-        (await start.Should().ThrowAsync<ExecFailedException>()).Which.Message.Should().Contain("Endpoint paths collide with built-in routes: Index");
+        (await start.Should().ThrowAsync<ExecFailedException>()).Which.Message.Should().Contain("Endpoint path collides with built-in route: Index");
     }
 
     [TestMethod]
@@ -58,7 +58,7 @@ public sealed class DockerBuildTests
 
         var start = () => compose.StartAsync(TestContext.CancellationToken);
 
-        (await start.Should().ThrowAsync<ExecFailedException>()).Which.Message.Should().Contain("Endpoint parameters collide with format query string parameter: format (reserved)");
+        (await start.Should().ThrowAsync<ExecFailedException>()).Which.Message.Should().Contain("Endpoint parameter collides with format query string parameter: format (reserved)");
     }
 
     [TestMethod]
