@@ -22,20 +22,20 @@ public class OpenApiController(Resources resources)
 
     [HttpGet(Route, Name = nameof(GetJson))]
     [Produces(OpenApiJsonFormatter.MediaType)]
-    public OpenApiDocument GetJson() => Document(resources);
+    public OpenApiDocument GetJson() => Get();
 
     [HttpGet("/openapi.yaml", Name = nameof(GetYaml))]
     [Produces(OpenApiYamlFormatter.MediaType)]
-    public OpenApiDocument GetYaml() => Document(resources);
+    public OpenApiDocument GetYaml() => Get();
 
-    private static OpenApiDocument Document(Resources resources) => new()
+    private OpenApiDocument Get() => new()
     {
         Info = new()
         {
             Title = "Named Query", // TODO: Don't hardcode
             Version = "1", // TODO: Don't hardcode
         },
-        Paths = Paths(resources),
+        Paths = Paths(),
         Components = new()
         {
             Responses = new Dictionary<string, IOpenApiResponse>
@@ -56,7 +56,7 @@ public class OpenApiController(Resources resources)
         },
     };
 
-    private static OpenApiPaths Paths(Resources resources)
+    private OpenApiPaths Paths()
     {
         var paths = new OpenApiPaths();
 
@@ -66,7 +66,7 @@ public class OpenApiController(Resources resources)
             {
                 Operations = new()
                 {
-                    [HttpMethod.Get] = Operation(endpoint, resources),
+                    [HttpMethod.Get] = Operation(endpoint),
                 },
             });
         }
@@ -74,7 +74,7 @@ public class OpenApiController(Resources resources)
         return paths;
     }
 
-    private static OpenApiOperation Operation(Model.Endpoint endpoint, Resources resources)
+    private OpenApiOperation Operation(Model.Endpoint endpoint)
     {
         var responses = new OpenApiResponses
         {
@@ -109,7 +109,7 @@ public class OpenApiController(Resources resources)
         };
     }
 
-    private static OpenApiParameter Parameter(Model.Parameter parameter) => new()
+    private OpenApiParameter Parameter(Model.Parameter parameter) => new()
     {
         Name = parameter.Name,
         Description = parameter.Description,
