@@ -1,11 +1,9 @@
-name: Publish First Test Image
+name: Publish Image
 
 on:
   push:
     branches:
       - main
-    paths:
-      - FirstTest/**
   workflow_dispatch:
 
 jobs:
@@ -28,7 +26,7 @@ jobs:
       - uses: docker/build-push-action@v7
         name: Build and push
         with:
-          context: ./FirstTest
+          context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/named-query-first-test:latest
-          build-contexts: endpoint-definition-folder=./FirstTest/ExampleEndpointDefinitions
+          tags: ghcr.io/${{ github.repository_owner }}/named-query:latest
+          build-contexts: endpoint-definition-folder=./ExampleEndpointDefinitions

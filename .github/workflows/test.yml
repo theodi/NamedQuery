@@ -1,9 +1,7 @@
-name: Test First Test Image
+name: Test
 
 on:
   pull_request:
-    paths:
-      - FirstTest/**
 
 jobs:
   test:
@@ -19,5 +17,4 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Test
-        working-directory: FirstTest
-        run: dotnet test --solution FirstTest.slnx
+        run: dotnet test --solution NamedQuery.slnx

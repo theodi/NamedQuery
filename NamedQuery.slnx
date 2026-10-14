@@ -1,8 +1,8 @@
 <Solution>
   <Folder Name="/Solution Items/">
-    <File Path="../.gitattributes" />
-    <File Path="../.github/workflows/publishFirstTest.yml" />
-    <File Path="../.github/workflows/testFirstTest.yml" />
+    <File Path=".gitattributes" />
+    <File Path=".github/workflows/publish.yml" />
+    <File Path=".github/workflows/test.yml" />
     <File Path=".editorconfig" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
