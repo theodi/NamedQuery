@@ -24,6 +24,14 @@ public sealed class IndexPageTests
     }
 
     [TestMethod]
+    public async Task ShowsEndpointNameAndDescription()
+    {
+        var html = await app.Client.GetStringAsync("", TestContext.CancellationToken);
+
+        html.Should().Contain("<a href=\"endpoint1\">Any ten triples</a> (Selects up to ten arbitrary triples.)");
+    }
+
+    [TestMethod]
     public async Task LinksToSwaggerUi()
     {
         var href = $"/{app.Services.GetRequiredService<IOptions<SwaggerUIOptions>>().Value.RoutePrefix}";
