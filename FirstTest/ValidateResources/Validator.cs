@@ -35,7 +35,6 @@ internal static class Validator
         .. ManifestExists(),
         .. ManifestIsValidTurtle(),
         .. ManifestConformsToShapes(),
-        .. SparqlIsRelativeUri(),
         .. SparqlFilesExist(),
         .. SparqlFilesValid(),
         .. EndpointPathsDoNotCollideWithWebRoutes(),
@@ -77,21 +76,6 @@ internal static class Validator
 
         return Shapes().Validate(dataGraph).Results
             .Select(result => new Diagnostic(ManifestName, $"Manifest does not conform to shapes: {result.FocusNode}: {result.Message?.Value ?? result.SourceConstraintComponent.ToString()}"));
-    }
-
-    private static IEnumerable<Diagnostic> SparqlIsRelativeUri()
-    {
-        if (ManifestGraph() is not { } graph)
-        {
-            return [];
-        }
-
-        return graph.GetTriplesWithPredicate(graph.CreateUriNode(new Uri("http://example.org/namedquery/sparql")))
-            .Select(triple => triple.Object)
-            .OfType<ILiteralNode>()
-            .Select(literal => literal.Value)
-            .Where(value => !Uri.TryCreate(value, UriKind.Relative, out _))
-            .Select(value => new Diagnostic(ManifestName, $"Endpoint SPARQL must be relative URI: {value}"));
     }
 
     private static IEnumerable<Diagnostic> SparqlFilesExist()
