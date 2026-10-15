@@ -16,5 +16,11 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
+      - uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('Directory.Packages.props', 'Directory.Build.props', '**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
       - name: Test
         run: dotnet test --solution NamedQuery.slnx
