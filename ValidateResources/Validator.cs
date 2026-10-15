@@ -12,12 +12,12 @@ using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+using TheODI.NamedQuery;
+using TheODI.NamedQuery.Controllers;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Parsing.Handlers;
 using VDS.RDF.Shacl;
-using Web;
-using Web.Controllers;
 using AppProgram = App::Program;
 
 namespace ValidateResources;

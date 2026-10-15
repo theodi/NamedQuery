@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Web\Web.csproj" />
+    <ProjectReference Include="..\TheODI.NamedQuery\TheODI.NamedQuery.csproj" />
   </ItemGroup>
 
   <Target Name="ValidateEndpointDefinitions" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">

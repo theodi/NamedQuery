@@ -1,0 +1,45 @@
+@page
+@using Microsoft.Extensions.Options
+@using Swashbuckle.AspNetCore.SwaggerUI
+@using TheODI.NamedQuery
+@using TheODI.NamedQuery.Controllers
+@inject IOptions<SwaggerUIOptions> SwaggerUi
+@inject Resources Resources
+@{
+    ViewData["Title"] = "{home}";
+}
+<ul>
+    <li>
+        <span>{openapi}</span>
+        <ul>
+            <li>
+                <a href="@Url.Content($"~/{SwaggerUi.Value.RoutePrefix}")">{ui}</a>
+            </li>
+            <li>
+                <a asp-route="@nameof(OpenApiController.GetJson)">{json}</a>
+            </li>
+            <li>
+                <a asp-route="@nameof(OpenApiController.GetYaml)">{yaml}</a>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <span>{sparql}</span>
+        <ul>
+            <li>
+                <a asp-page="/sparql">{ui}</a>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <span>{endpoints}</span>
+        <ul>
+            @foreach (var endpoint in Resources.Manifest.Node.Endpoint)
+            {
+                <li>
+                    <a href="@endpoint.ExampleUrl">@endpoint.Name</a> (@endpoint.Description)
+                </li>
+            }
+        </ul>
+    </li>
+</ul>

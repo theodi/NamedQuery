@@ -1,0 +1,29 @@
+using VDS.RDF;
+
+namespace TheODI.NamedQuery.Model;
+
+internal static class Vocabulary
+{
+    private const string Base = "http://example.org/namedquery/";
+    private static readonly NodeFactory Factory = new();
+
+    internal static IUriNode Endpoint { get; } = Node("endpoint");
+
+    internal static IUriNode Path { get; } = Node("path");
+
+    internal static IUriNode Sparql { get; } = Node("sparql");
+
+    internal static IUriNode Frame { get; } = Node("frame");
+
+    internal static IUriNode Parameter { get; } = Node("parameter");
+
+    internal static IUriNode Name { get; } = Node("name");
+
+    internal static IUriNode Datatype { get; } = Node("datatype");
+
+    internal static IUriNode Description { get; } = Node("description");
+
+    internal static IUriNode Example { get; } = Node("example");
+
+    private static IUriNode Node(string name) => Factory.CreateUriNode(UriFactory.Create($"{Base}{name}"));
+}
