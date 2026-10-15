@@ -11,7 +11,7 @@ using VDS.RDF.Query;
 namespace TheODI.NamedQuery.Controllers;
 
 [AllowSynchronousIO]
-public class OpenApiController(Resources resources)
+internal class OpenApiController(Resources resources)
 {
     internal const string Route = "/openapi.json";
     internal const string Name = "";

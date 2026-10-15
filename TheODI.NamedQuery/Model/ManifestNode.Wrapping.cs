@@ -3,7 +3,7 @@ using VDS.RDF.Wrapping;
 
 namespace TheODI.NamedQuery.Model;
 
-public partial class ManifestNode : GraphWrapperNode
+internal partial class ManifestNode : GraphWrapperNode
 {
     protected ManifestNode(INode node, IGraph graph) : base(node, graph) { }
 

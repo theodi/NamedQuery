@@ -2,4 +2,5 @@
 - Take manifest in any format, not just Turtle.
 - Validate at build that parametrized sparql query is still valid sparql after parameter substitution based on example.
 - Validate at runtime that param value is OK for param dt.
+- Eliminate `InternalsVisibleTo` (Test, ValidateResources) from TheODI.NamedQuery.
 - Stop publishing test image.

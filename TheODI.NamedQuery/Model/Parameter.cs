@@ -5,7 +5,7 @@ using VDS.RDF.Query.Expressions;
 
 namespace TheODI.NamedQuery.Model;
 
-public partial class Parameter
+internal partial class Parameter
 {
     public Uri Datatype => DatatypeInternal ?? new Uri(XmlSpecsHelper.XmlSchemaDataTypeString);
 

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace TheODI.NamedQuery.Model;
 
-public partial class Endpoint
+internal partial class Endpoint
 {
     private static readonly Uri FakeBase = new("http://resources/");
 

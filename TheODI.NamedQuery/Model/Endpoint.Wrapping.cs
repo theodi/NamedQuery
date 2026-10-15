@@ -3,7 +3,7 @@ using VDS.RDF.Wrapping;
 
 namespace TheODI.NamedQuery.Model;
 
-public partial class Endpoint : GraphWrapperNode
+internal partial class Endpoint : GraphWrapperNode
 {
     protected Endpoint(INode node, IGraph graph) : base(node, graph) { }
 
