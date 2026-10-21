@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <IsPackable>true</IsPackable>
+    <Description>Serves SPARQL queries described in an RDF manifest as named HTTP endpoints for ASP.NET Core, with content negotiation, OpenAPI and MCP.</Description>
+    <PackageTags>sparql;rdf;linked-data;named-query;openapi;mcp;aspnetcore</PackageTags>
+    <EnablePackageValidation>true</EnablePackageValidation>
   </PropertyGroup>
 
   <ItemGroup>
