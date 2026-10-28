@@ -10,13 +10,10 @@
 
   <ItemGroup>
     <PackageReference Include="dotNetRdf.Core" />
+    <PackageReference Include="langsamu.dotNetRdf.Wrapping" />
     <PackageReference Include="Microsoft.OpenApi" />
     <PackageReference Include="ModelContextProtocol.AspNetCore" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\dotNetRDF.Wrapping\dotNetRDF.Wrapping.csproj" />
   </ItemGroup>
 
 </Project>

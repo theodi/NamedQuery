@@ -2,13 +2,11 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 COPY Directory.Build.props Directory.Packages.props .editorconfig /src/
 COPY App/App.csproj /src/App/
 COPY Web/Web.csproj /src/Web/
-COPY dotNetRDF.Wrapping/dotNetRDF.Wrapping.csproj /src/dotNetRDF.Wrapping/
 COPY ValidateResources/ValidateResources.csproj /src/ValidateResources/
 RUN dotnet restore /src/ValidateResources
 
 COPY App /src/App
 COPY Web /src/Web
-COPY dotNetRDF.Wrapping /src/dotNetRDF.Wrapping
 COPY ValidateResources /src/ValidateResources
 
 # Requires named build context when building (https://docs.docker.com/build/concepts/context/#named-contexts)
