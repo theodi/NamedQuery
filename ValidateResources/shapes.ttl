@@ -173,9 +173,18 @@ _:prefixes :declare [
 [
 	:targetNode [] ;
     :sparql [
-        :message "Manifest must have exactly one manifest node" ;
+        :message "Manifest must have at least one manifest node" ;
         :prefixes _:prefixes ;
-        :select "SELECT $this { FILTER (NOT EXISTS { ?manifest nq:endpoint ?endpoint } || EXISTS { ?manifest nq:endpoint ?endpoint . ?other nq:endpoint ?otherEndpoint . FILTER (?other != ?manifest) }) }" ;
+        :select "SELECT $this { FILTER NOT EXISTS { ?manifest nq:endpoint ?endpoint } }" ;
+    ] ;
+] .
+
+[
+	:targetNode [] ;
+    :sparql [
+        :message "Manifest must have at most one manifest node" ;
+        :prefixes _:prefixes ;
+        :select "SELECT DISTINCT $this { ?manifest nq:endpoint ?endpoint . ?other nq:endpoint ?otherEndpoint . FILTER (?other != ?manifest) }" ;
     ] ;
 ] .
 
