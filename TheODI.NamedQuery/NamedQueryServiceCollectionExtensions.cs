@@ -30,7 +30,9 @@ public static class NamedQueryServiceCollectionExtensions
             options.OutputFormatters.Insert(2, new SparqlFormatter());
             options.OutputFormatters.Insert(3, new OpenApiJsonFormatter());
             options.OutputFormatters.Insert(4, new OpenApiYamlFormatter());
-        }).AddApplicationPart(typeof(NamedQueryServiceCollectionExtensions).Assembly);
+        })
+            .AddApplicationPart(typeof(NamedQueryServiceCollectionExtensions).Assembly)
+            .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new InternalControllerFeatureProvider()));
         services.AddRazorPages();
         services.Configure<SwaggerUIOptions>(options => options.SwaggerEndpoint(OpenApiController.Route, OpenApiController.Name));
         services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));

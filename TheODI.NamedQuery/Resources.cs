@@ -8,7 +8,7 @@ using VDS.RDF.Query;
 
 namespace TheODI.NamedQuery;
 
-public class Resources(IOptions<NamedQueryOptions> options)
+internal class Resources(IOptions<NamedQueryOptions> options)
 {
     private const string ManifestName = "manifest.ttl";
 

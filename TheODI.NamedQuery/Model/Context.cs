@@ -1,6 +1,6 @@
 namespace TheODI.NamedQuery.Model;
 
-public class Context
+internal class Context
 {
     public Endpoint? Endpoint { get; set; }
 
