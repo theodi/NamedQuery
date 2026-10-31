@@ -1,0 +1,40 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../TheODI.NamedQuery",
+          "files": [
+            "TheODI.NamedQuery.csproj"
+          ]
+        }
+      ],
+      "dest": "api",
+      "properties": {
+        "NoWarn": "NU1902"
+      }
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "index.md",
+          "toc.yml",
+          "api/**.yml",
+          "api/index.md"
+        ]
+      }
+    ],
+    "template": [
+      "default",
+      "modern"
+    ],
+    "globalMetadata": {
+      "_appTitle": "TheODI.NamedQuery",
+      "_enableSearch": true
+    },
+    "output": "_site"
+  }
+}

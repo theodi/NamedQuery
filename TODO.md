@@ -4,3 +4,4 @@
 - Validate at runtime that param value is OK for param dt.
 - Eliminate `InternalsVisibleTo` (Test, ValidateResources) from TheODI.NamedQuery.
 - Stop publishing test image.
+- Remove the NU1902 suppression from `docs/docfx.json` once dotNetRDF depends on a patched AngleSharp (1.4.0 has GHSA-pgww-w46g-26qg).

@@ -15,6 +15,15 @@ app.UseNamedQuery();
 
 See the [package README](TheODI.NamedQuery/README.md) for setup, the manifest reference and the routes it maps.
 
+# Docs
+
+The package README and an API reference generated from the XML docs are built into a [DocFX](https://dotnet.github.io/docfx/) site in `docs/`. To build and serve it locally at http://localhost:8080:
+
+```shell
+dotnet tool restore
+dotnet docfx docs/docfx.json --serve
+```
+
 # Build
 
 ```shell

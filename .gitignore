@@ -2,3 +2,6 @@
 .vs/
 bin/
 obj/
+docs/_site/
+docs/api/*.yml
+docs/api/.manifest
