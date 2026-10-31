@@ -9,8 +9,32 @@ using DotNetRDF = VDS.RDF.Query;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
+/// <summary>Extension methods for adding named SPARQL queries to an application's services.</summary>
 public static class NamedQueryServiceCollectionExtensions
 {
+    /// <summary>Adds everything an application needs to serve named SPARQL queries, and tells it which SPARQL endpoint to query and where to find the endpoint definitions.</summary>
+    /// <param name="services">The application's services, usually <c>builder.Services</c>.</param>
+    /// <param name="configure">Sets up <see cref="NamedQueryOptions"/>, typically by setting <see cref="NamedQueryOptions.Definitions"/>. It runs after the options are read from the <c>NamedQuery</c> configuration section, so values set here win.</param>
+    /// <returns>The same services, for chaining.</returns>
+    /// <remarks>
+    /// <para>Call it once in <c>Program.cs</c>, on <c>builder.Services</c> before <c>builder.Build()</c>, then call <see cref="Microsoft.AspNetCore.Builder.NamedQueryWebApplicationExtensions.UseNamedQuery"/> on the built application.</para>
+    /// <para>The SPARQL endpoint usually comes from configuration (<c>appsettings.json</c>, environment variables or command-line arguments) as <c>NamedQuery:SparqlEndpoint</c>. If it or the definitions are missing, the application fails to start; see <see cref="NamedQueryOptions"/>.</para>
+    /// <para>It also registers MVC controllers, Razor Pages, CORS and the MCP server for you, so you don't need to call <c>AddControllers</c>, <c>AddRazorPages</c>, <c>AddCors</c> or <c>AddMcpServer</c> yourself. Its settings apply to the whole application: your own controllers get the same output formatters, <c>format</c> query string mappings, <c>RespectBrowserAcceptHeader</c> and <c>ReturnHttpNotAcceptable</c>, and the default CORS policy allows any origin, method and header.</para>
+    /// </remarks>
+    /// <example>
+    /// <para>A complete <c>Program.cs</c>, with the definitions embedded in the application (see <see cref="NamedQueryOptions.Definitions"/>) and the SPARQL endpoint in configuration:</para>
+    /// <code language="csharp">
+    /// using Microsoft.Extensions.FileProviders;
+    ///
+    /// var builder = WebApplication.CreateBuilder(args);
+    /// builder.Services.AddNamedQuery(options => options.Definitions = new ManifestEmbeddedFileProvider(typeof(Program).Assembly));
+    ///
+    /// var app = builder.Build();
+    /// app.UseNamedQuery();
+    ///
+    /// app.Run();
+    /// </code>
+    /// </example>
     public static IServiceCollection AddNamedQuery(this IServiceCollection services, Action<NamedQueryOptions> configure)
     {
         services.AddControllers(options =>
