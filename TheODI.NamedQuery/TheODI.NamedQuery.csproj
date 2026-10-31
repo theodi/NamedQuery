@@ -6,6 +6,7 @@
     <Version>0.0.0-dev</Version>
     <Description>Serves SPARQL queries described in an RDF manifest as named HTTP endpoints for ASP.NET Core, with content negotiation, OpenAPI and MCP.</Description>
     <PackageTags>sparql;rdf;linked-data;named-query;openapi;mcp;aspnetcore</PackageTags>
+    <PackageProjectUrl>https://github.com/theodi/NamedQuery</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <EnablePackageValidation>true</EnablePackageValidation>
     <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>

@@ -1,6 +1,6 @@
 # Library
 
-The functionality is published on NuGet as [TheODI.NamedQuery](https://www.nuget.org/packages/TheODI.NamedQuery), for serving your own endpoint definitions from any ASP.NET Core app.
+The functionality is published on NuGet as [TheODI.NamedQuery](https://www.nuget.org/packages/TheODI.NamedQuery), for serving your own endpoint definitions from any ASP.NET Core app. Its documentation, including an API reference, is at https://theodi.github.io/NamedQuery/.
 
 ```shell
 dotnet add package TheODI.NamedQuery --prerelease

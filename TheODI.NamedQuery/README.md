@@ -163,5 +163,6 @@ Response formats are negotiated from `Accept`, or chosen with `format=csv|jsonld
 
 ## Links
 
+- Documentation and API reference: https://theodi.github.io/NamedQuery/
 - Source, Docker image and issues: https://github.com/theodi/NamedQuery
 - Licence: MIT
