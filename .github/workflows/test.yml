@@ -24,3 +24,6 @@ jobs:
 
       - name: Test
         run: dotnet test --solution NamedQuery.slnx
+
+      - name: Pack
+        run: dotnet pack TheODI.NamedQuery --configuration Release
