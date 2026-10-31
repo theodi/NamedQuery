@@ -17,7 +17,7 @@ See the [package README](TheODI.NamedQuery/README.md) for setup, the manifest re
 
 # Docs
 
-The package README and an API reference generated from the XML docs are built into a [DocFX](https://dotnet.github.io/docfx/) site in `docs/`. To build and serve it locally at http://localhost:8080:
+The package README and an API reference generated from the XML docs are built into a [DocFX](https://dotnet.github.io/docfx/) site in `docs/`, published at https://theodi.github.io/NamedQuery/. To build and serve it locally at http://localhost:8080:
 
 ```shell
 dotnet tool restore
@@ -54,6 +54,8 @@ dotnet test --solution NamedQuery.slnx
 # Release
 
 Publishing a GitHub release whose tag is `v` followed by the version (e.g. `v0.1.0-alpha.1`) runs the [release workflow](.github/workflows/release.yml). It tests, packs the library with that version, pushes it to NuGet and attaches the packages to the release. Mark versions with a `-` suffix as pre-releases.
+
+A release also deploys the docs site to [GitHub Pages](https://theodi.github.io/NamedQuery/) with the [docs workflow](.github/workflows/docs.yml), which can also be run by hand from the Actions tab ("Docs").
 
 # MCP
 
