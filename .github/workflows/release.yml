@@ -60,7 +60,6 @@ jobs:
       matrix:
         library:
           - /theodi/namedquery
-          - /websites/theodi_github_io_namedquery
 
     steps:
       - name: Refresh
