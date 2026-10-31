@@ -1,3 +1,20 @@
+# Library
+
+The functionality is published on NuGet as [TheODI.NamedQuery](https://www.nuget.org/packages/TheODI.NamedQuery), for serving your own endpoint definitions from any ASP.NET Core app.
+
+```shell
+dotnet add package TheODI.NamedQuery --prerelease
+```
+
+```csharp
+builder.Services.AddNamedQuery(options => options.Definitions = new ManifestEmbeddedFileProvider(typeof(Program).Assembly));
+
+var app = builder.Build();
+app.UseNamedQuery();
+```
+
+See the [package README](TheODI.NamedQuery/README.md) for setup, the manifest reference and the routes it maps.
+
 # Build
 
 ```shell
@@ -24,6 +41,10 @@ Docker tests require a running Docker daemon.
 ```shell
 dotnet test --solution NamedQuery.slnx
 ```
+
+# Release
+
+Publishing a GitHub release whose tag is `v` followed by the version (e.g. `v0.1.0-alpha.1`) runs the [release workflow](.github/workflows/release.yml). It tests, packs the library with that version, pushes it to NuGet and attaches the packages to the release. Mark versions with a `-` suffix as pre-releases.
 
 # MCP
 
