@@ -55,7 +55,7 @@ dotnet test --solution NamedQuery.slnx
 
 Publishing a GitHub release whose tag is `v` followed by the version (e.g. `v0.1.0-alpha.1`) runs the [release workflow](.github/workflows/release.yml). It tests, packs the library with that version, pushes it to NuGet and attaches the packages to the release. Mark versions with a `-` suffix as pre-releases.
 
-A release also deploys the docs site to [GitHub Pages](https://theodi.github.io/NamedQuery/) with the [docs workflow](.github/workflows/docs.yml), which can also be run by hand from the Actions tab ("Docs").
+A release also deploys the docs site to [GitHub Pages](https://theodi.github.io/NamedQuery/) with the [docs workflow](.github/workflows/docs.yml), which can also be run by hand from the Actions tab ("Docs"). After that, it asks [Context7](https://context7.com) to refresh both its libraries for this package: the repository and the docs site.
 
 # MCP
 

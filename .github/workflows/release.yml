@@ -49,3 +49,26 @@ jobs:
       pages: write
       id-token: write
     uses: ./.github/workflows/docs.yml
+
+  context7:
+    needs: docs
+    runs-on: ubuntu-latest
+    environment: context7
+    permissions: {}
+    strategy:
+      fail-fast: false
+      matrix:
+        library:
+          - /theodi/namedquery
+          - /websites/theodi_github_io_namedquery
+
+    steps:
+      - name: Refresh
+        env:
+          CONTEXT7_API_KEY: ${{ secrets.CONTEXT7_API_KEY }}
+          LIBRARY: ${{ matrix.library }}
+        run: |
+          curl --fail-with-body -sS -X POST https://context7.com/api/v1/refresh \
+            -H "Authorization: Bearer $CONTEXT7_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"libraryName\": \"$LIBRARY\"}"
