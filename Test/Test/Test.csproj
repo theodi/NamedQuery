@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Web\Web.csproj" />
+    <ProjectReference Include="..\..\TheODI.NamedQuery\TheODI.NamedQuery.csproj" />
   </ItemGroup>
 
   <ItemGroup>

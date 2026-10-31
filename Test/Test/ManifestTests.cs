@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using Web;
-using Web.Model;
+using TheODI.NamedQuery;
+using TheODI.NamedQuery.Model;
 
 namespace Test;
 
