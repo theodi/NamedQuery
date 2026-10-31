@@ -30,6 +30,13 @@ public class OpenApiController(Resources resources)
     [Produces(OpenApiYamlFormatter.MediaType)]
     public OpenApiDocument GetYaml() => Get();
 
+    private static OpenApiResponse Response(string summary, string description, IEnumerable<string> mediaTypes) => new()
+    {
+        Summary = summary,
+        Description = description,
+        Content = mediaTypes.Distinct().ToDictionary(mediaType => mediaType, _ => (IOpenApiMediaType)new OpenApiMediaType()),
+    };
+
     private OpenApiDocument Get() => new()
     {
         Info = new()
@@ -132,12 +139,5 @@ public class OpenApiController(Resources resources)
             Type = parameter.JsonSchemaType,
         },
         Example = JsonValue.Create(parameter.Example),
-    };
-
-    private static OpenApiResponse Response(string summary, string description, IEnumerable<string> mediaTypes) => new()
-    {
-        Summary = summary,
-        Description = description,
-        Content = mediaTypes.Distinct().ToDictionary(mediaType => mediaType, _ => (IOpenApiMediaType)new OpenApiMediaType()),
     };
 }
