@@ -1,0 +1,19 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "url": "https://context7.com/theodi/namedquery",
+  "public_key": "pk_b81C0iaVglBqebRWSV5TT",
+  "projectTitle": "TheODI.NamedQuery",
+  "description": "Serves SPARQL queries described in an RDF manifest as named HTTP endpoints for ASP.NET Core, with content negotiation, OpenAPI and MCP.",
+  "folders": [
+    "TheODI.NamedQuery"
+  ],
+  "excludeFiles": [
+    "TODO.md"
+  ],
+  "rules": [
+    "Install with 'dotnet add package TheODI.NamedQuery --prerelease'; the package is pre-release (0.x) and requires .NET 10.",
+    "Supply the endpoint definitions (manifest.ttl and the query files it refers to) as an IFileProvider via options.Definitions in builder.Services.AddNamedQuery(...), e.g. ManifestEmbeddedFileProvider or PhysicalFileProvider, then call app.UseNamedQuery().",
+    "Endpoint paths must not collide with the routes the library owns: /, /sparql, /swagger, /openapi.json, /openapi.yaml and /mcp. Don't name a parameter 'format'; it is reserved.",
+    "Configure the SPARQL endpoint with NamedQuery:SparqlEndpoint (appsettings.json, environment variable NamedQuery__SparqlEndpoint, or --NamedQuery:SparqlEndpoint=...)."
+  ]
+}

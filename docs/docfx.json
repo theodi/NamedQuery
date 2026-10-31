@@ -27,6 +27,13 @@
         ]
       }
     ],
+    "resource": [
+      {
+        "files": [
+          "context7.json"
+        ]
+      }
+    ],
     "template": [
       "default",
       "modern"
