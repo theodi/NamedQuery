@@ -40,7 +40,8 @@
     ],
     "globalMetadata": {
       "_appTitle": "TheODI.NamedQuery",
-      "_enableSearch": true
+      "_enableSearch": true,
+      "_appFooter": "<script src='https://context7.com/widget.js' data-library='/theodi/namedquery'></script>"
     },
     "output": "_site"
   }
