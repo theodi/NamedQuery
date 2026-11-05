@@ -9,40 +9,27 @@
       <_NamedQueryValidate Condition="'$(DesignTimeBuild)' == 'true' Or '$(BuildingProject)' == 'false'">false</_NamedQueryValidate>
       <_NamedQueryIntermediate>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)'))</_NamedQueryIntermediate>
       <_NamedQuerySources>$(_NamedQueryIntermediate)NamedQueryValidator.sources</_NamedQuerySources>
-      <_NamedQueryInputs>$(_NamedQueryIntermediate)NamedQueryValidator.inputs</_NamedQueryInputs>
-      <_NamedQueryStamp>$(_NamedQueryIntermediate)NamedQueryValidator.stamp</_NamedQueryStamp>
     </PropertyGroup>
-
-    <ReadLinesFromFile File="$(_NamedQueryInputs)" Condition="'$(_NamedQueryValidate)' == 'true' And Exists('$(_NamedQueryInputs)')">
-      <Output TaskParameter="Lines" ItemName="_NamedQueryValidationInput" />
-    </ReadLinesFromFile>
-
-    <ItemGroup Condition="'$(_NamedQueryValidate)' == 'true'">
-      <_NamedQueryValidationInput Include="$(TargetPath);$(ProjectDepsFilePath);$(ProjectRuntimeConfigFilePath);$(MSBuildProjectDirectory)\appsettings*.json" />
-    </ItemGroup>
   </Target>
 
-  <Target Name="_NamedQueryValidateDefinitions" Condition="'$(_NamedQueryValidate)' == 'true'" Inputs="@(_NamedQueryValidationInput)" Outputs="$(_NamedQueryStamp)">
+  <Target Name="_NamedQueryValidateDefinitions" Condition="'$(_NamedQueryValidate)' == 'true'">
     <Warning Condition="'$(StartupHookSupport)' == 'false'" Code="NQ0003" Text="Named query definitions are not validated because StartupHookSupport is false." />
 
     <PropertyGroup Condition="'$(StartupHookSupport)' != 'false'">
       <_NamedQueryDotnet>$(DOTNET_HOST_PATH)</_NamedQueryDotnet>
       <_NamedQueryDotnet Condition="'$(_NamedQueryDotnet)' == ''">dotnet</_NamedQueryDotnet>
-      <_NamedQueryEnvironment>DOTNET_STARTUP_HOOKS=TheODI.NamedQuery;NAMEDQUERY_VALIDATION=1;NAMEDQUERY_VALIDATION_SOURCES=$(_NamedQuerySources);NAMEDQUERY_VALIDATION_INPUTS=$(_NamedQueryInputs)</_NamedQueryEnvironment>
+      <_NamedQueryEnvironment>DOTNET_STARTUP_HOOKS=TheODI.NamedQuery;NAMEDQUERY_VALIDATION=1;NAMEDQUERY_VALIDATION_SOURCES=$(_NamedQuerySources)</_NamedQueryEnvironment>
       <_NamedQueryEnvironment Condition="'$(NamedQueryValidationTimeout)' != ''">$(_NamedQueryEnvironment);NAMEDQUERY_VALIDATION_TIMEOUT=$(NamedQueryValidationTimeout)</_NamedQueryEnvironment>
       <_NamedQueryEnvironment Condition="'$(NamedQueryValidationEnvironment)' != ''">$(_NamedQueryEnvironment);ASPNETCORE_ENVIRONMENT=$(NamedQueryValidationEnvironment)</_NamedQueryEnvironment>
     </PropertyGroup>
 
     <WriteLinesToFile Condition="'$(StartupHookSupport)' != 'false'" File="$(_NamedQuerySources)" Lines="@(EmbeddedResource->'%(FullPath)')" Overwrite="true" WriteOnlyWhenDifferent="true" />
-    <Delete Condition="'$(StartupHookSupport)' != 'false'" Files="$(_NamedQueryInputs)" />
 
     <Exec Condition="'$(StartupHookSupport)' != 'false'" Command="&quot;$(_NamedQueryDotnet)&quot; &quot;$(TargetPath)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="$(_NamedQueryEnvironment)" IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="_NamedQueryValidatorExitCode" />
     </Exec>
 
     <Error Condition="'$(_NamedQueryValidatorExitCode)' != '' And '$(_NamedQueryValidatorExitCode)' != '0' And '$(_NamedQueryValidatorExitCode)' != '-1'" Code="NQ0001" Text="Named query validation of $(TargetPath) exited with code $(_NamedQueryValidatorExitCode)." />
-
-    <Touch Files="$(_NamedQueryStamp)" AlwaysCreate="true" Condition="'$(_NamedQueryValidatorExitCode)' == '0'" />
   </Target>
 
   <Target Name="_NamedQueryFileWrites" BeforeTargets="IncrementalClean">
@@ -51,18 +38,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <FileWrites Include="$(_NamedQueryIntermediateFiles).sources;$(_NamedQueryIntermediateFiles).inputs;$(_NamedQueryIntermediateFiles).stamp" />
+      <FileWrites Include="$(_NamedQueryIntermediateFiles).sources" />
     </ItemGroup>
-  </Target>
-
-  <Target Name="_NamedQueryUpToDateCheckInputs" BeforeTargets="CollectUpToDateCheckInputDesignTime">
-    <PropertyGroup>
-      <_NamedQueryInputs>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)'))NamedQueryValidator.inputs</_NamedQueryInputs>
-    </PropertyGroup>
-
-    <ReadLinesFromFile File="$(_NamedQueryInputs)" Condition="Exists('$(_NamedQueryInputs)')">
-      <Output TaskParameter="Lines" ItemName="UpToDateCheckInput" />
-    </ReadLinesFromFile>
   </Target>
 
 </Project>

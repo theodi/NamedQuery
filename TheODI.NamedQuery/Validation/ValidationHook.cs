@@ -12,7 +12,6 @@ internal static class ValidationHook
 {
     private const string Marker = "NAMEDQUERY_VALIDATION";
     private const string SourcesVariable = "NAMEDQUERY_VALIDATION_SOURCES";
-    private const string InputsVariable = "NAMEDQUERY_VALIDATION_INPUTS";
     private const string TimeoutVariable = "NAMEDQUERY_VALIDATION_TIMEOUT";
     private const string HostingListener = "Microsoft.Extensions.Hosting";
     private const string HostFailure = "NQ0002";
@@ -90,7 +89,6 @@ internal static class ValidationHook
             }
 
             var definitions = services.GetRequiredService<IOptions<NamedQueryOptions>>().Value.Definitions;
-            WriteInputs(definitions);
             var locator = new SourceLocator(Environment.GetEnvironmentVariable(SourcesVariable), AssemblyPath, definitions);
             foreach (var diagnostic in Validator.Validate(services))
             {
@@ -107,18 +105,6 @@ internal static class ValidationHook
             lifetime.StopApplication();
         }
     }
-
-    private static void WriteInputs(IFileProvider definitions)
-    {
-        if (Environment.GetEnvironmentVariable(InputsVariable) is { Length: > 0 } path)
-        {
-            File.WriteAllLines(path, PhysicalFiles(definitions, string.Empty).Distinct(StringComparer.OrdinalIgnoreCase));
-        }
-    }
-
-    private static IEnumerable<string> PhysicalFiles(IFileProvider provider, string directory) => provider.GetDirectoryContents(directory).SelectMany(file => file.IsDirectory
-        ? PhysicalFiles(provider, string.IsNullOrEmpty(directory) ? file.Name : $"{directory}/{file.Name}")
-        : string.IsNullOrEmpty(file.PhysicalPath) ? [] : [file.PhysicalPath]);
 
     private static void Exit(string message)
     {

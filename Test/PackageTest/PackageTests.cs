@@ -38,16 +38,6 @@ public sealed class PackageTests
         </Project>
         """;
 
-    private const string PhysicalProgram = """
-        using Microsoft.Extensions.FileProviders;
-
-        var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddNamedQuery(options => options.Definitions = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "Definitions")));
-        var app = builder.Build();
-        app.UseNamedQuery();
-        app.Run();
-        """;
-
     [TestMethod]
     public void EmbeddedDefinitionsWithRootFolderBuild()
     {
@@ -58,39 +48,8 @@ public sealed class PackageTests
         first.Validated.Should().BeTrue(first.Output);
         first.Output.Should().NotContain("MSB3073");
 
-        var second = consumer.Build();
-        second.ExitCode.Should().Be(0, second.Output);
-        second.Validated.Should().BeFalse(second.Output);
-        second.SkippedValidation.Should().BeTrue(second.Output);
-
         var published = consumer.Publish();
         published.ExitCode.Should().Be(0, published.Output);
-    }
-
-    [TestMethod]
-    public void PhysicalDefinitionsRerunWhenEdited()
-    {
-        var consumer = Consumer.Create(nameof(PhysicalDefinitionsRerunWhenEdited), WebProject, PhysicalProgram, new Dictionary<string, string>
-        {
-            [Path.Combine("Definitions", "manifest.ttl")] = Consumer.Manifest,
-            [Path.Combine("Definitions", "things.sparql")] = Consumer.Query
-        });
-
-        var first = consumer.Build();
-        first.ExitCode.Should().Be(0, first.Output);
-        first.Validated.Should().BeTrue(first.Output);
-
-        var second = consumer.Build();
-        second.SkippedValidation.Should().BeTrue(second.Output);
-
-        var manifest = Path.Combine(consumer.Directory, "Definitions", "manifest.ttl");
-        File.WriteAllText(manifest, "not turtle");
-
-        var third = consumer.Build();
-        third.ExitCode.Should().NotBe(0, third.Output);
-        third.Validated.Should().BeTrue(third.Output);
-        third.Output.Should().Contain($"{manifest}").And.Contain("error NQ");
-        third.Output.Should().NotContain("MSB3073");
     }
 
     [TestMethod]

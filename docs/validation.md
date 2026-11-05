@@ -31,7 +31,7 @@ If no `SparqlEndpoint` is configured, a placeholder one is used.
 
 ## Diagnostics
 
-Errors are MSBuild diagnostics (`path(line,col): error NQxxxx: message`). They show in `dotnet build` and in the Visual Studio Error List, and fail the build. Validation is incremental and skipped when its inputs are unchanged.
+Errors are MSBuild diagnostics (`path(line,col): error NQxxxx: message`). They show in `dotnet build` and in the Visual Studio Error List, and fail the build.
 
 | Code | Meaning |
 |---|---|

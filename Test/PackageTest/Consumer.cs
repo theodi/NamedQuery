@@ -87,7 +87,5 @@ internal sealed record Build((int ExitCode, string Output) Result)
 
     internal string Output => Result.Output;
 
-    internal bool Validated => Output.Contains("_NamedQueryValidateDefinitions:", StringComparison.Ordinal) && !SkippedValidation;
-
-    internal bool SkippedValidation => Output.Contains("Skipping target \"_NamedQueryValidateDefinitions\"", StringComparison.Ordinal);
+    internal bool Validated => Output.Contains("_NamedQueryValidateDefinitions:", StringComparison.Ordinal);
 }
