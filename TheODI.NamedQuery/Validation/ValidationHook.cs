@@ -12,7 +12,6 @@ internal static class ValidationHook
 {
     private const string Marker = "NAMEDQUERY_VALIDATION";
     private const string SourcesVariable = "NAMEDQUERY_VALIDATION_SOURCES";
-    private const string TimeoutVariable = "NAMEDQUERY_VALIDATION_TIMEOUT";
     private const string HostingListener = "Microsoft.Extensions.Hosting";
     private const string HostFailure = "NQ0002";
     private static readonly Uri PlaceholderSparqlEndpoint = new("http://localhost/sparql");
@@ -30,9 +29,7 @@ internal static class ValidationHook
 
         Environment.SetEnvironmentVariable("DOTNET_STARTUP_HOOKS", null);
 
-        var timeout = int.TryParse(Environment.GetEnvironmentVariable(TimeoutVariable), out var seconds) && seconds > 0
-            ? TimeSpan.FromSeconds(seconds)
-            : TimeSpan.FromSeconds(60);
+        var timeout = TimeSpan.FromSeconds(60);
 
         AppDomain.CurrentDomain.UnhandledException += (_, e) => Exit($"The application failed: {Message(e.ExceptionObject as Exception)}");
         AppDomain.CurrentDomain.ProcessExit += (_, _) => Fail("The application exited before the host started.");

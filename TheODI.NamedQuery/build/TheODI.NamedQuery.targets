@@ -1,26 +1,20 @@
 <Project>
 
-  <Target Name="ValidateNamedQueryDefinitions" AfterTargets="Build" DependsOnTargets="_NamedQueryResolveValidation;_NamedQueryValidateDefinitions" />
+  <PropertyGroup>
+    <_NamedQueryValidate Condition="('$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe') And '$(IsTestProject)' != 'true' And '$(DesignTimeBuild)' != 'true'">true</_NamedQueryValidate>
+  </PropertyGroup>
 
-  <Target Name="_NamedQueryResolveValidation">
+  <Target Name="_NamedQueryValidateDefinitions" AfterTargets="Build" Condition="'$(_NamedQueryValidate)' == 'true'">
     <PropertyGroup>
-      <_NamedQueryValidate>$(NamedQueryValidateDefinitions)</_NamedQueryValidate>
-      <_NamedQueryValidate Condition="'$(_NamedQueryValidate)' == '' And ('$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe') And '$(IsTestProject)' != 'true'">true</_NamedQueryValidate>
-      <_NamedQueryValidate Condition="'$(DesignTimeBuild)' == 'true' Or '$(BuildingProject)' == 'false'">false</_NamedQueryValidate>
-      <_NamedQueryIntermediate>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)'))</_NamedQueryIntermediate>
-      <_NamedQuerySources>$(_NamedQueryIntermediate)NamedQueryValidator.sources</_NamedQuerySources>
+      <_NamedQuerySources>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)'))NamedQueryValidator.sources</_NamedQuerySources>
     </PropertyGroup>
-  </Target>
 
-  <Target Name="_NamedQueryValidateDefinitions" Condition="'$(_NamedQueryValidate)' == 'true'">
     <Warning Condition="'$(StartupHookSupport)' == 'false'" Code="NQ0003" Text="Named query definitions are not validated because StartupHookSupport is false." />
 
     <PropertyGroup Condition="'$(StartupHookSupport)' != 'false'">
       <_NamedQueryDotnet>$(DOTNET_HOST_PATH)</_NamedQueryDotnet>
       <_NamedQueryDotnet Condition="'$(_NamedQueryDotnet)' == ''">dotnet</_NamedQueryDotnet>
       <_NamedQueryEnvironment>DOTNET_STARTUP_HOOKS=TheODI.NamedQuery;NAMEDQUERY_VALIDATION=1;NAMEDQUERY_VALIDATION_SOURCES=$(_NamedQuerySources)</_NamedQueryEnvironment>
-      <_NamedQueryEnvironment Condition="'$(NamedQueryValidationTimeout)' != ''">$(_NamedQueryEnvironment);NAMEDQUERY_VALIDATION_TIMEOUT=$(NamedQueryValidationTimeout)</_NamedQueryEnvironment>
-      <_NamedQueryEnvironment Condition="'$(NamedQueryValidationEnvironment)' != ''">$(_NamedQueryEnvironment);ASPNETCORE_ENVIRONMENT=$(NamedQueryValidationEnvironment)</_NamedQueryEnvironment>
     </PropertyGroup>
 
     <WriteLinesToFile Condition="'$(StartupHookSupport)' != 'false'" File="$(_NamedQuerySources)" Lines="@(EmbeddedResource->'%(FullPath)')" Overwrite="true" WriteOnlyWhenDifferent="true" />

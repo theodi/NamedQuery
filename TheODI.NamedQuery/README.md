@@ -157,7 +157,7 @@ Response formats are negotiated from `Accept`, or chosen with `format=csv|jsonld
 
 ## Build-time validation
 
-Executable projects that reference the package have their endpoint definitions validated after every build; errors appear as `NQxxxx` build diagnostics. Set `NamedQueryValidateDefinitions` to `false` to opt out. Details: https://theodi.github.io/NamedQuery/validation.html
+Executable projects that reference the package have their endpoint definitions validated after every build; errors appear as `NQxxxx` build diagnostics. Details: https://theodi.github.io/NamedQuery/validation.html
 
 ## Known limitations (0.x)
 

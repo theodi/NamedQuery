@@ -6,13 +6,7 @@ Endpoint definitions are validated when the app is built, so mistakes fail the b
 
 None. Any executable project (not a test project or class library) that references `TheODI.NamedQuery` directly is validated after `Build`, through a `build` targets file in the package. Projects that only reference the package indirectly, through another project, are not validated. Design-time builds are skipped.
 
-Set `NamedQueryValidateDefinitions` to `true` or `false` in the `.csproj` to opt in or out:
-
-```xml
-<PropertyGroup>
-  <NamedQueryValidateDefinitions>false</NamedQueryValidateDefinitions>
-</PropertyGroup>
-```
+Validation cannot be turned off.
 
 ## How it works
 
@@ -49,11 +43,3 @@ Errors are MSBuild diagnostics (`path(line,col): error NQxxxx: message`). They s
 | NQ1008 | MCP tool name collision |
 | NQ1009 | Frame file missing |
 | NQ1010 | Frame is not valid JSON |
-
-## Properties
-
-| Property | Default | Meaning |
-|---|---|---|
-| `NamedQueryValidateDefinitions` | automatic | `true` or `false` to force validation on or off |
-| `NamedQueryValidationEnvironment` | | Sets `ASPNETCORE_ENVIRONMENT` for the validation run |
-| `NamedQueryValidationTimeout` | `60` | Seconds to wait for the host before reporting NQ0002 |
