@@ -19,7 +19,7 @@ internal sealed class Startup : IHostingStartup
         {
             if (Interlocked.Exchange(ref completed, 1) == 0)
             {
-                Console.Out.WriteLine(HostError("The application exited before the host started."));
+                HostError("The application exited before the host started.");
             }
         };
 
@@ -28,7 +28,7 @@ internal sealed class Startup : IHostingStartup
             .ConfigureServices(services => services.AddSingleton<IStartupFilter, ValidationFilter>());
     }
 
-    private static Diagnostic HostError(string message) => new(DiagnosticCodes.HostFailure, AssemblyPath, message);
+    private static void HostError(string message) => Console.Out.WriteLine(new Diagnostic(DiagnosticCodes.HostFailure, AssemblyPath, message));
 
     private sealed class ValidationFilter : IStartupFilter
     {
@@ -55,7 +55,7 @@ internal sealed class Startup : IHostingStartup
             }
             catch (Exception e)
             {
-                Console.Out.WriteLine(HostError($"Validation failed: {e.Message.ReplaceLineEndings(" ")}"));
+                HostError($"Validation failed: {e.Message.ReplaceLineEndings(" ")}");
             }
 
             Console.Out.Flush();
