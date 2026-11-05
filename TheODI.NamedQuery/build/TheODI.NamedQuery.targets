@@ -7,12 +7,12 @@
 <Project>
 
   <!--
-    After a runnable app is built, run it once with the library's startup hook loaded.
+    After a project that references the package directly is built, run it once with the library's startup hook loaded.
     The hook starts the host with a no-op server, validates the configured definitions against all
     of the app's endpoints, prints any problems as MSBuild-format errors and stops the app.
-    Libraries are skipped.
+    The project must be runnable: a class library cannot be run, so referencing the package from one fails its build.
   -->
-  <Target Name="_NamedQueryValidateDefinitions" AfterTargets="Build" Condition="'$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe'">
+  <Target Name="_NamedQueryValidateDefinitions" AfterTargets="Build">
     <!--
       Exec turns the app's "path(line,col) : error NQxxxx : message" lines into build errors, which fail the build.
       The working directory matches dotnet run, so the app finds its appsettings.

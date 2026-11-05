@@ -157,7 +157,7 @@ Response formats are negotiated from `Accept`, or chosen with `format=csv|jsonld
 
 ## Build-time validation
 
-Executable projects that reference the package have their endpoint definitions validated after every build; errors appear as `NQxxxx` build diagnostics. Details: https://theodi.github.io/NamedQuery/validation.html
+Validation runs after `Build` in every project that references the package directly, by running the built project. Reference `TheODI.NamedQuery` only from the web app project, not from class libraries or test projects: those get it transitively, which does not trigger validation, whereas a direct reference makes the build fail because a library cannot be run. Errors appear as `NQxxxx` build diagnostics. Details: https://theodi.github.io/NamedQuery/validation.html
 
 ## Known limitations (0.x)
 

@@ -92,12 +92,12 @@ public sealed class PackageTests
     }
 
     [TestMethod]
-    public void ClassLibraryIsSkipped()
+    public void ClassLibraryFailsBuild()
     {
-        var build = Consumer.Create(nameof(ClassLibraryIsSkipped), Library, "public static class Nothing;").Build();
+        var build = Consumer.Create(nameof(ClassLibraryFailsBuild), Library, "public static class Nothing;").Build();
 
-        build.ExitCode.Should().Be(0, build.Output);
-        build.Validated.Should().BeFalse(build.Output);
+        build.ExitCode.Should().NotBe(0, build.Output);
+        build.Validated.Should().BeTrue(build.Output);
     }
 
     [TestMethod]
@@ -115,7 +115,7 @@ public sealed class PackageTests
             </Project>
             """, "throw new InvalidOperationException(\"boom\");", new Dictionary<string, string>
         {
-            [Path.Combine("Library", "Library.csproj")] = Library.Replace("{0}", PackageFeed.Version),
+            [Path.Combine("Library", "Library.csproj")] = Library.Replace("{0}", PackageFeed.Version).Replace("Version=\"" + PackageFeed.Version + "\"", "Version=\"" + PackageFeed.Version + "\" ExcludeAssets=\"build\""),
             [Path.Combine("Library", "Nothing.cs")] = "public static class Nothing;"
         });
 
@@ -126,9 +126,9 @@ public sealed class PackageTests
     }
 
     [TestMethod]
-    public void TestProjectIsValidated()
+    public void TestProjectFailsBuild()
     {
-        var build = Consumer.Create(nameof(TestProjectIsValidated), TestProject, "throw new System.InvalidOperationException(\"boom\");").Build();
+        var build = Consumer.Create(nameof(TestProjectFailsBuild), TestProject, "throw new System.InvalidOperationException(\"boom\");").Build();
 
         build.ExitCode.Should().NotBe(0, build.Output);
         build.Validated.Should().BeTrue(build.Output);
