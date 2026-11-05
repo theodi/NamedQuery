@@ -3,11 +3,11 @@ using Microsoft.Extensions.Logging;
 using System.Reflection;
 using TheODI.NamedQuery.Validation;
 
-[assembly: HostingStartup(typeof(ValidationStartup))]
+[assembly: HostingStartup(typeof(Startup))]
 
 namespace TheODI.NamedQuery.Validation;
 
-internal sealed class ValidationStartup : IHostingStartup
+internal sealed class Startup : IHostingStartup
 {
     private static int completed;
 
