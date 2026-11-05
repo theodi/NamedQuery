@@ -18,9 +18,6 @@
   -->
   <Target Name="_NamedQueryValidateDefinitions" AfterTargets="Build" Condition="'$(_NamedQueryValidate)' == 'true'">
     <PropertyGroup>
-      <!-- Use the dotnet host running this build, falling back to the one on PATH. -->
-      <_NamedQueryDotnet>$(DOTNET_HOST_PATH)</_NamedQueryDotnet>
-      <_NamedQueryDotnet Condition="'$(_NamedQueryDotnet)' == ''">dotnet</_NamedQueryDotnet>
       <!-- The hook is loaded by simple assembly name, so the app's own copy of the library is used. NAMEDQUERY_VALIDATION activates it and lets apps skip side effects. -->
       <_NamedQueryEnvironment>DOTNET_STARTUP_HOOKS=TheODI.NamedQuery;NAMEDQUERY_VALIDATION=1</_NamedQueryEnvironment>
     </PropertyGroup>
@@ -29,7 +26,7 @@
       Exec turns the app's "path(line,col) : error NQxxxx : message" lines into build errors, which fail the build.
       The working directory matches dotnet run, so the app finds its appsettings.
     -->
-    <Exec Command="&quot;$(_NamedQueryDotnet)&quot; &quot;$(TargetPath)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="$(_NamedQueryEnvironment)" />
+    <Exec Command="dotnet &quot;$(TargetPath)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="$(_NamedQueryEnvironment)" />
   </Target>
 
 </Project>
