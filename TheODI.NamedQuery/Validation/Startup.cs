@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Reflection;
 using TheODI.NamedQuery.Validation;
 
 [assembly: HostingStartup(typeof(Startup))]
@@ -10,8 +9,6 @@ namespace TheODI.NamedQuery.Validation;
 internal sealed class Startup : IHostingStartup
 {
     private static int completed;
-
-    private static string AssemblyPath => Assembly.GetEntryAssembly()?.Location ?? string.Empty;
 
     void IHostingStartup.Configure(IWebHostBuilder builder)
     {
@@ -28,7 +25,7 @@ internal sealed class Startup : IHostingStartup
             .ConfigureServices(services => services.AddSingleton<IStartupFilter, ValidationFilter>());
     }
 
-    private static void HostError(string message) => Console.Out.WriteLine(new Diagnostic(DiagnosticCodes.HostFailure, AssemblyPath, message));
+    private static void HostError(string message) => Console.Out.WriteLine(new Diagnostic(DiagnosticCodes.HostFailure, string.Empty, message));
 
     private sealed class ValidationFilter : IStartupFilter
     {
