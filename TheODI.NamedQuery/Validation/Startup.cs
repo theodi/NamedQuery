@@ -21,7 +21,7 @@ internal sealed class Startup : IHostingStartup
         };
 
         builder
-            .ConfigureLogging(logging => logging.ClearProviders())
+            .ConfigureLogging(logging => logging.ClearProviders()) // MSBuild's Exec parses this process's stdout for errors, so the app's own logs must not go there: a log line that looks like a compiler error would fail the build, and the rest would clutter the build log.
             .ConfigureServices(services => services.AddSingleton<IStartupFilter, ValidationFilter>());
     }
 
