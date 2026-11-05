@@ -1,5 +1,5 @@
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Text.RegularExpressions;
 
 namespace TheODI.NamedQuery.Model;
 
