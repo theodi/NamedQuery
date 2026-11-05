@@ -126,12 +126,13 @@ public sealed class PackageTests
     }
 
     [TestMethod]
-    public void TestProjectIsSkipped()
+    public void TestProjectIsValidated()
     {
-        var build = Consumer.Create(nameof(TestProjectIsSkipped), TestProject, "throw new System.InvalidOperationException(\"boom\");").Build();
+        var build = Consumer.Create(nameof(TestProjectIsValidated), TestProject, "throw new System.InvalidOperationException(\"boom\");").Build();
 
-        build.ExitCode.Should().Be(0, build.Output);
-        build.Validated.Should().BeFalse(build.Output);
+        build.ExitCode.Should().NotBe(0, build.Output);
+        build.Validated.Should().BeTrue(build.Output);
+        build.Output.Should().Contain("error NQ0002");
     }
 
     [TestMethod]

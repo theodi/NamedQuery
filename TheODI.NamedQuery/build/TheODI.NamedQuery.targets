@@ -6,9 +6,9 @@
 -->
 <Project>
 
-  <!-- Validate only runnable apps: skip libraries and test projects. -->
+  <!-- Validate only runnable apps: skip libraries. -->
   <PropertyGroup>
-    <_NamedQueryValidate Condition="('$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe') And '$(IsTestProject)' != 'true'">true</_NamedQueryValidate>
+    <_NamedQueryValidate Condition="('$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe')">true</_NamedQueryValidate>
   </PropertyGroup>
 
   <!--
