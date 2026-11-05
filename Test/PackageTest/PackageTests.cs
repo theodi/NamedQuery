@@ -74,6 +74,51 @@ public sealed class PackageTests
     }
 
     [TestMethod]
+    public void HostRazorPageCollides()
+    {
+        AssertCollision(Consumer.Embedded(
+            nameof(HostRazorPageCollides),
+            "app.MapRazorPages();",
+            serviceCode: "builder.Services.AddRazorPages();",
+            files: new Dictionary<string, string>
+            {
+                [Path.Combine("Pages", "Things.cshtml")] = "@page \"/things\"\n<p>host</p>\n"
+            }));
+    }
+
+    [TestMethod]
+    public void HostReverseProxyRouteCollides()
+    {
+        AssertCollision(Consumer.Embedded(
+            nameof(HostReverseProxyRouteCollides),
+            "app.MapReverseProxy();",
+            serviceCode: "builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection(\"ReverseProxy\"));",
+            packages: "<PackageReference Include=\"Yarp.ReverseProxy\" Version=\"2.3.0\" />\n",
+            files: new Dictionary<string, string>
+            {
+                ["appsettings.json"] = """
+                    {
+                      "ReverseProxy": {
+                        "Routes": {
+                          "things": {
+                            "ClusterId": "cluster",
+                            "Match": { "Path": "/things" }
+                          }
+                        },
+                        "Clusters": {
+                          "cluster": {
+                            "Destinations": {
+                              "destination": { "Address": "http://localhost:1/" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                    """
+            }));
+    }
+
+    [TestMethod]
     public void HostPostOnlyRouteDoesNotCollide()
     {
         var build = Consumer.Embedded(nameof(HostPostOnlyRouteDoesNotCollide), "app.MapPost(\"/things\", () => \"host\");").Build();

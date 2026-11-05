@@ -39,6 +39,7 @@ internal sealed class Consumer
 
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddNamedQuery(options => options.Definitions = new ManifestEmbeddedFileProvider(typeof(Program).Assembly, "Endpoints"));
+        {1}
         var app = builder.Build();
         app.UseNamedQuery();
         {0}
@@ -66,11 +67,11 @@ internal sealed class Consumer
         return new Consumer(directory);
     }
 
-    internal static Consumer Embedded(string name, string hostCode = "", string extraCode = "") => Create(
+    internal static Consumer Embedded(string name, string hostCode = "", string extraCode = "", string serviceCode = "", string packages = "", IDictionary<string, string>? files = null) => Create(
         name,
-        EmbeddedProject,
-        EmbeddedProgram.Replace("{0}", hostCode) + extraCode,
-        new Dictionary<string, string>
+        EmbeddedProject.Replace("</ItemGroup>", packages + "</ItemGroup>"),
+        EmbeddedProgram.Replace("{0}", hostCode).Replace("{1}", serviceCode) + extraCode,
+        new Dictionary<string, string>(files ?? new Dictionary<string, string>())
         {
             [Path.Combine("Endpoints", "manifest.ttl")] = Manifest,
             [Path.Combine("Endpoints", "things.sparql")] = Query
