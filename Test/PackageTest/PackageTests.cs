@@ -65,10 +65,6 @@ public sealed class PackageTests
 
         var published = consumer.Publish();
         published.ExitCode.Should().Be(0, published.Output);
-
-        System.IO.Directory.EnumerateFiles(consumer.Directory, "TheODI.NamedQuery.Validator*", SearchOption.AllDirectories)
-            .Where(path => !path.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal))
-            .Should().BeEmpty();
     }
 
     [TestMethod]

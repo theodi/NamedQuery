@@ -1,25 +1,16 @@
 using Microsoft.Extensions.FileProviders;
-using LibraryDiagnostic = TheODI.NamedQuery.Validation.Diagnostic;
 
-namespace TheODI.NamedQuery.Validator;
+namespace TheODI.NamedQuery.Validation;
 
-internal class SourceLocator(Arguments arguments, IFileProvider definitions)
+internal class SourceLocator(string? sourcesPath, string assemblyPath, IFileProvider definitions)
 {
-    private readonly IReadOnlyList<string> sources = arguments.Sources is { } path && File.Exists(path)
+    private readonly IReadOnlyList<string> sources = sourcesPath is { } path && File.Exists(path)
         ? File.ReadAllLines(path).Where(line => !string.IsNullOrWhiteSpace(line)).Select(line => Path.GetFullPath(line.Trim())).ToList()
         : [];
 
-    internal Diagnostic Locate(LibraryDiagnostic diagnostic) => (Find(diagnostic.Path) is { } origin
-        ? new Diagnostic(origin, diagnostic.Message)
-        : new Diagnostic(arguments.Assembly, string.IsNullOrEmpty(diagnostic.Path) ? diagnostic.Message : $"{diagnostic.Path}: {diagnostic.Message}"))
-    with
-    {
-        Code = diagnostic.Code,
-        Line = diagnostic.Line,
-        Column = diagnostic.Column,
-        EndLine = diagnostic.EndLine,
-        EndColumn = diagnostic.EndColumn
-    };
+    internal Diagnostic Locate(Diagnostic diagnostic) => Find(diagnostic.Path) is { } origin
+        ? diagnostic with { Path = origin }
+        : diagnostic with { Path = assemblyPath, Message = string.IsNullOrEmpty(diagnostic.Path) ? diagnostic.Message : $"{diagnostic.Path}: {diagnostic.Message}" };
 
     private static byte[] Bytes(IFileInfo file)
     {

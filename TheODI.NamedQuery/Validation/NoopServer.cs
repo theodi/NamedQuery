@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http.Features;
 
-namespace TheODI.NamedQuery.Validator;
+namespace TheODI.NamedQuery.Validation;
 
 internal sealed class NoopServer : IServer
 {

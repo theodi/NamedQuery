@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Hosting;
 
-namespace TheODI.NamedQuery.Validator;
+namespace TheODI.NamedQuery.Validation;
 
 internal sealed class NoopHostLifetime : IHostLifetime
 {

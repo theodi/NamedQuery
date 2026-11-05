@@ -27,15 +27,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TheODI.NamedQuery\TheODI.NamedQuery.csproj" />
-    <ProjectReference Include="..\TheODI.NamedQuery.Validator\TheODI.NamedQuery.Validator.csproj" ReferenceOutputAssembly="false" Private="false" OutputItemType="NamedQueryValidatorAssembly" />
   </ItemGroup>
 
   <Import Project="..\TheODI.NamedQuery\buildTransitive\TheODI.NamedQuery.targets" />
-
-  <Target Name="ResolveNamedQueryValidatorPath" AfterTargets="ResolveProjectReferences">
-    <PropertyGroup>
-      <NamedQueryValidatorPath>@(NamedQueryValidatorAssembly->'%(FullPath)')</NamedQueryValidatorPath>
-    </PropertyGroup>
-  </Target>
 
 </Project>

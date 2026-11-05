@@ -16,12 +16,12 @@ Set `NamedQueryValidateDefinitions` to `true` or `false` in the `.csproj` to opt
 
 ## How it works
 
-Like ASP.NET Core build-time OpenAPI generation (`dotnet-getdocument`), a bundled out-of-process validator loads the built app together with its own dependencies. It builds and starts the host with a no-op server, then reads the definitions the app configured and all of its endpoints: controllers, Razor Pages, minimal APIs, reverse proxies and the NamedQuery built-ins.
+After `Build`, the built app is run with a [startup hook](https://github.com/dotnet/runtime/blob/main/docs/design/features/host-startup-hook.md) from `TheODI.NamedQuery` itself. The hook builds and starts the host with a no-op server, then reads the definitions the app configured and all of its endpoints: controllers, Razor Pages, minimal APIs, reverse proxies and the NamedQuery built-ins. Validation is skipped with a warning (NQ0003) if `StartupHookSupport` is `false`.
 
-Your startup code and hosted services run. To skip side effects such as migrations or outbound calls during validation, check the entry assembly name:
+Your startup code and hosted services run. To skip side effects such as migrations or outbound calls during validation, check the `NAMEDQUERY_VALIDATION` environment variable:
 
 ```csharp
-if (Assembly.GetEntryAssembly()?.GetName().Name == "TheODI.NamedQuery.Validator")
+if (Environment.GetEnvironmentVariable("NAMEDQUERY_VALIDATION") == "1")
 {
     // validation run
 }
@@ -35,8 +35,9 @@ Errors are MSBuild diagnostics (`path(line,col): error NQxxxx: message`). They s
 
 | Code | Meaning |
 |---|---|
-| NQ0001 | The validator failed to launch |
+| NQ0001 | The validation run exited unexpectedly |
 | NQ0002 | The host failed to build or start, or timed out |
+| NQ0003 | Validation skipped because `StartupHookSupport` is `false` (warning) |
 | NQ1000 | Internal error |
 | NQ1001 | Manifest missing |
 | NQ1002 | Turtle syntax error |
@@ -56,4 +57,3 @@ Errors are MSBuild diagnostics (`path(line,col): error NQxxxx: message`). They s
 | `NamedQueryValidateDefinitions` | automatic | `true` or `false` to force validation on or off |
 | `NamedQueryValidationEnvironment` | | Sets `ASPNETCORE_ENVIRONMENT` for the validation run |
 | `NamedQueryValidationTimeout` | `60` | Seconds to wait for the host before reporting NQ0002 |
-| `NamedQueryValidatorPath` | bundled | Path to the validator; advanced |
