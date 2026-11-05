@@ -29,7 +29,13 @@ internal static class StartupHook
         var timeout = TimeSpan.FromSeconds(60);
 
         AppDomain.CurrentDomain.UnhandledException += (_, e) => Exit($"The application failed: {Message(e.ExceptionObject as Exception)}");
-        AppDomain.CurrentDomain.ProcessExit += (_, _) => Fail("The application exited before the host started.");
+        AppDomain.CurrentDomain.ProcessExit += (_, _) =>
+        {
+            if (Interlocked.Exchange(ref completed, 1) == 0)
+            {
+                Console.Out.WriteLine(HostError("The application exited before the host started."));
+            }
+        };
         timer = new Timer(_ => Exit($"Timed out after {timeout.TotalSeconds} seconds waiting for the host to start."), null, timeout, Timeout.InfiniteTimeSpan);
 
         DiagnosticListener.AllListeners.Subscribe(new Observer<DiagnosticListener>(listener =>
@@ -92,24 +98,18 @@ internal static class StartupHook
         }
         finally
         {
-            Console.Out.Flush();
             lifetime.StopApplication();
         }
     }
 
     private static void Exit(string message)
     {
-        Fail(message);
-        Environment.Exit(0);
-    }
-
-    private static void Fail(string message)
-    {
         if (Interlocked.Exchange(ref completed, 1) == 0)
         {
             Console.Out.WriteLine(HostError(message));
-            Console.Out.Flush();
         }
+
+        Environment.Exit(0);
     }
 
     private static string AssemblyPath => Assembly.GetEntryAssembly()?.Location ?? string.Empty;
