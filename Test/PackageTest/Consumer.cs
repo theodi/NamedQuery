@@ -76,9 +76,9 @@ internal sealed class Consumer
             [Path.Combine("Endpoints", "things.sparql")] = Query
         });
 
-    internal Build Build() => new(PackageFeed.Dotnet(Directory, true, "build", "-v:n"));
+    internal Build Build() => new(PackageFeed.Dotnet(Directory, "build", "-v:n"));
 
-    internal Build Publish() => new(PackageFeed.Dotnet(Directory, true, "publish", "-v:n", "-o", Path.Combine(Directory, "publish")));
+    internal Build Publish() => new(PackageFeed.Dotnet(Directory, "publish", "-v:n", "-o", Path.Combine(Directory, "publish")));
 }
 
 internal sealed record Build((int ExitCode, string Output) Result)

@@ -5,35 +5,26 @@ namespace PackageTest;
 [TestClass]
 public static class PackageFeed
 {
-    internal const string Version = "0.0.0-dev";
+    internal static string Version { get; } = $"0.0.0-test.{Guid.NewGuid():N}";
 
     internal static string Root { get; private set; } = null!;
 
     internal static string Feed => Path.Combine(Root, "feed");
 
-    internal static string Packages => Path.Combine(Root, "packages");
-
     [AssemblyInitialize]
     public static void Pack(TestContext context)
     {
         Root = Directory.CreateTempSubdirectory("NamedQueryPackageTest").FullName;
-        File.WriteAllText(Path.Combine(Root, "Directory.Build.props"), "<Project />");
-        File.WriteAllText(Path.Combine(Root, "Directory.Build.targets"), "<Project />");
-        File.WriteAllText(Path.Combine(Root, "Directory.Packages.props"), "<Project />");
         File.WriteAllText(Path.Combine(Root, "nuget.config"), $"""
             <configuration>
               <packageSources>
                 <clear />
                 <add key="feed" value="{Feed}" />
-                {Cache()}
                 <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
               </packageSources>
               <packageSourceMapping>
                 <packageSource key="feed">
                   <package pattern="TheODI.NamedQuery" />
-                </packageSource>
-                <packageSource key="cache">
-                  <package pattern="*" />
                 </packageSource>
                 <packageSource key="nuget.org">
                   <package pattern="*" />
@@ -42,26 +33,23 @@ public static class PackageFeed
             </configuration>
             """);
 
-        var result = Dotnet(Root, false, "pack", Path.Combine(RepositoryRoot(), "TheODI.NamedQuery"), "--output", Feed);
+        var result = Dotnet(Root, "pack", Path.Combine(RepositoryRoot(), "TheODI.NamedQuery"), "--output", Feed, $"-p:Version={Version}");
         result.ExitCode.Should().Be(0, result.Output);
     }
 
     [AssemblyCleanup]
     public static void Clean()
     {
-        try
-        {
-            Directory.Delete(Root, true);
-        }
-        catch (IOException)
-        {
-        }
-        catch (UnauthorizedAccessException)
-        {
-        }
+        var packages = Environment.GetEnvironmentVariable("NUGET_PACKAGES") is { Length: > 0 } configured
+            ? configured
+            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
+
+        Delete(Path.Combine(packages, "theodi.namedquery", Version.ToLowerInvariant()));
+
+        Delete(Root);
     }
 
-    internal static (int ExitCode, string Output) Dotnet(string workingDirectory, bool isolated, params string[] arguments)
+    internal static (int ExitCode, string Output) Dotnet(string workingDirectory, params string[] arguments)
     {
         var info = new ProcessStartInfo("dotnet")
         {
@@ -80,11 +68,6 @@ public static class PackageFeed
             info.Environment.Remove(key);
         }
 
-        if (isolated)
-        {
-            info.Environment["NUGET_PACKAGES"] = Packages;
-        }
-
         info.Environment["DOTNET_CLI_TELEMETRY_OPTOUT"] = "1";
         info.Environment["DOTNET_NOLOGO"] = "1";
 
@@ -96,13 +79,18 @@ public static class PackageFeed
         return (process.ExitCode, output + error.Result);
     }
 
-    private static string Cache()
+    private static void Delete(string path)
     {
-        var packages = Environment.GetEnvironmentVariable("NUGET_PACKAGES") is { Length: > 0 } configured
-            ? configured
-            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
-
-        return Directory.Exists(packages) ? $"<add key=\"cache\" value=\"{packages}\" />" : string.Empty;
+        try
+        {
+            Directory.Delete(path, true);
+        }
+        catch (IOException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
     }
 
     private static string RepositoryRoot()
