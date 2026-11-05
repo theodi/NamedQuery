@@ -2,6 +2,7 @@ namespace TheODI.NamedQuery.Validation;
 
 internal static class DiagnosticCodes
 {
+    internal const string HostFailure = "NQ0002";
     internal const string Internal = "NQ1000";
     internal const string ManifestMissing = "NQ1001";
     internal const string TurtleSyntax = "NQ1002";

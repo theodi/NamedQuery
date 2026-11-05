@@ -11,7 +11,6 @@ internal static class ValidationHook
 {
     private const string Marker = "NAMEDQUERY_VALIDATION";
     private const string HostingListener = "Microsoft.Extensions.Hosting";
-    private const string HostFailure = "NQ0002";
     private static readonly Uri PlaceholderSparqlEndpoint = new("http://localhost/sparql");
 
     private static int completed;
@@ -116,7 +115,7 @@ internal static class ValidationHook
 
     private static string AssemblyPath => Assembly.GetEntryAssembly()?.Location ?? string.Empty;
 
-    private static Diagnostic HostError(string message) => new(HostFailure, AssemblyPath, message);
+    private static Diagnostic HostError(string message) => new(DiagnosticCodes.HostFailure, AssemblyPath, message);
 
     private static string Message(Exception? e) => e switch
     {
