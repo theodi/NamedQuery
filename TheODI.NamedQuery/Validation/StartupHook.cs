@@ -15,7 +15,6 @@ internal static class StartupHook
 
     private static int completed;
     private static int hostBuilt;
-    private static Timer? timer;
 
     public static void Initialize()
     {
@@ -26,8 +25,6 @@ internal static class StartupHook
 
         Environment.SetEnvironmentVariable("DOTNET_STARTUP_HOOKS", null);
 
-        var timeout = TimeSpan.FromSeconds(60);
-
         AppDomain.CurrentDomain.UnhandledException += (_, e) => Exit($"The application failed: {Message(e.ExceptionObject as Exception)}");
         AppDomain.CurrentDomain.ProcessExit += (_, _) =>
         {
@@ -36,7 +33,6 @@ internal static class StartupHook
                 Console.Out.WriteLine(HostError("The application exited before the host started."));
             }
         };
-        timer = new Timer(_ => Exit($"Timed out after {timeout.TotalSeconds} seconds waiting for the host to start."), null, timeout, Timeout.InfiniteTimeSpan);
 
         DiagnosticListener.AllListeners.Subscribe(new Observer<DiagnosticListener>(listener =>
         {

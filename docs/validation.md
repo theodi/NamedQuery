@@ -29,7 +29,7 @@ Errors are MSBuild diagnostics (`path(line,col): error NQxxxx: message`). They s
 
 | Code | Meaning |
 |---|---|
-| NQ0002 | The host failed to build or start, or timed out |
+| NQ0002 | The host failed to build or start |
 | NQ1000 | Internal error |
 | NQ1001 | Manifest missing |
 | NQ1002 | Turtle syntax error |
