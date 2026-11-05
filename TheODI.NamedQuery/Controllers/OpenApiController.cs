@@ -4,7 +4,6 @@ using System.Net.Mime;
 using System.Text.Json.Nodes;
 using TheODI.NamedQuery.Filters;
 using TheODI.NamedQuery.Formatters;
-using TheODI.NamedQuery.Model;
 using VDS.RDF;
 using VDS.RDF.Query;
 
