@@ -59,7 +59,6 @@ internal static class StartupHook
         .ConfigureLogging(logging => logging.ClearProviders())
         .ConfigureServices(services => services
             .AddSingleton<IServer, NoopServer>()
-            .AddSingleton<IHostLifetime, NoopHostLifetime>()
             .PostConfigure<NamedQueryOptions>(options =>
             {
                 if (options.SparqlEndpoint is not { IsAbsoluteUri: true })
