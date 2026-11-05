@@ -7,18 +7,19 @@
 <Project>
 
   <!--
-    After a project that references the package directly is built, run it once with the library's startup hook loaded.
-    The hook starts the host with a no-op server, validates the configured definitions against all
-    of the app's endpoints, prints any problems as MSBuild-format errors and stops the app.
+    After a project that references the package directly is built, run it once with the library's ASP.NET Core hosting startup loaded.
+    The hosting startup validates the configured definitions against all of the app's endpoints while the
+    request pipeline is built, before the server starts, prints any problems as MSBuild-format errors and exits the app.
     The project must be runnable: a class library cannot be run, so referencing the package from one fails its build.
   -->
   <Target Name="_NamedQueryValidateDefinitions" AfterTargets="Build">
     <!--
       Exec turns the app's "path(line,col) : error NQxxxx : message" lines into build errors, which fail the build.
       The working directory matches dotnet run, so the app finds its appsettings.
-      The hook is loaded by simple assembly name, so the app's own copy of the library is used.      NamedQuery__SparqlEndpoint supplies a placeholder SPARQL endpoint so apps that do not configure one still start, and overrides one configured in appsettings. A SparqlEndpoint set in code is not overridden.
+      The hosting startup is loaded by simple assembly name, so the app's own copy of the library is used.
+      NamedQuery__SparqlEndpoint supplies a placeholder SPARQL endpoint so apps that do not configure one still start, and overrides one configured in appsettings. A SparqlEndpoint set in code is not overridden.
     -->
-    <Exec Command="dotnet &quot;$(TargetPath)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="DOTNET_STARTUP_HOOKS=TheODI.NamedQuery;NamedQuery__SparqlEndpoint=http://localhost/sparql" />
+    <Exec Command="dotnet &quot;$(TargetPath)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="ASPNETCORE_HOSTINGSTARTUPASSEMBLIES=TheODI.NamedQuery;NamedQuery__SparqlEndpoint=http://localhost/sparql" />
   </Target>
 
 </Project>

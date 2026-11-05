@@ -10,9 +10,11 @@ Validation cannot be turned off.
 
 ## How it works
 
-After `Build`, the built app is run with a [startup hook](https://github.com/dotnet/runtime/blob/main/docs/design/features/host-startup-hook.md) from `TheODI.NamedQuery` itself. The hook builds and starts the host with a no-op server, then reads the definitions the app configured and all of its endpoints: controllers, Razor Pages, minimal APIs, reverse proxies and the NamedQuery built-ins.
+After `Build`, the built app is run with an ASP.NET Core [hosting startup](https://learn.microsoft.com/aspnet/core/fundamentals/host/platform-specific-configuration) from `TheODI.NamedQuery` itself. The hosting startup builds the host and, while the request pipeline is built and before the server starts, reads the definitions the app configured and all of its endpoints: controllers, Razor Pages, minimal APIs, reverse proxies and the NamedQuery built-ins.
 
-Your startup code and hosted services run. If they throw, the unhandled exception is printed and the build fails with the app's non-zero exit code.
+Hosting startups can be disabled by the app's `preventHostingStartup` setting, in which case no validation runs.
+
+Your startup code runs. No server starts and no port is bound; the process exits once validation is done. If they throw, the unhandled exception is printed and the build fails with the app's non-zero exit code.
 
 Validation sets the `NamedQuery__SparqlEndpoint` environment variable to a placeholder, so apps that configure the endpoint through configuration do not need one at build time. A `SparqlEndpoint` set in code is not overridden.
 
