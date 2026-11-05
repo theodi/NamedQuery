@@ -11,4 +11,6 @@ internal static class DiagnosticCodes
     internal const string RouteCollision = "NQ1006";
     internal const string FormatParameterCollision = "NQ1007";
     internal const string ToolNameCollision = "NQ1008";
+    internal const string FrameMissing = "NQ1009";
+    internal const string FrameSyntax = "NQ1010";
 }

@@ -73,7 +73,47 @@ public sealed class ValidatorTests
     {
         Validate(Fixture("Colliding")).Should().ContainSingle().Which.Should().Match<Diagnostic>(diagnostic =>
             diagnostic.Code == DiagnosticCodes.RouteCollision &&
-            diagnostic.Message.Contains("Endpoint path collides with built-in route: Index"));
+            diagnostic.Message.Contains("Endpoint path collides with route: Index"));
+    }
+
+    [TestMethod]
+    public void MissingFrameIsReportedWithManifestPosition()
+    {
+        using var directory = new TempDefinitions(Manifest("framed", "./f.jsonld"), "SELECT * WHERE { ?s ?p ?o }");
+
+        var diagnostic = Validate(directory.Provider).Should().ContainSingle().Subject;
+
+        diagnostic.Code.Should().Be(DiagnosticCodes.FrameMissing);
+        diagnostic.Path.Should().Be("manifest.ttl");
+        diagnostic.Line.Should().Be(9);
+        diagnostic.Column.Should().BeGreaterThan(0);
+    }
+
+    [TestMethod]
+    public void InvalidFrameIsReportedWithPosition()
+    {
+        using var directory = new TempDefinitions(Manifest("framed", "./f.jsonld"), "SELECT * WHERE { ?s ?p ?o }", "{ \"a\": ");
+
+        Validate(directory.Provider).Should().ContainSingle().Which.Should().Match<Diagnostic>(diagnostic =>
+            diagnostic.Code == DiagnosticCodes.FrameSyntax &&
+            diagnostic.Path == "f.jsonld" &&
+            diagnostic.Line != null);
+    }
+
+    [TestMethod]
+    public void ValidFrameHasNoDiagnostics()
+    {
+        using var directory = new TempDefinitions(Manifest("framed", "./f.jsonld"), "SELECT * WHERE { ?s ?p ?o }", "{ \"@type\": \"x\" }");
+
+        Validate(directory.Provider).Should().BeEmpty();
+    }
+
+    [TestMethod]
+    public void MissingSparqlIsReportedWithManifestPosition()
+    {
+        using var directory = new TempDefinitions(Manifest("missing"));
+
+        Validate(directory.Provider).Should().ContainSingle().Which.Line.Should().Be(8);
     }
 
     [TestMethod]
@@ -110,7 +150,7 @@ public sealed class ValidatorTests
 
     private static IFileProvider Fixture(string name) => new PhysicalFileProvider(Path.Combine(AppContext.BaseDirectory, "Fixtures", name));
 
-    private static string Manifest(string name) => $$"""
+    private static string Manifest(string name, string? frame = null) => $$"""
         PREFIX : <http://example.org/namedquery/>
         PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
@@ -119,6 +159,7 @@ public sealed class ValidatorTests
             :endpoint [
                 :path "{{name}}" ;
                 :sparql "./q.sparql"^^xsd:anyURI ;
+                {{(frame is null ? "" : $":frame \"{frame}\"^^xsd:anyURI ;")}}
                 :name "{{name}}" ;
                 :description "{{name}}" ;
             ] ;
@@ -151,12 +192,17 @@ public sealed class ValidatorTests
     {
         private readonly string path = Directory.CreateTempSubdirectory().FullName;
 
-        internal TempDefinitions(string manifest, string? sparql = null)
+        internal TempDefinitions(string manifest, string? sparql = null, string? frame = null)
         {
             File.WriteAllText(Path.Combine(path, "manifest.ttl"), manifest);
             if (sparql is not null)
             {
                 File.WriteAllText(Path.Combine(path, "q.sparql"), sparql);
+            }
+
+            if (frame is not null)
+            {
+                File.WriteAllText(Path.Combine(path, "f.jsonld"), frame);
             }
 
             Provider = new PhysicalFileProvider(path);
