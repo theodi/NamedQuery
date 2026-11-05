@@ -37,7 +37,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Test" />
-    <InternalsVisibleTo Include="ValidateResources" />
+    <InternalsVisibleTo Include="TheODI.NamedQuery.Validator" />
   </ItemGroup>
 
 </Project>

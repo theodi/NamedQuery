@@ -1,4 +1,4 @@
-namespace ValidateResources;
+namespace TheODI.NamedQuery.Validator;
 
 /// <seealso href="https://learn.microsoft.com/visualstudio/msbuild/msbuild-diagnostic-format-for-tasks"/>
 internal record Diagnostic(string Origin, string Text)

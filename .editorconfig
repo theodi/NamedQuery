@@ -39,3 +39,6 @@ dotnet_diagnostic.SA1028.severity = warning
 # Space after comma
 dotnet_diagnostic.SA1001.severity = warning
 dotnet_diagnostic.SA0001.severity = none
+
+[TheODI.NamedQuery.Validator/HostFactoryResolver.cs]
+generated_code = true
