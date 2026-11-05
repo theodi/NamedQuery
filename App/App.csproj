@@ -30,23 +30,12 @@
     <ProjectReference Include="..\TheODI.NamedQuery.Validator\TheODI.NamedQuery.Validator.csproj" ReferenceOutputAssembly="false" Private="false" OutputItemType="NamedQueryValidatorAssembly" />
   </ItemGroup>
 
-  <Target Name="ValidateEndpointDefinitions" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
-    <!-- After building, runs TheODI.NamedQuery.Validator inside this app's runtime and dependencies. It starts this app's host without a server and validates the endpoint definitions against it. Failures are written in MSBuild canonical error format, which fails the build, the publish and the Docker build. -->
+  <Import Project="..\TheODI.NamedQuery\buildTransitive\TheODI.NamedQuery.targets" />
+
+  <Target Name="ResolveNamedQueryValidatorPath" AfterTargets="ResolveProjectReferences">
     <PropertyGroup>
-      <_NamedQueryDotnet>$(DOTNET_HOST_PATH)</_NamedQueryDotnet>
-      <_NamedQueryDotnet Condition="'$(_NamedQueryDotnet)' == '' And '$(OS)' == 'Windows_NT'">$(NetCoreRoot)dotnet.exe</_NamedQueryDotnet>
-      <_NamedQueryDotnet Condition="'$(_NamedQueryDotnet)' == ''">$(NetCoreRoot)dotnet</_NamedQueryDotnet>
-      <_NamedQuerySources>$(MSBuildProjectDirectory)\$(IntermediateOutputPath)NamedQueryValidator.sources</_NamedQuerySources>
+      <NamedQueryValidatorPath>@(NamedQueryValidatorAssembly->'%(FullPath)')</NamedQueryValidatorPath>
     </PropertyGroup>
-    <ItemGroup>
-      <_NamedQueryProbingPath Include="$(NuGetPackageFolders)" />
-      <_NamedQueryProbingArgument Include="--additionalprobingpath &quot;$([System.String]::Copy('%(_NamedQueryProbingPath.Identity)').TrimEnd('\/'))&quot;" />
-    </ItemGroup>
-    <WriteLinesToFile File="$(_NamedQuerySources)" Lines="@(EmbeddedResource->'%(FullPath)')" Overwrite="true" WriteOnlyWhenDifferent="true" />
-    <Exec Command="&quot;$(_NamedQueryDotnet)&quot; exec --depsfile &quot;$(ProjectDepsFilePath)&quot; --runtimeconfig &quot;$(ProjectRuntimeConfigFilePath)&quot; @(_NamedQueryProbingArgument, ' ') &quot;@(NamedQueryValidatorAssembly)&quot; --assembly &quot;$(TargetPath)&quot; --sources &quot;$(_NamedQuerySources)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" IgnoreExitCode="true">
-      <Output TaskParameter="ExitCode" PropertyName="_NamedQueryValidatorExitCode" />
-    </Exec>
-    <Error Condition="'$(_NamedQueryValidatorExitCode)' != '0' And '$(_NamedQueryValidatorExitCode)' != '-1'" Text="TheODI.NamedQuery.Validator exited with code $(_NamedQueryValidatorExitCode)." />
   </Target>
 
 </Project>

@@ -1,0 +1,77 @@
+<Project>
+
+  <Target Name="ValidateNamedQueryDefinitions" AfterTargets="Build" DependsOnTargets="_NamedQueryResolveValidation;_NamedQueryValidateDefinitions" />
+
+  <Target Name="_NamedQueryResolveValidation">
+    <ItemGroup>
+      <_NamedQueryReference Include="@(PackageReference)" Condition="'%(Identity)' == 'TheODI.NamedQuery'" />
+      <_NamedQueryReference Include="@(ProjectReference)" Condition="'%(Filename)' == 'TheODI.NamedQuery'" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_NamedQueryValidate>$(NamedQueryValidateDefinitions)</_NamedQueryValidate>
+      <_NamedQueryValidate Condition="'$(_NamedQueryValidate)' == '' And ('$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe') And '$(IsTestProject)' != 'true' And '@(_NamedQueryReference)' != ''">true</_NamedQueryValidate>
+      <_NamedQueryValidate Condition="'$(DesignTimeBuild)' == 'true' Or '$(BuildingProject)' == 'false'">false</_NamedQueryValidate>
+      <NamedQueryValidatorPath Condition="'$(NamedQueryValidatorPath)' == ''">$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)..\tools\validator\TheODI.NamedQuery.Validator.dll'))</NamedQueryValidatorPath>
+      <_NamedQueryIntermediate>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)'))</_NamedQueryIntermediate>
+      <_NamedQuerySources>$(_NamedQueryIntermediate)NamedQueryValidator.sources</_NamedQuerySources>
+      <_NamedQueryInputs>$(_NamedQueryIntermediate)NamedQueryValidator.inputs</_NamedQueryInputs>
+      <_NamedQueryStamp>$(_NamedQueryIntermediate)NamedQueryValidator.stamp</_NamedQueryStamp>
+    </PropertyGroup>
+
+    <ReadLinesFromFile File="$(_NamedQueryInputs)" Condition="'$(_NamedQueryValidate)' == 'true' And Exists('$(_NamedQueryInputs)')">
+      <Output TaskParameter="Lines" ItemName="_NamedQueryValidationInput" />
+    </ReadLinesFromFile>
+
+    <ItemGroup Condition="'$(_NamedQueryValidate)' == 'true'">
+      <_NamedQueryValidationInput Include="$(TargetPath);$(ProjectDepsFilePath);$(ProjectRuntimeConfigFilePath);$(NamedQueryValidatorPath);$(MSBuildProjectDirectory)\appsettings*.json" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_NamedQueryValidateDefinitions" Condition="'$(_NamedQueryValidate)' == 'true'" Inputs="@(_NamedQueryValidationInput)" Outputs="$(_NamedQueryStamp)">
+    <PropertyGroup>
+      <_NamedQueryDotnet>$(DOTNET_HOST_PATH)</_NamedQueryDotnet>
+      <_NamedQueryDotnet Condition="'$(_NamedQueryDotnet)' == '' And '$(OS)' == 'Windows_NT'">$(NetCoreRoot)dotnet.exe</_NamedQueryDotnet>
+      <_NamedQueryDotnet Condition="'$(_NamedQueryDotnet)' == ''">$(NetCoreRoot)dotnet</_NamedQueryDotnet>
+      <_NamedQueryTimeoutArgument Condition="'$(NamedQueryValidationTimeout)' != ''">--timeout $(NamedQueryValidationTimeout)</_NamedQueryTimeoutArgument>
+      <_NamedQueryEnvironment Condition="'$(NamedQueryValidationEnvironment)' != ''">ASPNETCORE_ENVIRONMENT=$(NamedQueryValidationEnvironment)</_NamedQueryEnvironment>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_NamedQueryProbingPath Include="$(NuGetPackageFolders)" />
+      <_NamedQueryProbingArgument Include="--additionalprobingpath &quot;$([System.String]::Copy('%(_NamedQueryProbingPath.Identity)').TrimEnd('\/'))&quot;" />
+    </ItemGroup>
+
+    <WriteLinesToFile File="$(_NamedQuerySources)" Lines="@(EmbeddedResource->'%(FullPath)')" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    <Delete Files="$(_NamedQueryInputs)" />
+
+    <Exec Command="&quot;$(_NamedQueryDotnet)&quot; exec --depsfile &quot;$(ProjectDepsFilePath)&quot; --runtimeconfig &quot;$(ProjectRuntimeConfigFilePath)&quot; @(_NamedQueryProbingArgument, ' ') &quot;$(NamedQueryValidatorPath)&quot; --assembly &quot;$(TargetPath)&quot; --sources &quot;$(_NamedQuerySources)&quot; --inputs-out &quot;$(_NamedQueryInputs)&quot; $(_NamedQueryTimeoutArgument)" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="$(_NamedQueryEnvironment)" IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="_NamedQueryValidatorExitCode" />
+    </Exec>
+
+    <Error Condition="'$(_NamedQueryValidatorExitCode)' != '0' And '$(_NamedQueryValidatorExitCode)' != '-1'" Text="TheODI.NamedQuery.Validator exited with code $(_NamedQueryValidatorExitCode)." />
+
+    <Touch Files="$(_NamedQueryStamp)" AlwaysCreate="true" Condition="'$(_NamedQueryValidatorExitCode)' == '0'" />
+  </Target>
+
+  <Target Name="_NamedQueryFileWrites" BeforeTargets="IncrementalClean">
+    <PropertyGroup>
+      <_NamedQueryIntermediateFiles>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)'))NamedQueryValidator</_NamedQueryIntermediateFiles>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <FileWrites Include="$(_NamedQueryIntermediateFiles).sources;$(_NamedQueryIntermediateFiles).inputs;$(_NamedQueryIntermediateFiles).stamp" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_NamedQueryUpToDateCheckInputs" BeforeTargets="CollectUpToDateCheckInputDesignTime">
+    <PropertyGroup>
+      <_NamedQueryInputs>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)'))NamedQueryValidator.inputs</_NamedQueryInputs>
+    </PropertyGroup>
+
+    <ReadLinesFromFile File="$(_NamedQueryInputs)" Condition="Exists('$(_NamedQueryInputs)')">
+      <Output TaskParameter="Lines" ItemName="UpToDateCheckInput" />
+    </ReadLinesFromFile>
+  </Target>
+
+</Project>

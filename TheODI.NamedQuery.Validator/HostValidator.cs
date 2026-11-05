@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -69,6 +70,7 @@ internal static class HostValidator
             }
 
             var definitions = host.Services.GetRequiredService<IOptions<NamedQueryOptions>>().Value.Definitions;
+            WriteInputs(arguments, definitions);
             var locator = new SourceLocator(arguments, definitions);
             return LibraryValidator.Validate(host.Services).Select(locator.Locate).ToList();
         }
@@ -91,6 +93,18 @@ internal static class HostValidator
                     options.SparqlEndpoint = PlaceholderSparqlEndpoint;
                 }
             }));
+
+    private static void WriteInputs(Arguments arguments, IFileProvider definitions)
+    {
+        if (arguments.InputsOut is { } path)
+        {
+            File.WriteAllLines(path, PhysicalFiles(definitions, string.Empty).Distinct(StringComparer.OrdinalIgnoreCase));
+        }
+    }
+
+    private static IEnumerable<string> PhysicalFiles(IFileProvider provider, string directory) => provider.GetDirectoryContents(directory).SelectMany(file => file.IsDirectory
+        ? PhysicalFiles(provider, string.IsNullOrEmpty(directory) ? file.Name : $"{directory}/{file.Name}")
+        : string.IsNullOrEmpty(file.PhysicalPath) ? [] : [file.PhysicalPath]);
 
     private static Diagnostic HostError(Arguments arguments, string message) => new(arguments.Assembly, message) { Code = HostFailure };
 

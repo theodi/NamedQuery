@@ -1,11 +1,12 @@
 namespace TheODI.NamedQuery.Validator;
 
-internal record Arguments(string Assembly, string? Sources, TimeSpan Timeout)
+internal record Arguments(string Assembly, string? Sources, string? InputsOut, TimeSpan Timeout)
 {
     internal static Arguments? Parse(string[] args)
     {
         string? assembly = null;
         string? sources = null;
+        string? inputsOut = null;
         var timeout = TimeSpan.FromSeconds(60);
 
         for (var i = 0; i < args.Length; i++)
@@ -24,6 +25,9 @@ internal record Arguments(string Assembly, string? Sources, TimeSpan Timeout)
                 case "--sources":
                     sources = Path.GetFullPath(value);
                     break;
+                case "--inputs-out":
+                    inputsOut = Path.GetFullPath(value);
+                    break;
                 case "--timeout" when int.TryParse(value, out var seconds) && seconds > 0:
                     timeout = TimeSpan.FromSeconds(seconds);
                     break;
@@ -32,6 +36,6 @@ internal record Arguments(string Assembly, string? Sources, TimeSpan Timeout)
             }
         }
 
-        return assembly is null ? null : new Arguments(assembly, sources, timeout);
+        return assembly is null ? null : new Arguments(assembly, sources, inputsOut, timeout);
     }
 }

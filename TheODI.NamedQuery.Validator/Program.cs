@@ -4,7 +4,7 @@ using TheODI.NamedQuery.Validator;
 
 if (Arguments.Parse(args) is not { } arguments)
 {
-    Console.Error.WriteLine("Usage: TheODI.NamedQuery.Validator --assembly <path> [--sources <path>] [--timeout <seconds>]");
+    Console.Error.WriteLine("Usage: TheODI.NamedQuery.Validator --assembly <path> [--sources <path>] [--inputs-out <path>] [--timeout <seconds>]");
     return 2;
 }
 
