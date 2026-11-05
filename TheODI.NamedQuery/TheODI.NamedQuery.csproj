@@ -12,6 +12,7 @@
     <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <WarningsAsErrors>$(WarningsAsErrors);CS1591</WarningsAsErrors>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_PackNamedQueryValidator</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,6 +34,7 @@
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="/" />
+    <None Include="buildTransitive\**" Pack="true" PackagePath="buildTransitive\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,4 +42,21 @@
     <InternalsVisibleTo Include="TheODI.NamedQuery.Validator" />
   </ItemGroup>
 
+  <Target Name="_PackNamedQueryValidator">
+    <PropertyGroup>
+      <_NamedQueryValidatorProject>$(MSBuildThisFileDirectory)..\TheODI.NamedQuery.Validator\TheODI.NamedQuery.Validator.csproj</_NamedQueryValidatorProject>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(_NamedQueryValidatorProject)" Targets="Restore" Properties="_NamedQueryValidatorRestore=true" />
+    <MSBuild Projects="$(_NamedQueryValidatorProject)" Targets="Build">
+      <Output TaskParameter="TargetOutputs" ItemName="_NamedQueryValidatorOutput" />
+    </MSBuild>
+
+    <ItemGroup>
+      <_NamedQueryValidatorFile Include="@(_NamedQueryValidatorOutput->'%(RootDir)%(Directory)%(Filename).dll');@(_NamedQueryValidatorOutput->'%(RootDir)%(Directory)%(Filename).pdb');@(_NamedQueryValidatorOutput->'%(RootDir)%(Directory)THIRD-PARTY-NOTICES.txt')" />
+      <TfmSpecificPackageFile Include="@(_NamedQueryValidatorFile)" PackagePath="tools\validator\" />
+    </ItemGroup>
+  </Target>
+
 </Project>
+
