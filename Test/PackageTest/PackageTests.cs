@@ -143,6 +143,31 @@ public sealed class PackageTests
     }
 
     [TestMethod]
+    public void AppReferencingNamedQueryOnlyThroughProjectIsNotValidated()
+    {
+        var consumer = Consumer.Create(nameof(AppReferencingNamedQueryOnlyThroughProjectIsNotValidated), """
+            <Project Sdk="Microsoft.NET.Sdk.Web">
+              <PropertyGroup>
+                <TargetFramework>net10.0</TargetFramework>
+                <ImplicitUsings>enable</ImplicitUsings>
+              </PropertyGroup>
+              <ItemGroup>
+                <ProjectReference Include="Library\Library.csproj" />
+              </ItemGroup>
+            </Project>
+            """, "throw new InvalidOperationException(\"boom\");", new Dictionary<string, string>
+        {
+            [Path.Combine("Library", "Library.csproj")] = Library.Replace("{0}", PackageFeed.Version),
+            [Path.Combine("Library", "Nothing.cs")] = "public static class Nothing;"
+        });
+
+        var build = consumer.Build();
+
+        build.ExitCode.Should().Be(0, build.Output);
+        build.Validated.Should().BeFalse(build.Output);
+    }
+
+    [TestMethod]
     public void TestProjectIsSkipped()
     {
         var build = Consumer.Create(nameof(TestProjectIsSkipped), TestProject, "throw new System.InvalidOperationException(\"boom\");").Build();

@@ -29,6 +29,6 @@
     <ProjectReference Include="..\TheODI.NamedQuery\TheODI.NamedQuery.csproj" />
   </ItemGroup>
 
-  <Import Project="..\TheODI.NamedQuery\buildTransitive\TheODI.NamedQuery.targets" />
+  <Import Project="..\TheODI.NamedQuery\build\TheODI.NamedQuery.targets" />
 
 </Project>

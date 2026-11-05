@@ -3,14 +3,9 @@
   <Target Name="ValidateNamedQueryDefinitions" AfterTargets="Build" DependsOnTargets="_NamedQueryResolveValidation;_NamedQueryValidateDefinitions" />
 
   <Target Name="_NamedQueryResolveValidation">
-    <ItemGroup>
-      <_NamedQueryReference Include="@(PackageReference)" Condition="'%(Identity)' == 'TheODI.NamedQuery'" />
-      <_NamedQueryReference Include="@(ProjectReference)" Condition="'%(Filename)' == 'TheODI.NamedQuery'" />
-    </ItemGroup>
-
     <PropertyGroup>
       <_NamedQueryValidate>$(NamedQueryValidateDefinitions)</_NamedQueryValidate>
-      <_NamedQueryValidate Condition="'$(_NamedQueryValidate)' == '' And ('$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe') And '$(IsTestProject)' != 'true' And '@(_NamedQueryReference)' != ''">true</_NamedQueryValidate>
+      <_NamedQueryValidate Condition="'$(_NamedQueryValidate)' == '' And ('$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe') And '$(IsTestProject)' != 'true'">true</_NamedQueryValidate>
       <_NamedQueryValidate Condition="'$(DesignTimeBuild)' == 'true' Or '$(BuildingProject)' == 'false'">false</_NamedQueryValidate>
       <_NamedQueryIntermediate>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)'))</_NamedQueryIntermediate>
       <_NamedQuerySources>$(_NamedQueryIntermediate)NamedQueryValidator.sources</_NamedQuerySources>
