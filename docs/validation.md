@@ -4,7 +4,7 @@ Endpoint definitions are validated when the app is built, so mistakes fail the b
 
 ## Setup
 
-None. Any executable project (not a test project or class library) that references `TheODI.NamedQuery` directly is validated after `Build`, through a `build` targets file in the package. Projects that only reference the package indirectly, through another project, are not validated. Design-time builds are skipped.
+None. Any executable project (not a test project or class library) that references `TheODI.NamedQuery` directly is validated after `Build`, through a `build` targets file in the package. Projects that only reference the package indirectly, through another project, are not validated.
 
 Validation cannot be turned off.
 
