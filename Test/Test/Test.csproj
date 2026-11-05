@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\DockerTest\Fixtures\**\*.*" Exclude="..\DockerTest\Fixtures\Sparql\**" Link="Fixtures\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\TheODI.NamedQuery\TheODI.NamedQuery.csproj" />
   </ItemGroup>
 

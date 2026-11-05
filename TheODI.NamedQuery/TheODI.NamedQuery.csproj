@@ -20,10 +20,15 @@
 
   <ItemGroup>
     <PackageReference Include="dotNetRdf.Core" />
+    <PackageReference Include="dotNetRdf.Shacl" />
     <PackageReference Include="langsamu.dotNetRdf.Wrapping" />
     <PackageReference Include="Microsoft.OpenApi" />
     <PackageReference Include="ModelContextProtocol.AspNetCore" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Validation\shapes.ttl" LogicalName="TheODI.NamedQuery.Validation.shapes.ttl" />
   </ItemGroup>
 
   <ItemGroup>
