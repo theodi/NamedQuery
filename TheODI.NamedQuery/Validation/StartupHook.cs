@@ -80,7 +80,7 @@ internal static class StartupHook
         }
         catch (Exception e)
         {
-            Console.Out.WriteLine(HostError($"Validation failed: {Message(e)}"));
+            Console.Out.WriteLine(HostError($"Validation failed: {e.Message.ReplaceLineEndings(" ")}"));
         }
         finally
         {
@@ -91,13 +91,6 @@ internal static class StartupHook
     private static string AssemblyPath => Assembly.GetEntryAssembly()?.Location ?? string.Empty;
 
     private static Diagnostic HostError(string message) => new(DiagnosticCodes.HostFailure, AssemblyPath, message);
-
-    private static string Message(Exception? e) => e switch
-    {
-        null => "Unknown error.",
-        TargetInvocationException or AggregateException when e.InnerException is { } inner => Message(inner),
-        _ => e.Message.ReplaceLineEndings(" ")
-    };
 
     private sealed class Observer<T>(Action<T> next) : IObserver<T>
     {
