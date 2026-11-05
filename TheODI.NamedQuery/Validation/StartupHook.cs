@@ -3,7 +3,6 @@ using System.Reflection;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using TheODI.NamedQuery;
 using TheODI.NamedQuery.Validation;
 
@@ -11,7 +10,6 @@ internal static class StartupHook
 {
     private const string Marker = "NAMEDQUERY_VALIDATION";
     private const string HostingListener = "Microsoft.Extensions.Hosting";
-    private static readonly Uri PlaceholderSparqlEndpoint = new("http://localhost/sparql");
 
     private static int completed;
     private static int hostBuilt;
@@ -59,14 +57,7 @@ internal static class StartupHook
     private static void Configure(IHostBuilder builder) => builder
         .ConfigureLogging(logging => logging.ClearProviders())
         .ConfigureServices(services => services
-            .AddSingleton<IServer, NoopServer>()
-            .PostConfigure<NamedQueryOptions>(options =>
-            {
-                if (options.SparqlEndpoint is not { IsAbsoluteUri: true })
-                {
-                    options.SparqlEndpoint = PlaceholderSparqlEndpoint;
-                }
-            }));
+            .AddSingleton<IServer, NoopServer>());
 
     private static void Validate(IServiceProvider services, IHostApplicationLifetime lifetime)
     {

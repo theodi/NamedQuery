@@ -21,7 +21,7 @@ if (Environment.GetEnvironmentVariable("NAMEDQUERY_VALIDATION") == "1")
 }
 ```
 
-If no `SparqlEndpoint` is configured, a placeholder one is used.
+Validation sets the `NamedQuery__SparqlEndpoint` environment variable to a placeholder, so apps that configure the endpoint through configuration do not need one at build time. A `SparqlEndpoint` set in code is not overridden.
 
 ## Diagnostics
 
