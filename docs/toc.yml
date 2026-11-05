@@ -1,4 +1,6 @@
 - name: Home
   href: index.md
+- name: Build-time validation
+  href: validation.md
 - name: API reference
   href: api/
