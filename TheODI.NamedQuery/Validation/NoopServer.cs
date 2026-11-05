@@ -5,14 +5,13 @@ namespace TheODI.NamedQuery.Validation;
 
 internal sealed class NoopServer : IServer
 {
-    public IFeatureCollection Features { get; } = new FeatureCollection();
+    IFeatureCollection IServer.Features { get; } = new FeatureCollection();
 
-    public void Dispose()
+    void IDisposable.Dispose()
     {
     }
 
-    public Task StartAsync<TContext>(IHttpApplication<TContext> application, CancellationToken cancellationToken)
-        where TContext : notnull => Task.CompletedTask;
+    Task IServer.StartAsync<TContext>(IHttpApplication<TContext> application, CancellationToken cancellationToken) => Task.CompletedTask;
 
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+    Task IServer.StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }
