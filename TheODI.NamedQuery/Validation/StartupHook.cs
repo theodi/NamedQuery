@@ -8,7 +8,6 @@ using TheODI.NamedQuery.Validation;
 
 internal static class StartupHook
 {
-    private const string Marker = "NAMEDQUERY_VALIDATION";
     private const string HostingListener = "Microsoft.Extensions.Hosting";
 
     private static int completed;
@@ -18,11 +17,6 @@ internal static class StartupHook
 
     public static void Initialize()
     {
-        if (Environment.GetEnvironmentVariable(Marker) != "1")
-        {
-            return;
-        }
-
         Environment.SetEnvironmentVariable("DOTNET_STARTUP_HOOKS", null);
 
         AppDomain.CurrentDomain.ProcessExit += (_, _) =>
