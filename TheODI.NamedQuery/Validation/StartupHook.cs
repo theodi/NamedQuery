@@ -14,6 +14,8 @@ internal static class StartupHook
     private static int completed;
     private static int hostBuilt;
 
+    private static string AssemblyPath => Assembly.GetEntryAssembly()?.Location ?? string.Empty;
+
     public static void Initialize()
     {
         if (Environment.GetEnvironmentVariable(Marker) != "1")
@@ -87,8 +89,6 @@ internal static class StartupHook
             lifetime.StopApplication();
         }
     }
-
-    private static string AssemblyPath => Assembly.GetEntryAssembly()?.Location ?? string.Empty;
 
     private static Diagnostic HostError(string message) => new(DiagnosticCodes.HostFailure, AssemblyPath, message);
 
