@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Reflection;
 using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -11,7 +10,6 @@ namespace TheODI.NamedQuery.Validation;
 internal static class ValidationHook
 {
     private const string Marker = "NAMEDQUERY_VALIDATION";
-    private const string SourcesVariable = "NAMEDQUERY_VALIDATION_SOURCES";
     private const string HostingListener = "Microsoft.Extensions.Hosting";
     private const string HostFailure = "NQ0002";
     private static readonly Uri PlaceholderSparqlEndpoint = new("http://localhost/sparql");
@@ -85,11 +83,9 @@ internal static class ValidationHook
                 return;
             }
 
-            var definitions = services.GetRequiredService<IOptions<NamedQueryOptions>>().Value.Definitions;
-            var locator = new SourceLocator(Environment.GetEnvironmentVariable(SourcesVariable), AssemblyPath, definitions);
             foreach (var diagnostic in Validator.Validate(services))
             {
-                Console.Out.WriteLine(locator.Locate(diagnostic));
+                Console.Out.WriteLine(diagnostic);
             }
         }
         catch (Exception e)

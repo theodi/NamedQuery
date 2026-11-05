@@ -5,35 +5,19 @@
   </PropertyGroup>
 
   <Target Name="_NamedQueryValidateDefinitions" AfterTargets="Build" Condition="'$(_NamedQueryValidate)' == 'true'">
-    <PropertyGroup>
-      <_NamedQuerySources>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)'))NamedQueryValidator.sources</_NamedQuerySources>
-    </PropertyGroup>
-
     <Warning Condition="'$(StartupHookSupport)' == 'false'" Code="NQ0003" Text="Named query definitions are not validated because StartupHookSupport is false." />
 
     <PropertyGroup Condition="'$(StartupHookSupport)' != 'false'">
       <_NamedQueryDotnet>$(DOTNET_HOST_PATH)</_NamedQueryDotnet>
       <_NamedQueryDotnet Condition="'$(_NamedQueryDotnet)' == ''">dotnet</_NamedQueryDotnet>
-      <_NamedQueryEnvironment>DOTNET_STARTUP_HOOKS=TheODI.NamedQuery;NAMEDQUERY_VALIDATION=1;NAMEDQUERY_VALIDATION_SOURCES=$(_NamedQuerySources)</_NamedQueryEnvironment>
+      <_NamedQueryEnvironment>DOTNET_STARTUP_HOOKS=TheODI.NamedQuery;NAMEDQUERY_VALIDATION=1</_NamedQueryEnvironment>
     </PropertyGroup>
-
-    <WriteLinesToFile Condition="'$(StartupHookSupport)' != 'false'" File="$(_NamedQuerySources)" Lines="@(EmbeddedResource->'%(FullPath)')" Overwrite="true" WriteOnlyWhenDifferent="true" />
 
     <Exec Condition="'$(StartupHookSupport)' != 'false'" Command="&quot;$(_NamedQueryDotnet)&quot; &quot;$(TargetPath)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="$(_NamedQueryEnvironment)" IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="_NamedQueryValidatorExitCode" />
     </Exec>
 
     <Error Condition="'$(_NamedQueryValidatorExitCode)' != '' And '$(_NamedQueryValidatorExitCode)' != '0' And '$(_NamedQueryValidatorExitCode)' != '-1'" Code="NQ0001" Text="Named query validation of $(TargetPath) exited with code $(_NamedQueryValidatorExitCode)." />
-  </Target>
-
-  <Target Name="_NamedQueryFileWrites" BeforeTargets="IncrementalClean">
-    <PropertyGroup>
-      <_NamedQueryIntermediateFiles>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)'))NamedQueryValidator</_NamedQueryIntermediateFiles>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <FileWrites Include="$(_NamedQueryIntermediateFiles).sources" />
-    </ItemGroup>
   </Target>
 
 </Project>

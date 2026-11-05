@@ -25,7 +25,7 @@ If no `SparqlEndpoint` is configured, a placeholder one is used.
 
 ## Diagnostics
 
-Errors are MSBuild diagnostics (`path(line,col): error NQxxxx: message`). They show in `dotnet build` and in the Visual Studio Error List, and fail the build.
+Errors are MSBuild diagnostics (`path(line,col): error NQxxxx: message`). They show in `dotnet build` and in the Visual Studio Error List, and fail the build. Paths are relative to the definitions root, for example `manifest.ttl(7,15,7,23)`.
 
 | Code | Meaning |
 |---|---|
