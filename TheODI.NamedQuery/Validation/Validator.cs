@@ -32,6 +32,47 @@ internal class Validator(IServiceProvider services)
         }
     }
 
+    private static bool ReadsAsFormat(FormatFilter filter, string name)
+    {
+        var probe = Guid.NewGuid().ToString();
+        var http = new DefaultHttpContext();
+        http.Request.QueryString = QueryString.Create(name, probe);
+
+        return filter.GetFormat(new ActionContext(http, new RouteData(), new ActionDescriptor())) == probe;
+    }
+
+    private static ShapesGraph Shapes()
+    {
+        var shapesGraph = new ShapesGraph(new Graph());
+        using var shapesReader = new StreamReader(typeof(Validator).Assembly.GetManifestResourceStream(ShapesName)!);
+        new TurtleParser().Load(shapesGraph, shapesReader);
+        return shapesGraph;
+    }
+
+    private static (int Line, int Column) Position(string text, int index)
+    {
+        var line = 1;
+        var start = 0;
+        for (var i = 0; i < index; i++)
+        {
+            if (text[i] == '\n')
+            {
+                line++;
+                start = i + 1;
+            }
+        }
+
+        return (line, index - start + 1);
+    }
+
+    private static Diagnostic ParseError(string code, string path, string message, RdfParseException e) => new(code, path, message)
+    {
+        Line = e.HasPositionInformation ? e.StartLine : null,
+        Column = e.HasPositionInformation ? e.StartPosition : null,
+        EndLine = e.HasPositionInformation ? e.EndLine : null,
+        EndColumn = e.HasPositionInformation ? e.EndPosition : null
+    };
+
     private IEnumerable<Diagnostic> Validate() =>
     [
         .. ManifestExists(),
@@ -243,15 +284,6 @@ internal class Validator(IServiceProvider services)
         route.Metadata.GetMetadata<IHttpMethodMetadata>() is not { } methods
         || methods.HttpMethods.Any(method => HttpMethods.IsGet(method) || HttpMethods.IsHead(method));
 
-    private bool ReadsAsFormat(FormatFilter filter, string name)
-    {
-        var probe = Guid.NewGuid().ToString();
-        var http = new DefaultHttpContext();
-        http.Request.QueryString = QueryString.Create(name, probe);
-
-        return filter.GetFormat(new ActionContext(http, new RouteData(), new ActionDescriptor())) == probe;
-    }
-
     private Graph? ManifestGraph()
     {
         if (resources.Reader(ManifestName) is not { } reader)
@@ -275,14 +307,6 @@ internal class Validator(IServiceProvider services)
     }
 
     private Graph? ConformingManifestGraph() => ManifestGraph() is { } graph && Shapes().Validate(graph).Conforms ? graph : null;
-
-    private ShapesGraph Shapes()
-    {
-        var shapesGraph = new ShapesGraph(new Graph());
-        using var shapesReader = new StreamReader(typeof(Validator).Assembly.GetManifestResourceStream(ShapesName)!);
-        new TurtleParser().Load(shapesGraph, shapesReader);
-        return shapesGraph;
-    }
 
     private Diagnostic Located(string code, string path, string message, string? needle)
     {
@@ -308,28 +332,4 @@ internal class Validator(IServiceProvider services)
         var (endLine, endColumn) = Position(text, index + needle.Length);
         return diagnostic with { Line = line, Column = column, EndLine = endLine, EndColumn = endColumn };
     }
-
-    private (int Line, int Column) Position(string text, int index)
-    {
-        var line = 1;
-        var start = 0;
-        for (var i = 0; i < index; i++)
-        {
-            if (text[i] == '\n')
-            {
-                line++;
-                start = i + 1;
-            }
-        }
-
-        return (line, index - start + 1);
-    }
-
-    private Diagnostic ParseError(string code, string path, string message, RdfParseException e) => new(code, path, message)
-    {
-        Line = e.HasPositionInformation ? e.StartLine : null,
-        Column = e.HasPositionInformation ? e.StartPosition : null,
-        EndLine = e.HasPositionInformation ? e.EndLine : null,
-        EndColumn = e.HasPositionInformation ? e.EndPosition : null
-    };
 }
