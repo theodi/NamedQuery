@@ -6,27 +6,19 @@
 -->
 <Project>
 
-  <!-- Validate only runnable apps: skip libraries. -->
-  <PropertyGroup>
-    <_NamedQueryValidate Condition="('$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe')">true</_NamedQueryValidate>
-  </PropertyGroup>
-
   <!--
-    After the app is built, run it once with the library's startup hook loaded.
+    After a runnable app is built, run it once with the library's startup hook loaded.
     The hook starts the host with a no-op server, validates the configured definitions against all
     of the app's endpoints, prints any problems as MSBuild-format errors and stops the app.
+    Libraries are skipped.
   -->
-  <Target Name="_NamedQueryValidateDefinitions" AfterTargets="Build" Condition="'$(_NamedQueryValidate)' == 'true'">
-    <PropertyGroup>
-      <!-- The hook is loaded by simple assembly name, so the app's own copy of the library is used. NAMEDQUERY_VALIDATION activates it and lets apps skip side effects. -->
-      <_NamedQueryEnvironment>DOTNET_STARTUP_HOOKS=TheODI.NamedQuery;NAMEDQUERY_VALIDATION=1</_NamedQueryEnvironment>
-    </PropertyGroup>
-
+  <Target Name="_NamedQueryValidateDefinitions" AfterTargets="Build" Condition="'$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe'">
     <!--
       Exec turns the app's "path(line,col) : error NQxxxx : message" lines into build errors, which fail the build.
       The working directory matches dotnet run, so the app finds its appsettings.
+      The hook is loaded by simple assembly name, so the app's own copy of the library is used. NAMEDQUERY_VALIDATION activates it and lets apps skip side effects.
     -->
-    <Exec Command="dotnet &quot;$(TargetPath)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="$(_NamedQueryEnvironment)" />
+    <Exec Command="dotnet &quot;$(TargetPath)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="DOTNET_STARTUP_HOOKS=TheODI.NamedQuery;NAMEDQUERY_VALIDATION=1" />
   </Target>
 
 </Project>
