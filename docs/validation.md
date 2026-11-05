@@ -29,7 +29,6 @@ Errors are MSBuild diagnostics (`path(line,col): error NQxxxx: message`). They s
 
 | Code | Meaning |
 |---|---|
-| NQ0001 | The validation run exited unexpectedly |
 | NQ0002 | The host failed to build or start, or timed out |
 | NQ0003 | Validation skipped because `StartupHookSupport` is `false` (warning) |
 | NQ1000 | Internal error |

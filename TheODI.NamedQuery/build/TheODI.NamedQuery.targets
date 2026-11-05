@@ -30,15 +30,9 @@
 
     <!--
       Exec turns the app's "path(line,col) : error NQxxxx : message" lines into build errors, which fail the build.
-      The exit code is ignored so that a failed validation doesn't add a redundant MSB3073 error.
       The working directory matches dotnet run, so the app finds its appsettings.
     -->
-    <Exec Condition="'$(StartupHookSupport)' != 'false'" Command="&quot;$(_NamedQueryDotnet)&quot; &quot;$(TargetPath)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="$(_NamedQueryEnvironment)" IgnoreExitCode="true">
-      <Output TaskParameter="ExitCode" PropertyName="_NamedQueryValidatorExitCode" />
-    </Exec>
-
-    <!-- 0: validation ran. -1: Exec already logged errors from the output. Anything else: the app failed in a way the hook couldn't report. -->
-    <Error Condition="'$(_NamedQueryValidatorExitCode)' != '' And '$(_NamedQueryValidatorExitCode)' != '0' And '$(_NamedQueryValidatorExitCode)' != '-1'" Code="NQ0001" Text="Named query validation of $(TargetPath) exited with code $(_NamedQueryValidatorExitCode)." />
+    <Exec Condition="'$(StartupHookSupport)' != 'false'" Command="&quot;$(_NamedQueryDotnet)&quot; &quot;$(TargetPath)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="$(_NamedQueryEnvironment)" />
   </Target>
 
 </Project>
