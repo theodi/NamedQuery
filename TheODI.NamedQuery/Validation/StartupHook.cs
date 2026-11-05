@@ -25,7 +25,6 @@ internal static class StartupHook
 
         Environment.SetEnvironmentVariable("DOTNET_STARTUP_HOOKS", null);
 
-        AppDomain.CurrentDomain.UnhandledException += (_, e) => Exit($"The application failed: {Message(e.ExceptionObject as Exception)}");
         AppDomain.CurrentDomain.ProcessExit += (_, _) =>
         {
             if (Interlocked.Exchange(ref completed, 1) == 0)
@@ -96,16 +95,6 @@ internal static class StartupHook
         {
             lifetime.StopApplication();
         }
-    }
-
-    private static void Exit(string message)
-    {
-        if (Interlocked.Exchange(ref completed, 1) == 0)
-        {
-            Console.Out.WriteLine(HostError(message));
-        }
-
-        Environment.Exit(0);
     }
 
     private static string AssemblyPath => Assembly.GetEntryAssembly()?.Location ?? string.Empty;

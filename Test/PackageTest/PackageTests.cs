@@ -88,7 +88,7 @@ public sealed class PackageTests
         var build = Consumer.Create(nameof(ThrowingStartupIsReported), WebProject, "throw new InvalidOperationException(\"boom\");").Build();
 
         build.ExitCode.Should().NotBe(0, build.Output);
-        build.Output.Should().Contain("error NQ0002");
+        build.Output.Should().Contain("boom");
     }
 
     [TestMethod]
@@ -132,7 +132,7 @@ public sealed class PackageTests
 
         build.ExitCode.Should().NotBe(0, build.Output);
         build.Validated.Should().BeTrue(build.Output);
-        build.Output.Should().Contain("error NQ0002");
+        build.Output.Should().Contain("boom");
     }
 
     [TestMethod]
