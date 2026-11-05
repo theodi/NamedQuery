@@ -10,7 +10,7 @@ Validation cannot be turned off.
 
 ## How it works
 
-After `Build`, the built app is run with a [startup hook](https://github.com/dotnet/runtime/blob/main/docs/design/features/host-startup-hook.md) from `TheODI.NamedQuery` itself. The hook builds and starts the host with a no-op server, then reads the definitions the app configured and all of its endpoints: controllers, Razor Pages, minimal APIs, reverse proxies and the NamedQuery built-ins. Validation is skipped with a warning (NQ0003) if `StartupHookSupport` is `false`.
+After `Build`, the built app is run with a [startup hook](https://github.com/dotnet/runtime/blob/main/docs/design/features/host-startup-hook.md) from `TheODI.NamedQuery` itself. The hook builds and starts the host with a no-op server, then reads the definitions the app configured and all of its endpoints: controllers, Razor Pages, minimal APIs, reverse proxies and the NamedQuery built-ins.
 
 Your startup code and hosted services run. To skip side effects such as migrations or outbound calls during validation, check the `NAMEDQUERY_VALIDATION` environment variable:
 
@@ -30,7 +30,6 @@ Errors are MSBuild diagnostics (`path(line,col): error NQxxxx: message`). They s
 | Code | Meaning |
 |---|---|
 | NQ0002 | The host failed to build or start, or timed out |
-| NQ0003 | Validation skipped because `StartupHookSupport` is `false` (warning) |
 | NQ1000 | Internal error |
 | NQ1001 | Manifest missing |
 | NQ1002 | Turtle syntax error |

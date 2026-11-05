@@ -17,10 +17,7 @@
     of the app's endpoints, prints any problems as MSBuild-format errors and stops the app.
   -->
   <Target Name="_NamedQueryValidateDefinitions" AfterTargets="Build" Condition="'$(_NamedQueryValidate)' == 'true'">
-    <!-- Startup hooks are disabled (for example by trimming), so the hook could not load and the app would start for real. -->
-    <Warning Condition="'$(StartupHookSupport)' == 'false'" Code="NQ0003" Text="Named query definitions are not validated because StartupHookSupport is false." />
-
-    <PropertyGroup Condition="'$(StartupHookSupport)' != 'false'">
+    <PropertyGroup>
       <!-- Use the dotnet host running this build, falling back to the one on PATH. -->
       <_NamedQueryDotnet>$(DOTNET_HOST_PATH)</_NamedQueryDotnet>
       <_NamedQueryDotnet Condition="'$(_NamedQueryDotnet)' == ''">dotnet</_NamedQueryDotnet>
@@ -32,7 +29,7 @@
       Exec turns the app's "path(line,col) : error NQxxxx : message" lines into build errors, which fail the build.
       The working directory matches dotnet run, so the app finds its appsettings.
     -->
-    <Exec Condition="'$(StartupHookSupport)' != 'false'" Command="&quot;$(_NamedQueryDotnet)&quot; &quot;$(TargetPath)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="$(_NamedQueryEnvironment)" />
+    <Exec Command="&quot;$(_NamedQueryDotnet)&quot; &quot;$(TargetPath)&quot;" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="$(_NamedQueryEnvironment)" />
   </Target>
 
 </Project>
