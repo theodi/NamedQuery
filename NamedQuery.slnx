@@ -13,6 +13,7 @@
   </Folder>
   <Folder Name="/Test/">
     <Project Path="Test/DockerTest/DockerTest.csproj" />
+    <Project Path="Test/PackageTest/PackageTest.csproj" />
     <Project Path="Test/Test/Test.csproj" />
   </Folder>
   <Project Path="App/App.csproj" />
