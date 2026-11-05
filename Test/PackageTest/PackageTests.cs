@@ -174,7 +174,7 @@ public sealed class PackageTests
         var build = consumer.Build();
 
         build.ExitCode.Should().NotBe(0, build.Output);
-        build.Output.Should().Contain($"{Path.Combine(consumer.Directory, "Endpoints", "manifest.ttl")} : error NQ1006");
+        build.Output.Should().Contain($"{Path.Combine(consumer.Directory, "Endpoints", "manifest.ttl")}(7,15,7,23): error NQ1006");
         build.Output.Should().NotContain("MSB3073");
     }
 }
