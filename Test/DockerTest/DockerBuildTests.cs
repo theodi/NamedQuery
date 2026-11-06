@@ -48,7 +48,7 @@ public sealed class DockerBuildTests
 
         var start = () => compose.StartAsync(TestContext.CancellationToken);
 
-        (await start.Should().ThrowAsync<ExecFailedException>()).Which.Message.Should().Contain("Endpoint path collides with built-in route: Index");
+        (await start.Should().ThrowAsync<ExecFailedException>()).Which.Message.Should().Contain("Endpoint path collides with route: Index");
     }
 
     [TestMethod]
