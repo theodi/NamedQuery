@@ -1,0 +1,7 @@
+<Project Sdk="MSTest.Sdk/4.4.1">
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" />
+  </ItemGroup>
+
+</Project>
