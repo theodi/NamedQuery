@@ -2,12 +2,10 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 COPY Directory.Build.props Directory.Packages.props .editorconfig /src/
 COPY App/App.csproj /src/App/
 COPY TheODI.NamedQuery/TheODI.NamedQuery.csproj /src/TheODI.NamedQuery/
-COPY ValidateResources/ValidateResources.csproj /src/ValidateResources/
-RUN dotnet restore /src/ValidateResources
+RUN dotnet restore /src/App
 
 COPY App /src/App
 COPY TheODI.NamedQuery /src/TheODI.NamedQuery
-COPY ValidateResources /src/ValidateResources
 
 # Requires named build context when building (https://docs.docker.com/build/concepts/context/#named-contexts)
 # E.g. `docker build --build-context endpoint-definition-folder=PATH`
