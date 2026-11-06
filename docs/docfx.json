@@ -21,6 +21,7 @@
       {
         "files": [
           "index.md",
+          "validation.md",
           "toc.yml",
           "api/**.yml",
           "api/index.md"
