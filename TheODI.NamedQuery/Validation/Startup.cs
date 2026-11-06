@@ -31,7 +31,6 @@ internal sealed class Startup : IHostingStartup
                 }
             }
 
-            Console.Out.Flush();
             Environment.Exit(0);
         }
     }
