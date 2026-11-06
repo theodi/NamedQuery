@@ -8,24 +8,9 @@ namespace TheODI.NamedQuery.Validation;
 
 internal sealed class Startup : IHostingStartup
 {
-    private static volatile bool validated;
-
-    void IHostingStartup.Configure(IWebHostBuilder builder)
-    {
-        AppDomain.CurrentDomain.ProcessExit += (_, _) =>
-        {
-            if (!validated)
-            {
-                HostError("The application exited before the host started.");
-            }
-        };
-
-        builder
-            .ConfigureLogging(logging => logging.ClearProviders()) // MSBuild's Exec parses this process's stdout for errors, so the app's own logs must not go there: a log line that looks like a compiler error would fail the build, and the rest would clutter the build log.
-            .ConfigureServices(services => services.AddSingleton<IStartupFilter, ValidationFilter>());
-    }
-
-    private static void HostError(string message) => Console.Out.WriteLine(new Diagnostic(DiagnosticCodes.HostFailure, string.Empty, message));
+    void IHostingStartup.Configure(IWebHostBuilder builder) => builder
+        .ConfigureLogging(logging => logging.ClearProviders()) // MSBuild's Exec parses this process's stdout for errors, so the app's own logs must not go there: a log line that looks like a compiler error would fail the build, and the rest would clutter the build log.
+        .ConfigureServices(services => services.AddSingleton<IStartupFilter, ValidationFilter>());
 
     private sealed class ValidationFilter : IStartupFilter
     {
@@ -38,21 +23,12 @@ internal sealed class Startup : IHostingStartup
 
         private static void Validate(IServiceProvider services)
         {
-            validated = true;
-
-            try
+            if (services.GetService<Resources>() is not null)
             {
-                if (services.GetService<Resources>() is not null)
+                foreach (var diagnostic in Validator.Validate(services))
                 {
-                    foreach (var diagnostic in Validator.Validate(services))
-                    {
-                        Console.Out.WriteLine(diagnostic);
-                    }
+                    Console.Out.WriteLine(diagnostic);
                 }
-            }
-            catch (Exception e)
-            {
-                HostError($"Validation failed: {e.Message.ReplaceLineEndings(" ")}");
             }
 
             Console.Out.Flush();

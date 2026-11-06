@@ -24,7 +24,6 @@ Errors are MSBuild diagnostics (`path(line,col): error NQxxxx: message`). They s
 
 | Code | Meaning |
 |---|---|
-| NQ0002 | The app exited before the host started, or validation itself failed |
 | NQ1000 | Internal error |
 | NQ1001 | Manifest missing |
 | NQ1002 | Turtle syntax error |
