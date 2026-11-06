@@ -8,13 +8,13 @@ namespace TheODI.NamedQuery.Validation;
 
 internal sealed class Startup : IHostingStartup
 {
-    private static int completed;
+    private static volatile bool validated;
 
     void IHostingStartup.Configure(IWebHostBuilder builder)
     {
         AppDomain.CurrentDomain.ProcessExit += (_, _) =>
         {
-            if (Interlocked.Exchange(ref completed, 1) == 0)
+            if (!validated)
             {
                 HostError("The application exited before the host started.");
             }
@@ -38,7 +38,7 @@ internal sealed class Startup : IHostingStartup
 
         private static void Validate(IServiceProvider services)
         {
-            Interlocked.Exchange(ref completed, 1);
+            validated = true;
 
             try
             {
