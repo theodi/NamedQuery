@@ -9,12 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="shapes.ttl" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="dotNetRdf.Core" />
-    <PackageReference Include="dotNetRdf.Shacl" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
   </ItemGroup>
 
