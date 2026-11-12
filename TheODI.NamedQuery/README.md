@@ -155,11 +155,15 @@ Every parameter must be supplied exactly once; otherwise the response is `400 Ba
 
 Response formats are negotiated from `Accept`, or chosen with `format=csv|jsonld|ttl|rdf|nt|html`. SPARQL endpoint failures become `502` and timeouts `504`, with problem details.
 
+## Build-time validation
+
+Validation runs after `Build` in every project that references the package directly, by running the built project. Reference `TheODI.NamedQuery` only from the web app project, not from class libraries or test projects: those get it transitively, which does not trigger validation, whereas a direct reference makes the build fail because a library cannot be run. Errors appear as `NQxxxx` build diagnostics. Details: https://theodi.github.io/NamedQuery/validation.html
+
 ## Known limitations (0.x)
 
 - The library owns the routes above, so endpoint paths must not collide with them, and the host can't have its own `/` page or Swagger UI.
 - `AddNamedQuery` changes application-wide MVC options (output formatters, `RespectBrowserAcceptHeader`, `ReturnHttpNotAcceptable`) and registers a default CORS policy that allows any origin.
-- Definitions aren't validated by the package. Mistakes surface as errors at request time.
+- Build-time validation starts the app's host, so its startup code and hosted services run; see [Build-time validation](https://theodi.github.io/NamedQuery/validation.html).
 
 ## Links
 
