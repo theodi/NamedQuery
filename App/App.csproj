@@ -29,9 +29,6 @@
     <ProjectReference Include="..\TheODI.NamedQuery\TheODI.NamedQuery.csproj" />
   </ItemGroup>
 
-  <Target Name="ValidateEndpointDefinitions" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
-    <!-- After building, runs the ValidateResources project in this solution, which references this project and reads its embedded Resources. BuildProjectReferences=false makes it use this build's output instead of building this project again. Failures are written in MSBuild canonical error format and exit non-zero, which fails the build, the publish and the Docker build. -->
-    <Exec Command="dotnet run --project &quot;$(MSBuildThisFileDirectory)../ValidateResources/ValidateResources.csproj&quot; --configuration $(Configuration) --property:BuildProjectReferences=false" />
-  </Target>
+  <Import Project="..\TheODI.NamedQuery\build\TheODI.NamedQuery.targets" />
 
 </Project>

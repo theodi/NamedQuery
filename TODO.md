@@ -2,6 +2,6 @@
 - Take manifest in any format, not just Turtle.
 - Validate at build that parametrized sparql query is still valid sparql after parameter substitution based on example.
 - Validate at runtime that param value is OK for param dt.
-- Eliminate `InternalsVisibleTo` (Test, ValidateResources) from TheODI.NamedQuery.
+- Eliminate `InternalsVisibleTo` (Test) from TheODI.NamedQuery.
 - Stop publishing test image.
 - Remove the NU1902 suppression from `docs/docfx.json` once dotNetRDF depends on a patched AngleSharp (1.4.0 has GHSA-pgww-w46g-26qg).
