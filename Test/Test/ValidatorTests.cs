@@ -143,6 +143,76 @@ public sealed class ValidatorTests
     }
 
     [TestMethod]
+    [DataRow("value", "value")]
+    [DataRow("value", "Value")]
+    public void DuplicateParameterNameIsReported(string first, string second)
+    {
+        ShouldReportShapeViolation(
+            Manifest("dup", extras: $"""
+                :parameter [ :name "{first}" ; :description "d" ; :example "x" ], [ :name "{second}" ; :description "d2" ; :example "y" ] ;
+                """),
+            "Parameter name must be unique within its endpoint");
+    }
+
+    [TestMethod]
+    public void LiteralParameterDatatypeIsReported()
+    {
+        ShouldReportShapeViolation(
+            Manifest("datatype", extras: """:parameter [ :name "value" ; :description "d" ; :example "x" ; :datatype "integer" ] ;"""),
+            "Parameter datatype must be an IRI");
+    }
+
+    [TestMethod]
+    public void MissingParameterNameIsReported()
+    {
+        ShouldReportShapeViolation(
+            Manifest("noname", extras: """:parameter [ :description "d" ; :example "x" ] ;"""),
+            "Parameter must have at least one name");
+    }
+
+    [TestMethod]
+    public void InvalidParameterNameIsReported()
+    {
+        ShouldReportShapeViolation(
+            Manifest("badname", extras: """:parameter [ :name "not valid" ; :description "d" ; :example "x" ] ;"""),
+            "Parameter name must be a valid SPARQL variable name");
+    }
+
+    [TestMethod]
+    public void LiteralFrameIsReported()
+    {
+        ShouldReportShapeViolation(
+            Manifest("frameliteral", extras: """:frame "./f.jsonld" ;"""),
+            "Endpoint frame must be xsd:anyURI literal");
+    }
+
+    [TestMethod]
+    public void RelativeFrameWithoutDotSlashIsReported()
+    {
+        ShouldReportShapeViolation(
+            Manifest("framed", "f.jsonld"),
+            "Endpoint frame must start with './'");
+    }
+
+    [TestMethod]
+    public void LeadingSlashPathIsReported()
+    {
+        ShouldReportShapeViolation(
+            Manifest("slash", path: "/slash"),
+            "Endpoint path must not start with '/'");
+    }
+
+    [TestMethod]
+    public void TypedParameterHasNoDiagnostics()
+    {
+        using var directory = new TempDefinitions(
+            Manifest("typed", extras: """:parameter [ :name "value_1" ; :description "d" ; :example "1" ; :datatype xsd:integer ] ;"""),
+            "SELECT * WHERE { ?s ?p ?value_1 }");
+
+        Validate(directory.Provider).Should().BeEmpty();
+    }
+
+    [TestMethod]
     public void HostPostOnlyRouteDoesNotCollide()
     {
         Validate(Fixture("Valid"), app => app.MapPost("/docker-test", () => "host")).Should().BeEmpty();
@@ -150,21 +220,34 @@ public sealed class ValidatorTests
 
     private static IFileProvider Fixture(string name) => new PhysicalFileProvider(Path.Combine(AppContext.BaseDirectory, "Fixtures", name));
 
-    private static string Manifest(string name, string? frame = null) => $$"""
+    private static string Manifest(string name, string? frame = null, string extras = "", string? path = null) => $$"""
         PREFIX : <http://example.org/namedquery/>
         PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
         [
             :name "{{name}}" ;
             :endpoint [
-                :path "{{name}}" ;
+                :path "{{path ?? name}}" ;
                 :sparql "./q.sparql"^^xsd:anyURI ;
                 {{(frame is null ? "" : $":frame \"{frame}\"^^xsd:anyURI ;")}}
                 :name "{{name}}" ;
                 :description "{{name}}" ;
+                {{extras}}
             ] ;
         ] .
         """;
+
+    private static void ShouldReportShapeViolation(string manifest, string message)
+    {
+        using var directory = new TempDefinitions(manifest, "SELECT * WHERE { ?s ?p ?o }", "{}");
+
+        var diagnostics = Validate(directory.Provider);
+
+        diagnostics.Should().Contain(diagnostic =>
+            diagnostic.Code == DiagnosticCodes.ShapeViolation &&
+            diagnostic.Message.Contains(message));
+        diagnostics.Should().NotContain(diagnostic => diagnostic.Code == DiagnosticCodes.Internal);
+    }
 
     private static IReadOnlyList<Diagnostic> Validate(IFileProvider definitions, Action<WebApplication>? map = null)
     {

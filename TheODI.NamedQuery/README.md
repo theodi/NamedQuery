@@ -128,17 +128,17 @@ Each endpoint:
 | `:sparql` | yes | Relative path of the query file, an `xsd:anyURI` starting with `./` |
 | `:name` | yes | Title (home page, OpenAPI, MCP tool title) |
 | `:description` | yes | Description (home page, OpenAPI, MCP tool description) |
-| `:frame` | no | Relative path of a JSON-LD frame applied to graph results served as JSON-LD |
+| `:frame` | no | Relative path of a JSON-LD frame applied to graph results served as JSON-LD, an `xsd:anyURI` starting with `./` |
 | `:parameter` | no, repeatable | A query parameter |
 
 Each parameter:
 
 | Property | Required | Meaning |
 |---|---|---|
-| `:name` | yes | Query string parameter name and SPARQL variable name |
+| `:name` | yes | Query string parameter name and SPARQL variable name; letters, digits and `_` only; unique per endpoint, case-insensitive |
 | `:description` | yes | Description (OpenAPI, MCP) |
 | `:example` | yes | Example value (home page links, OpenAPI, MCP) |
-| `:datatype` | no | Datatype of the bound literal; default `xsd:string` |
+| `:datatype` | no | Datatype of the bound literal, an IRI such as `xsd:integer`; default `xsd:string` |
 
 Every parameter must be supplied exactly once; otherwise the response is `400 Bad Request`. `format` is reserved.
 
