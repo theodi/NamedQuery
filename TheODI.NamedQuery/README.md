@@ -5,7 +5,7 @@ Serve SPARQL queries as named HTTP endpoints from an ASP.NET Core app. You descr
 - runs the query against your SPARQL endpoint and returns the results with content negotiation (SPARQL results for `SELECT`/`ASK`, RDF graphs for `CONSTRUCT`/`DESCRIBE`)
 - publishes an OpenAPI description
 - exposes every endpoint as a read-only tool on an MCP server
-- serves a home page that lists the endpoints and a SPARQL query editor
+- serves a SPARQL query editor
 
 ## Install
 
@@ -117,7 +117,7 @@ Vocabulary: `http://example.org/namedquery/`. The manifest has exactly one node 
 
 | Property | Required | Meaning |
 |---|---|---|
-| `:name` | yes | Title of the endpoint set (home page, OpenAPI title) |
+| `:name` | yes | Title of the endpoint set (OpenAPI title) |
 | `:endpoint` | one or more | The endpoints |
 
 Each endpoint:
@@ -126,8 +126,8 @@ Each endpoint:
 |---|---|---|
 | `:path` | yes | Unique URL path, no leading slash; may contain `/` |
 | `:sparql` | yes | Relative path of the query file, an `xsd:anyURI` starting with `./` |
-| `:name` | yes | Title (home page, OpenAPI, MCP tool title) |
-| `:description` | yes | Description (home page, OpenAPI, MCP tool description) |
+| `:name` | yes | Title (OpenAPI, MCP tool title) |
+| `:description` | yes | Description (OpenAPI, MCP tool description) |
 | `:frame` | no | Relative path of a JSON-LD frame applied to graph results served as JSON-LD |
 | `:parameter` | no, repeatable | A query parameter |
 
@@ -137,7 +137,7 @@ Each parameter:
 |---|---|---|
 | `:name` | yes | Query string parameter name and SPARQL variable name |
 | `:description` | yes | Description (OpenAPI, MCP) |
-| `:example` | yes | Example value (home page links, OpenAPI, MCP) |
+| `:example` | yes | Example value (OpenAPI, MCP) |
 | `:datatype` | no | Datatype of the bound literal; default `xsd:string` |
 
 Every parameter must be supplied exactly once; otherwise the response is `400 Bad Request`. `format` is reserved.
@@ -146,9 +146,8 @@ Every parameter must be supplied exactly once; otherwise the response is `400 Ba
 
 | Route | |
 |---|---|
-| `/` | Home page listing the endpoints with example links |
 | `/sparql` | SPARQL query editor for the configured endpoint |
-| `/openapi.json`, `/openapi.yaml` | OpenAPI description |
+| `/` | OpenAPI description (JSON) |
 | `/mcp` | MCP server (Streamable HTTP); one read-only tool per endpoint |
 | `/{path}` | Each endpoint, `GET` only |
 
@@ -160,7 +159,7 @@ Validation runs after `Build` in every project that references the package direc
 
 ## Known limitations (0.x)
 
-- The library owns the routes above, so endpoint paths must not collide with them, and the host can't have its own `/` page.
+- The library owns the routes above, so endpoint paths must not collide with them, and the host can't map its own `/`.
 - `AddNamedQuery` changes application-wide MVC options (output formatters, `RespectBrowserAcceptHeader`, `ReturnHttpNotAcceptable`) and registers a default CORS policy that allows any origin.
 - Build-time validation starts the app's host, so its startup code and hosted services run; see [Build-time validation](https://theodi.github.io/NamedQuery/validation.html).
 

@@ -52,7 +52,6 @@ public static class NamedQueryServiceCollectionExtensions
             options.OutputFormatters.Insert(1, new GraphFormatter());
             options.OutputFormatters.Insert(2, new SparqlFormatter());
             options.OutputFormatters.Insert(3, new OpenApiJsonFormatter());
-            options.OutputFormatters.Insert(4, new OpenApiYamlFormatter());
         })
             .AddApplicationPart(typeof(NamedQueryServiceCollectionExtensions).Assembly)
             .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new InternalControllerFeatureProvider()));

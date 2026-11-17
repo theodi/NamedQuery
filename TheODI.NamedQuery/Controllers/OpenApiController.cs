@@ -12,30 +12,15 @@ namespace TheODI.NamedQuery.Controllers;
 [AllowSynchronousIO]
 internal class OpenApiController(Resources resources)
 {
-    internal const string Route = "/openapi.json";
-
     private const string GraphResponse = "graph";
     private const string ResultsResponse = "results";
     private const string ProblemResponse = "problem";
     private const string UpstreamResponse = "upstream";
     private const string TimeoutResponse = "timeout";
 
-    [HttpGet(Route, Name = nameof(GetJson))]
+    [HttpGet("/")]
     [Produces(OpenApiJsonFormatter.MediaType)]
-    public OpenApiDocument GetJson() => Get();
-
-    [HttpGet("/openapi.yaml", Name = nameof(GetYaml))]
-    [Produces(OpenApiYamlFormatter.MediaType)]
-    public OpenApiDocument GetYaml() => Get();
-
-    private static OpenApiResponse Response(string summary, string description, IEnumerable<string> mediaTypes) => new()
-    {
-        Summary = summary,
-        Description = description,
-        Content = mediaTypes.Distinct().ToDictionary(mediaType => mediaType, _ => (IOpenApiMediaType)new OpenApiMediaType()),
-    };
-
-    private OpenApiDocument Get() => new()
+    public OpenApiDocument Get() => new()
     {
         Info = new()
         {
@@ -69,6 +54,13 @@ internal class OpenApiController(Resources resources)
                     [MediaTypeNames.Application.ProblemJson]),
             },
         },
+    };
+
+    private static OpenApiResponse Response(string summary, string description, IEnumerable<string> mediaTypes) => new()
+    {
+        Summary = summary,
+        Description = description,
+        Content = mediaTypes.Distinct().ToDictionary(mediaType => mediaType, _ => (IOpenApiMediaType)new OpenApiMediaType()),
     };
 
     private OpenApiPaths Paths()

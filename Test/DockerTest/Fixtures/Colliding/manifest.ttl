@@ -5,7 +5,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     :name "colliding" ;
     :endpoint
         [
-            :path "Index" ;
+            :path "sparql" ;
             :sparql "./queries/colliding.sparql"^^xsd:anyURI ;
             :name "Colliding" ;
             :description "Uses a path that collides with a built-in route." ;

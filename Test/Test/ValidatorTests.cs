@@ -73,7 +73,7 @@ public sealed class ValidatorTests
     {
         Validate(Fixture("Colliding")).Should().ContainSingle().Which.Should().Match<Diagnostic>(diagnostic =>
             diagnostic.Code == DiagnosticCodes.RouteCollision &&
-            diagnostic.Message.Contains("Endpoint path collides with route: Index"));
+            diagnostic.Message.Contains("Endpoint path collides with route: sparql"));
     }
 
     [TestMethod]

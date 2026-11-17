@@ -47,7 +47,7 @@ public class NamedQueryOptions
     /// <description><c>:sparql</c>: the relative path of its SPARQL query file, as an <c>xsd:anyURI</c> starting with <c>./</c>.</description>
     /// </item>
     /// <item>
-    /// <description><c>:name</c> and <c>:description</c>: shown on the home page, in OpenAPI and as the MCP tool title and description.</description>
+    /// <description><c>:name</c> and <c>:description</c>: shown in OpenAPI and as the MCP tool title and description.</description>
     /// </item>
     /// <item>
     /// <description><c>:frame</c> (optional): the relative path of a JSON-LD frame applied to graph results served as JSON-LD.</description>

@@ -10,44 +10,25 @@ public sealed class OpenApiTests
     public required TestContext TestContext { get; set; }
 
     [TestMethod]
-    [DataRow("openapi.json", "application/openapi+json; version=3.2; charset=utf-8")]
-    [DataRow("openapi.yaml", "application/openapi+yaml; version=3.2; charset=utf-8")]
-    public async Task ServesFormatByExtension(string path, string mediaType)
+    public async Task ServesOpenApiJson()
     {
-        var response = await app.Client.GetAsync(path, TestContext.CancellationToken);
+        var response = await app.Client.GetAsync("", TestContext.CancellationToken);
 
         response.Should().Be200Ok();
-        response.Content.Headers.ContentType!.ToString().Should().Be(mediaType);
+        response.Content.Headers.ContentType!.ToString().Should().Be("application/openapi+json; version=3.2; charset=utf-8");
     }
 
     [TestMethod]
-    [DataRow("openapi.json", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")]
-    [DataRow("openapi.json", "application/json")]
-    [DataRow("openapi.yaml", "application/yaml")]
-    public async Task AcceptsGenericMediaTypes(string path, string accept)
+    [DataRow("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")]
+    [DataRow("application/json")]
+    public async Task AcceptsGenericMediaTypes(string accept)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, path);
+        using var request = new HttpRequestMessage(HttpMethod.Get, "");
         request.Headers.Accept.ParseAdd(accept);
 
         var response = await app.Client.SendAsync(request, TestContext.CancellationToken);
 
         response.Should().Be200Ok();
-    }
-
-    [TestMethod]
-    public async Task ServesYaml()
-    {
-        var yaml = await app.Client.GetStringAsync("openapi.yaml", TestContext.CancellationToken);
-
-        yaml.Should().StartWith("openapi: '3.2").And.Contain("/endpoint6:").And.Contain("$ref: '#/components/responses/results'");
-    }
-
-    [TestMethod]
-    public async Task UnsupportedExtensionIsNotFound()
-    {
-        var response = await app.Client.GetAsync("openapi.ttl", TestContext.CancellationToken);
-
-        response.Should().Be404NotFound();
     }
 
     [TestMethod]
@@ -161,7 +142,7 @@ public sealed class OpenApiTests
 
     private async Task<JsonNode> Document()
     {
-        var json = await app.Client.GetStringAsync("openapi.json", TestContext.CancellationToken);
+        var json = await app.Client.GetStringAsync("", TestContext.CancellationToken);
         return JsonNode.Parse(json)!;
     }
 }
