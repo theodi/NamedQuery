@@ -116,7 +116,8 @@ Vocabulary: `http://example.org/namedquery/`. The manifest has exactly one node 
 
 | Property | Required | Meaning |
 |---|---|---|
-| `:name` | yes | Title of the endpoint set (OpenAPI title) |
+| `:name` | yes | Title of the endpoint set (OpenAPI title, MCP server name) |
+| `:description` | no | Description of the endpoint set (OpenAPI description, MCP server instructions) |
 | `:endpoint` | one or more | The endpoints |
 
 Each endpoint:
@@ -127,17 +128,18 @@ Each endpoint:
 | `:sparql` | yes | Relative path of the query file, an `xsd:anyURI` starting with `./` |
 | `:name` | yes | Title (OpenAPI, MCP tool title) |
 | `:description` | yes | Description (OpenAPI, MCP tool description) |
-| `:frame` | no | Relative path of a JSON-LD frame applied to graph results served as JSON-LD |
+| `:frame` | no | Relative path of a JSON-LD frame applied to graph results served as JSON-LD, an `xsd:anyURI` starting with `./` |
+| `:mcp` | no | `false` (an `xsd:boolean`) to leave the endpoint out of the MCP server; default `true` |
 | `:parameter` | no, repeatable | A query parameter |
 
 Each parameter:
 
 | Property | Required | Meaning |
 |---|---|---|
-| `:name` | yes | Query string parameter name and SPARQL variable name |
+| `:name` | yes | Query string parameter name and SPARQL variable name; letters, digits and `_` only; unique per endpoint, case-insensitive |
 | `:description` | yes | Description (OpenAPI, MCP) |
 | `:example` | yes | Example value (OpenAPI, MCP) |
-| `:datatype` | no | Datatype of the bound literal; default `xsd:string` |
+| `:datatype` | no | Datatype of the bound literal, an IRI such as `xsd:integer`; default `xsd:string` |
 
 Every parameter must be supplied exactly once; otherwise the response is `400 Bad Request`. `format` is reserved.
 
@@ -146,7 +148,7 @@ Every parameter must be supplied exactly once; otherwise the response is `400 Ba
 | Route | |
 |---|---|
 | `/` | OpenAPI description (JSON) |
-| `/mcp` | MCP server (Streamable HTTP); one read-only tool per endpoint |
+| `/mcp` | MCP server (Streamable HTTP); one read-only tool per endpoint, returning `SELECT` and `ASK` results as TSV and graphs as Turtle |
 | `/{path}` | Each endpoint, `GET` only |
 
 Response formats are negotiated from `Accept`, or chosen with `format=csv|jsonld|ttl|rdf|nt|html`. SPARQL endpoint failures become `502` and timeouts `504`, with problem details.

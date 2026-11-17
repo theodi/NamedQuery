@@ -17,6 +17,8 @@ internal static class Vocabulary
 
     internal static IUriNode Parameter { get; } = Node("parameter");
 
+    internal static IUriNode Mcp { get; } = Node("mcp");
+
     internal static IUriNode Name { get; } = Node("name");
 
     internal static IUriNode Datatype { get; } = Node("datatype");

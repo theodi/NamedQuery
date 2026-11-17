@@ -1,3 +1,4 @@
+using ModelContextProtocol.Server;
 using TheODI.NamedQuery;
 using TheODI.NamedQuery.Constraints;
 using TheODI.NamedQuery.Controllers;
@@ -63,6 +64,7 @@ public static class NamedQueryServiceCollectionExtensions
         services.AddTransient<QueryService>();
         services.AddScoped<Mcp>();
         services.AddRouting(options => options.SetParameterPolicy<ManifestEndpointConstraint>(ManifestEndpointConstraint.Name));
+        services.AddOptions<McpServerOptions>().PostConfigure<Resources>(Mcp.Configure);
         services.AddMcpServer()
             .WithHttpTransport(options => options.Stateless = true)
             .WithListToolsHandler((request, ct) => request.Services!.GetRequiredService<Mcp>().ListTools(request, ct))
