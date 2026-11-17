@@ -1,6 +1,7 @@
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using TheODI.NamedQuery.Filters;
@@ -18,6 +19,18 @@ internal class Mcp(Resources resources, QueryService queryService)
 
     private static readonly IRdfWriter graphWriter = new CompressingTurtleWriter();
     private static readonly ISparqlResultsWriter resultsWriter = new SparqlHtmlWriter();
+
+    internal static void Configure(McpServerOptions options, Resources resources)
+    {
+        var manifest = resources.Manifest.Node;
+
+        options.ServerInfo = new()
+        {
+            Name = manifest.Name,
+            Version = typeof(Mcp).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion,
+        };
+        options.ServerInstructions = manifest.Description;
+    }
 
     internal ValueTask<ListToolsResult> ListTools(RequestContext<ListToolsRequestParams> _, CancellationToken __) =>
         ValueTask.FromResult(new ListToolsResult

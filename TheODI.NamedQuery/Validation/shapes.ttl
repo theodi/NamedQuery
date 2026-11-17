@@ -171,6 +171,20 @@ _:prefixes :declare [
 ] .
 
 [
+	:targetSubjectsOf nq:endpoint ;
+    :path nq:description ;
+    :datatype xsd:string ;
+    :message "Manifest description must be string literal" ;
+] .
+
+[
+	:targetSubjectsOf nq:endpoint ;
+    :path nq:description ;
+    :maxCount 1 ;
+    :message "Manifest must have at most one description" ;
+] .
+
+[
 	:targetNode [] ;
     :sparql [
         :message "Manifest must have at least one manifest node" ;

@@ -14,6 +14,16 @@ public sealed class McpTests
     public required TestContext TestContext { get; set; }
 
     [TestMethod]
+    public async Task ServerDescribesManifest()
+    {
+        await using var client = await Client(app);
+
+        client.ServerInfo!.Name.Should().Be("test endpoints");
+        client.ServerInfo.Version.Should().NotBeNullOrEmpty();
+        client.ServerInstructions.Should().Be("Endpoints for testing.");
+    }
+
+    [TestMethod]
     public async Task ListsToolPerEndpoint()
     {
         await using var client = await Client(app);
