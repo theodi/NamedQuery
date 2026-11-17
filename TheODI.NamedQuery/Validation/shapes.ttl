@@ -8,28 +8,35 @@ _:prefixes :declare [
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path nq:path ;
     :datatype xsd:string ;
     :message "Endpoint path must be string literal" ;
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path nq:path ;
     :minCount 1 ;
     :message "Endpoint must have at least one path" ;
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path nq:path ;
     :maxCount 1 ;
     :message "Endpoint must have at most one path" ;
 ] .
 
 [
-	:targetSubjectsOf nq:path ;
+    :targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:path ;
+    :pattern "^$|^[^/]" ;
+    :message "Endpoint path must not start with '/'" ;
+] .
+
+[
+    :targetSubjectsOf nq:path ;
     :sparql [
         :message "Endpoint path must be unique" ;
         :prefixes _:prefixes ;
@@ -38,140 +45,212 @@ _:prefixes :declare [
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path nq:sparql ;
     :datatype xsd:anyURI ;
     :message "Endpoint SPARQL must be xsd:anyURI literal" ;
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path nq:sparql ;
     :pattern "^\\./.+" ;
     :message "Endpoint SPARQL must start with './'" ;
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path nq:sparql ;
     :minCount 1 ;
     :message "Endpoint must have at least one SPARQL" ;
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path nq:sparql ;
     :maxCount 1 ;
     :message "Endpoint must have at most one SPARQL" ;
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:frame ;
+    :datatype xsd:anyURI ;
+    :message "Endpoint frame must be xsd:anyURI literal" ;
+] .
+
+[
+    :targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:frame ;
+    :pattern "^\\./.+" ;
+    :message "Endpoint frame must start with './'" ;
+] .
+
+[
+    :targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:frame ;
+    :maxCount 1 ;
+    :message "Endpoint must have at most one frame" ;
+] .
+
+[
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path nq:name ;
     :datatype xsd:string ;
     :message "Endpoint name must be string literal" ;
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path nq:name ;
     :minCount 1 ;
     :message "Endpoint must have at least one name" ;
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path nq:name ;
     :maxCount 1 ;
     :message "Endpoint must have at most one name" ;
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path nq:description ;
     :datatype xsd:string ;
     :message "Endpoint description must be string literal" ;
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path nq:description ;
     :minCount 1 ;
     :message "Endpoint must have at least one description" ;
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path nq:description ;
     :maxCount 1 ;
     :message "Endpoint must have at most one description" ;
 ] .
 
 [
-	:targetObjectsOf nq:parameter ;
+    :targetObjectsOf nq:parameter ;
+    :path nq:name ;
+    :datatype xsd:string ;
+    :message "Parameter name must be string literal" ;
+] .
+
+[
+    :targetObjectsOf nq:parameter ;
+    :path nq:name ;
+    :minCount 1 ;
+    :message "Parameter must have at least one name" ;
+] .
+
+[
+    :targetObjectsOf nq:parameter ;
+    :path nq:name ;
+    :maxCount 1 ;
+    :message "Parameter must have at most one name" ;
+] .
+
+[
+    :targetObjectsOf nq:parameter ;
+    :path nq:name ;
+    :pattern "^[A-Za-z0-9_]+$" ;
+    :message "Parameter name must be a valid SPARQL variable name (letters, digits, underscore)" ;
+] .
+
+[
+    :targetObjectsOf nq:parameter ;
+    :sparql [
+        :message "Parameter name must be unique within its endpoint (case-insensitive)" ;
+        :prefixes _:prefixes ;
+        :select "SELECT $this ?value { ?endpoint nq:parameter $this, ?other . $this nq:name ?value . ?other nq:name ?otherValue . FILTER (?other != $this && LCASE(STR(?value)) = LCASE(STR(?otherValue))) }" ;
+    ] ;
+] .
+
+[
+    :targetObjectsOf nq:parameter ;
+    :path nq:datatype ;
+    :nodeKind :IRI ;
+    :message "Parameter datatype must be an IRI" ;
+] .
+
+[
+    :targetObjectsOf nq:parameter ;
+    :path nq:datatype ;
+    :maxCount 1 ;
+    :message "Parameter must have at most one datatype" ;
+] .
+
+[
+    :targetObjectsOf nq:parameter ;
     :path nq:description ;
     :datatype xsd:string ;
     :message "Parameter description must be string literal" ;
 ] .
 
 [
-	:targetObjectsOf nq:parameter ;
+    :targetObjectsOf nq:parameter ;
     :path nq:description ;
     :minCount 1 ;
     :message "Parameter must have at least one description" ;
 ] .
 
 [
-	:targetObjectsOf nq:parameter ;
+    :targetObjectsOf nq:parameter ;
     :path nq:description ;
     :maxCount 1 ;
     :message "Parameter must have at most one description" ;
 ] .
 
 [
-	:targetObjectsOf nq:parameter ;
+    :targetObjectsOf nq:parameter ;
     :path nq:example ;
     :datatype xsd:string ;
     :message "Parameter example must be string literal" ;
 ] .
 
 [
-	:targetObjectsOf nq:parameter ;
+    :targetObjectsOf nq:parameter ;
     :path nq:example ;
     :minCount 1 ;
     :message "Parameter must have at least one example" ;
 ] .
 
 [
-	:targetObjectsOf nq:parameter ;
+    :targetObjectsOf nq:parameter ;
     :path nq:example ;
     :maxCount 1 ;
     :message "Parameter must have at most one example" ;
 ] .
 
 [
-	:targetSubjectsOf nq:endpoint ;
+    :targetSubjectsOf nq:endpoint ;
     :path nq:name ;
     :datatype xsd:string ;
     :message "Manifest name must be string literal" ;
 ] .
 
 [
-	:targetSubjectsOf nq:endpoint ;
+    :targetSubjectsOf nq:endpoint ;
     :path nq:name ;
     :minCount 1 ;
     :message "Manifest must have at least one name" ;
 ] .
 
 [
-	:targetSubjectsOf nq:endpoint ;
+    :targetSubjectsOf nq:endpoint ;
     :path nq:name ;
     :maxCount 1 ;
     :message "Manifest must have at most one name" ;
 ] .
 
 [
-	:targetNode [] ;
+    :targetNode [] ;
     :sparql [
         :message "Manifest must have at least one manifest node" ;
         :prefixes _:prefixes ;
@@ -180,7 +259,7 @@ _:prefixes :declare [
 ] .
 
 [
-	:targetNode [] ;
+    :targetNode [] ;
     :sparql [
         :message "Manifest must have at most one manifest node" ;
         :prefixes _:prefixes ;
@@ -189,14 +268,14 @@ _:prefixes :declare [
 ] .
 
 [
-	:targetSubjectsOf nq:path, nq:sparql ;
+    :targetSubjectsOf nq:path, nq:sparql ;
     :path [ :inversePath nq:endpoint ] ;
     :minCount 1 ;
     :message "Endpoint must be in manifest endpoints" ;
 ] .
 
 [
-	:targetNode [] ;
+    :targetNode [] ;
     :sparql [
         :message "Manifest must have at least one endpoint" ;
         :prefixes _:prefixes ;
