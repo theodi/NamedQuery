@@ -67,6 +67,14 @@ public sealed class OpenApiTests
     }
 
     [TestMethod]
+    public async Task TakesDescriptionFromManifest()
+    {
+        var document = await Document();
+
+        document["info"]!["description"]!.GetValue<string>().Should().Be("Endpoints for testing.");
+    }
+
+    [TestMethod]
     public async Task DescribesEachEndpoint()
     {
         var document = await Document();

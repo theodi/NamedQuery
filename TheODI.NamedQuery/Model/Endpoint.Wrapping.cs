@@ -1,4 +1,5 @@
 using VDS.RDF;
+using VDS.RDF.Nodes;
 using VDS.RDF.Wrapping;
 
 namespace TheODI.NamedQuery.Model;
@@ -16,6 +17,8 @@ internal partial class Endpoint : GraphWrapperNode
     public string Name => this.Singular(Vocabulary.Name, ValueMappings.As<string>, throwWhenMissing: true)!;
 
     public string Description => this.Singular(Vocabulary.Description, ValueMappings.As<string>, throwWhenMissing: true)!;
+
+    public bool IsMcpTool => this.Singular(Vocabulary.Mcp, static node => node is null ? (bool?)null : node.AsValuedNode().AsBoolean()) is not false;
 
     public ISet<Parameter> Parameters => this.Objects(Vocabulary.Parameter, Parameter.Wrap, Parameter.Wrap);
 

@@ -117,7 +117,8 @@ Vocabulary: `http://example.org/namedquery/`. The manifest has exactly one node 
 
 | Property | Required | Meaning |
 |---|---|---|
-| `:name` | yes | Title of the endpoint set (home page, OpenAPI title) |
+| `:name` | yes | Title of the endpoint set (home page, OpenAPI title, MCP server name) |
+| `:description` | no | Description of the endpoint set (home page, OpenAPI description, MCP server instructions) |
 | `:endpoint` | one or more | The endpoints |
 
 Each endpoint:
@@ -129,6 +130,7 @@ Each endpoint:
 | `:name` | yes | Title (home page, OpenAPI, MCP tool title) |
 | `:description` | yes | Description (home page, OpenAPI, MCP tool description) |
 | `:frame` | no | Relative path of a JSON-LD frame applied to graph results served as JSON-LD |
+| `:mcp` | no | `false` (an `xsd:boolean`) to leave the endpoint out of the MCP server; default `true` |
 | `:parameter` | no, repeatable | A query parameter |
 
 Each parameter:

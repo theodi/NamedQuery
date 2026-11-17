@@ -3,12 +3,14 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 [
     :name "test endpoints" ;
+    :description "Endpoints for testing." ;
     :endpoint
         [
             :path "endpoint1" ;
             :sparql "./endpoint1.sparql"^^xsd:anyURI ;
             :name "Any ten triples" ;
             :description "Selects up to ten arbitrary triples." ;
+            :mcp false ;
         ],
         [
             :path "endpoint2" ;

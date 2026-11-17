@@ -22,6 +22,14 @@ public sealed class ManifestTests
     }
 
     [TestMethod]
+    [DataRow("endpoint1", false)]
+    [DataRow("endpoint2", true)]
+    public void ReadsMcpFlagDefaultingToTrue(string path, bool expected)
+    {
+        resources.Manifest[path]!.IsMcpTool.Should().Be(expected);
+    }
+
+    [TestMethod]
     public void ReadsParameters()
     {
         resources.Manifest["endpoint6"]!.Parameters.Should().ContainSingle().Which.Should().Match<Parameter>(parameter =>

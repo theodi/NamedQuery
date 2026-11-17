@@ -14,13 +14,23 @@ public sealed class McpTests
     public required TestContext TestContext { get; set; }
 
     [TestMethod]
+    public async Task ServerDescribesManifest()
+    {
+        await using var client = await Client(app);
+
+        client.ServerInfo!.Name.Should().Be("test endpoints");
+        client.ServerInfo.Version.Should().NotBeNullOrEmpty();
+        client.ServerInstructions.Should().Be("Endpoints for testing.");
+    }
+
+    [TestMethod]
     public async Task ListsToolPerEndpoint()
     {
         await using var client = await Client(app);
 
         var tools = await client.ListToolsAsync(cancellationToken: TestContext.CancellationToken);
 
-        tools.Select(tool => tool.Name).Should().BeEquivalentTo("endpoint1", "endpoint2", "endpoint3_something", "endpoint4", "endpoint5", "endpoint6");
+        tools.Select(tool => tool.Name).Should().BeEquivalentTo("endpoint2", "endpoint3_something", "endpoint4", "endpoint5", "endpoint6");
     }
 
     [TestMethod]
@@ -78,11 +88,13 @@ public sealed class McpTests
     }
 
     [TestMethod]
-    public async Task UnknownToolIsProtocolError()
+    [DataRow("unknown")]
+    [DataRow("endpoint1")]
+    public async Task UnknownToolIsProtocolError(string name)
     {
         await using var client = await Client(app);
 
-        var call = () => client.CallToolAsync("unknown", cancellationToken: TestContext.CancellationToken).AsTask();
+        var call = () => client.CallToolAsync(name, cancellationToken: TestContext.CancellationToken).AsTask();
 
         (await call.Should().ThrowAsync<McpProtocolException>()).Which.ErrorCode.Should().Be(McpErrorCode.InvalidParams);
     }

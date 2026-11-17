@@ -9,6 +9,8 @@ internal partial class ManifestNode : GraphWrapperNode
 
     public string Name => this.Singular(Vocabulary.Name, ValueMappings.As<string>, throwWhenMissing: true)!;
 
+    public string? Description => this.Singular(Vocabulary.Description, ValueMappings.As<string>);
+
     public ISet<Endpoint> Endpoint => this.Objects(Vocabulary.Endpoint, Model.Endpoint.Wrap, Model.Endpoint.Wrap);
 
     public static ManifestNode Wrap(GraphWrapperNode node) => new(node, node.Graph);

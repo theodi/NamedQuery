@@ -275,6 +275,7 @@ internal class Validator(IServiceProvider services)
         }
 
         return resources.Manifest.Node.Endpoint
+            .Where(endpoint => endpoint.IsMcpTool)
             .GroupBy(endpoint => endpoint.ToolName)
             .Where(group => group.Count() > 1)
             .Select(group => Located(DiagnosticCodes.ToolNameCollision, ManifestName, $"Endpoint paths collide as MCP tool name: {group.Key} ({string.Join(", ", group.Select(endpoint => endpoint.Path))})", $"\"{group.Last().Path}\""));
