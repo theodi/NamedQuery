@@ -13,7 +13,7 @@
   "rules": [
     "Install with 'dotnet add package TheODI.NamedQuery --prerelease'; the package is pre-release (0.x) and requires .NET 10.",
     "Supply the endpoint definitions (manifest.ttl and the query files it refers to) as an IFileProvider via options.Definitions in builder.Services.AddNamedQuery(...), e.g. ManifestEmbeddedFileProvider or PhysicalFileProvider, then call app.UseNamedQuery().",
-    "Endpoint paths must not collide with the routes the library owns: /, /sparql and /mcp. Don't name a parameter 'format'; it is reserved.",
+    "Endpoint paths must not collide with the routes the library owns: / and /mcp. Don't name a parameter 'format'; it is reserved.",
     "Configure the SPARQL endpoint with NamedQuery:SparqlEndpoint (appsettings.json, environment variable NamedQuery__SparqlEndpoint, or --NamedQuery:SparqlEndpoint=...)."
   ]
 }

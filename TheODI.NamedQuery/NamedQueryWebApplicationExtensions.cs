@@ -11,7 +11,7 @@ public static class NamedQueryWebApplicationExtensions
     /// <remarks>
     /// <para>Call it once in <c>Program.cs</c>, after <c>builder.Build()</c> and before <c>app.Run()</c>. The services it needs must already be registered with <see cref="Microsoft.Extensions.DependencyInjection.NamedQueryServiceCollectionExtensions.AddNamedQuery"/>.</para>
     /// <para>It adds the CORS middleware at the point where it is called, so middleware added before it (for example exception handling, HTTPS redirection or authentication) runs first for named query requests.</para>
-    /// <para>It maps the application's MVC controllers and Razor Pages, so your own controllers and pages are mapped too and you don't need to call <c>MapControllers</c> or <c>MapRazorPages</c> yourself. Your own endpoints can be mapped before or after it, as long as their routes don't collide with endpoint paths in the manifest.</para>
+    /// <para>It maps the application's MVC controllers, so your own controllers are mapped too and you don't need to call <c>MapControllers</c> yourself. Your own endpoints can be mapped before or after it, as long as their routes don't collide with endpoint paths in the manifest.</para>
     /// </remarks>
     /// <example>
     /// <code language="csharp">
@@ -32,7 +32,6 @@ public static class NamedQueryWebApplicationExtensions
     {
         app.UseCors();
         app.MapControllers();
-        app.MapRazorPages();
         app.MapMcp(Mcp.Route);
 
         return app;

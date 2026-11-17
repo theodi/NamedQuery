@@ -5,7 +5,6 @@ Serve SPARQL queries as named HTTP endpoints from an ASP.NET Core app. You descr
 - runs the query against your SPARQL endpoint and returns the results with content negotiation (SPARQL results for `SELECT`/`ASK`, RDF graphs for `CONSTRUCT`/`DESCRIBE`)
 - publishes an OpenAPI description
 - exposes every endpoint as a read-only tool on an MCP server
-- serves a SPARQL query editor
 
 ## Install
 
@@ -146,7 +145,6 @@ Every parameter must be supplied exactly once; otherwise the response is `400 Ba
 
 | Route | |
 |---|---|
-| `/sparql` | SPARQL query editor for the configured endpoint |
 | `/` | OpenAPI description (JSON) |
 | `/mcp` | MCP server (Streamable HTTP); one read-only tool per endpoint |
 | `/{path}` | Each endpoint, `GET` only |

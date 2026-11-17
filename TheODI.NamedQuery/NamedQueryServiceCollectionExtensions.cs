@@ -18,7 +18,7 @@ public static class NamedQueryServiceCollectionExtensions
     /// <remarks>
     /// <para>Call it once in <c>Program.cs</c>, on <c>builder.Services</c> before <c>builder.Build()</c>, then call <see cref="Microsoft.AspNetCore.Builder.NamedQueryWebApplicationExtensions.UseNamedQuery"/> on the built application.</para>
     /// <para>The SPARQL endpoint usually comes from configuration (<c>appsettings.json</c>, environment variables or command-line arguments) as <c>NamedQuery:SparqlEndpoint</c>. If it or the definitions are missing, the application fails to start; see <see cref="NamedQueryOptions"/>.</para>
-    /// <para>It also registers MVC controllers, Razor Pages, CORS and the MCP server for you, so you don't need to call <c>AddControllers</c>, <c>AddRazorPages</c>, <c>AddCors</c> or <c>AddMcpServer</c> yourself. Its settings apply to the whole application: your own controllers get the same output formatters, <c>format</c> query string mappings, <c>RespectBrowserAcceptHeader</c> and <c>ReturnHttpNotAcceptable</c>, and the default CORS policy allows any origin, method and header.</para>
+    /// <para>It also registers MVC controllers, CORS and the MCP server for you, so you don't need to call <c>AddControllers</c>, <c>AddCors</c> or <c>AddMcpServer</c> yourself. Its settings apply to the whole application: your own controllers get the same output formatters, <c>format</c> query string mappings, <c>RespectBrowserAcceptHeader</c> and <c>ReturnHttpNotAcceptable</c>, and the default CORS policy allows any origin, method and header.</para>
     /// </remarks>
     /// <example>
     /// <para>A complete <c>Program.cs</c>, with the definitions embedded in the application (see <see cref="NamedQueryOptions.Definitions"/>) and the SPARQL endpoint in configuration:</para>
@@ -55,7 +55,6 @@ public static class NamedQueryServiceCollectionExtensions
         })
             .AddApplicationPart(typeof(NamedQueryServiceCollectionExtensions).Assembly)
             .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new InternalControllerFeatureProvider()));
-        services.AddRazorPages();
         services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
         services.AddOptions<NamedQueryOptions>().BindConfiguration(NamedQueryOptions.SectionName).Configure(configure).ValidateDataAnnotations().ValidateOnStart();
         services.AddHttpClient<DotNetRDF.ISparqlQueryClient, SparqlQueryClient>();

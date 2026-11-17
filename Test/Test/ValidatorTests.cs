@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using TheODI.NamedQuery.Controllers;
 using TheODI.NamedQuery.Validation;
 
 namespace Test;
@@ -73,7 +74,7 @@ public sealed class ValidatorTests
     {
         Validate(Fixture("Colliding")).Should().ContainSingle().Which.Should().Match<Diagnostic>(diagnostic =>
             diagnostic.Code == DiagnosticCodes.RouteCollision &&
-            diagnostic.Message.Contains("Endpoint path collides with route: sparql"));
+            diagnostic.Message.Contains($"Endpoint path collides with route:  ({typeof(OpenApiController).FullName}.{nameof(OpenApiController.Get)}"));
     }
 
     [TestMethod]
