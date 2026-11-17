@@ -150,7 +150,7 @@ Every parameter must be supplied exactly once; otherwise the response is `400 Ba
 | `/sparql` | SPARQL query editor for the configured endpoint |
 | `/swagger` | Swagger UI |
 | `/openapi.json`, `/openapi.yaml` | OpenAPI description |
-| `/mcp` | MCP server (Streamable HTTP); one read-only tool per endpoint |
+| `/mcp` | MCP server (Streamable HTTP); one read-only tool per endpoint, returning `SELECT` and `ASK` results as TSV and graphs as Turtle |
 | `/{path}` | Each endpoint, `GET` only |
 
 Response formats are negotiated from `Accept`, or chosen with `format=csv|jsonld|ttl|rdf|nt|html`. SPARQL endpoint failures become `502` and timeouts `504`, with problem details.
