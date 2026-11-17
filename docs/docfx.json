@@ -12,7 +12,8 @@
       ],
       "dest": "api",
       "properties": {
-        "NoWarn": "NU1902"
+        "NoWarn": "NU1902",
+        "UseRazorSourceGenerator": "false"
       }
     }
   ],
