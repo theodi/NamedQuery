@@ -41,6 +41,7 @@ internal class OpenApiController(Resources resources)
         Info = new()
         {
             Title = resources.Manifest.Node.Name,
+            Description = resources.Manifest.Node.Description,
             Version = "1", // TODO: Don't hardcode
         },
         Paths = Paths(),

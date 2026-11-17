@@ -118,7 +118,7 @@ Vocabulary: `http://example.org/namedquery/`. The manifest has exactly one node 
 | Property | Required | Meaning |
 |---|---|---|
 | `:name` | yes | Title of the endpoint set (home page, OpenAPI title, MCP server name) |
-| `:description` | no | Description of the endpoint set (MCP server instructions) |
+| `:description` | no | Description of the endpoint set (home page, OpenAPI description, MCP server instructions) |
 | `:endpoint` | one or more | The endpoints |
 
 Each endpoint:
