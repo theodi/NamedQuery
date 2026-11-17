@@ -3,7 +3,7 @@
 Serve SPARQL queries as named HTTP endpoints from an ASP.NET Core app. You describe each endpoint (path, SPARQL query, parameters) in an RDF manifest, and the library:
 
 - runs the query against your SPARQL endpoint and returns the results with content negotiation (SPARQL results for `SELECT`/`ASK`, RDF graphs for `CONSTRUCT`/`DESCRIBE`)
-- publishes an OpenAPI description and Swagger UI
+- publishes an OpenAPI description
 - exposes every endpoint as a read-only tool on an MCP server
 - serves a home page that lists the endpoints and a SPARQL query editor
 
@@ -148,7 +148,6 @@ Every parameter must be supplied exactly once; otherwise the response is `400 Ba
 |---|---|
 | `/` | Home page listing the endpoints with example links |
 | `/sparql` | SPARQL query editor for the configured endpoint |
-| `/swagger` | Swagger UI |
 | `/openapi.json`, `/openapi.yaml` | OpenAPI description |
 | `/mcp` | MCP server (Streamable HTTP); one read-only tool per endpoint |
 | `/{path}` | Each endpoint, `GET` only |
@@ -161,7 +160,7 @@ Validation runs after `Build` in every project that references the package direc
 
 ## Known limitations (0.x)
 
-- The library owns the routes above, so endpoint paths must not collide with them, and the host can't have its own `/` page or Swagger UI.
+- The library owns the routes above, so endpoint paths must not collide with them, and the host can't have its own `/` page.
 - `AddNamedQuery` changes application-wide MVC options (output formatters, `RespectBrowserAcceptHeader`, `ReturnHttpNotAcceptable`) and registers a default CORS policy that allows any origin.
 - Build-time validation starts the app's host, so its startup code and hosted services run; see [Build-time validation](https://theodi.github.io/NamedQuery/validation.html).
 

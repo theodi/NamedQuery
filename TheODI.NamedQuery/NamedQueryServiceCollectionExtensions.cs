@@ -1,4 +1,3 @@
-using Swashbuckle.AspNetCore.SwaggerUI;
 using TheODI.NamedQuery;
 using TheODI.NamedQuery.Constraints;
 using TheODI.NamedQuery.Controllers;
@@ -58,7 +57,6 @@ public static class NamedQueryServiceCollectionExtensions
             .AddApplicationPart(typeof(NamedQueryServiceCollectionExtensions).Assembly)
             .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new InternalControllerFeatureProvider()));
         services.AddRazorPages();
-        services.Configure<SwaggerUIOptions>(options => options.SwaggerEndpoint(OpenApiController.Route, OpenApiController.Name));
         services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
         services.AddOptions<NamedQueryOptions>().BindConfiguration(NamedQueryOptions.SectionName).Configure(configure).ValidateDataAnnotations().ValidateOnStart();
         services.AddHttpClient<DotNetRDF.ISparqlQueryClient, SparqlQueryClient>();

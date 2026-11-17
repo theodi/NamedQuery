@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.SwaggerUI;
 using TheODI.NamedQuery.Controllers;
 
 namespace Test;
@@ -39,20 +37,6 @@ public sealed class IndexPageTests
 
         var response = await app.Client.GetAsync("endpoint6?value=example", TestContext.CancellationToken);
         response.Should().Be200Ok();
-    }
-
-    [TestMethod]
-    public async Task LinksToSwaggerUi()
-    {
-        var href = $"/{app.Services.GetRequiredService<IOptions<SwaggerUIOptions>>().Value.RoutePrefix}";
-
-        var html = await app.Client.GetStringAsync("", TestContext.CancellationToken);
-        html.Should().Contain($"href=\"{href}\"");
-
-        var response = await app.Client.GetAsync(href, TestContext.CancellationToken);
-        response.Should().Be200Ok();
-        var ui = await response.Content.ReadAsStringAsync(TestContext.CancellationToken);
-        ui.Should().Contain("swagger-ui");
     }
 
     [TestMethod]

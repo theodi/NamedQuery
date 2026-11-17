@@ -13,7 +13,6 @@ namespace TheODI.NamedQuery.Controllers;
 internal class OpenApiController(Resources resources)
 {
     internal const string Route = "/openapi.json";
-    internal const string Name = "";
 
     private const string GraphResponse = "graph";
     private const string ResultsResponse = "results";

@@ -1,9 +1,6 @@
 @page
-@using Microsoft.Extensions.Options
-@using Swashbuckle.AspNetCore.SwaggerUI
 @using TheODI.NamedQuery
 @using TheODI.NamedQuery.Controllers
-@inject IOptions<SwaggerUIOptions> SwaggerUi
 @inject Resources Resources
 @{
     ViewData["Title"] = "{home}";
@@ -12,9 +9,6 @@
     <li>
         <span>{openapi}</span>
         <ul>
-            <li>
-                <a href="@Url.Content($"~/{SwaggerUi.Value.RoutePrefix}")">{ui}</a>
-            </li>
             <li>
                 <a asp-route="@nameof(OpenApiController.GetJson)">{json}</a>
             </li>
