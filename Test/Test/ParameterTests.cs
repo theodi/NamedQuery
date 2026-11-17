@@ -19,8 +19,6 @@ public sealed class ParameterTests
 
     [TestMethod]
     [DataRow("endpoint6", null)]
-    [DataRow("endpoint6?format=html", null)]
-    [DataRow("endpoint6?format=ttl", null)]
     [DataRow("endpoint6?other=x", null)]
     [DataRow("endpoint6", "text/turtle")]
     [DataRow("endpoint6", "application/sparql-results+json")]

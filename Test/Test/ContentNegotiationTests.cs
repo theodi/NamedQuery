@@ -34,7 +34,18 @@ public sealed class ContentNegotiationTests
     }
 
     [TestMethod]
-    public async Task FramedJsonLd() => await ServesAs("endpoint5", "application/ld+json");
+    [DataRow("endpoint2?format=csv", "application/sparql-results+xml")]
+    [DataRow("endpoint4?format=ttl", "application/ld+json")]
+    public async Task IgnoresFormatQueryParameter(string path, string mediaType)
+    {
+        var response = await app.Client.GetAsync(path, TestContext.CancellationToken);
+
+        response.Should().Be200Ok();
+        response.Content.Headers.ContentType!.MediaType.Should().Be(mediaType);
+    }
+
+    [TestMethod]
+    public async Task FramedJsonLd()=> await ServesAs("endpoint5", "application/ld+json");
 
     [TestMethod]
     public async Task UnknownFormatIsNotAcceptable()

@@ -56,7 +56,7 @@ public class NamedQueryOptions
     /// <description><c>:parameter</c> (zero or more): each with a <c>:name</c>, <c>:description</c> and <c>:example</c>, and an optional <c>:datatype</c> (default <c>xsd:string</c>).</description>
     /// </item>
     /// </list>
-    /// <para>A parameter is supplied as a query string parameter of the same name, exactly once, and is bound to the SPARQL variable of the same name as a literal of its datatype. Every parameter is required. <c>format</c> is reserved for choosing the response format.</para>
+    /// <para>A parameter is supplied as a query string parameter of the same name, exactly once, and is bound to the SPARQL variable of the same name as a literal of its datatype. Every parameter is required.</para>
     /// <para>Use a <see cref="ManifestEmbeddedFileProvider"/> to embed the definitions in the host assembly, or a <see cref="PhysicalFileProvider"/> to read them from a folder at runtime.</para>
     /// </remarks>
     /// <example>

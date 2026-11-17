@@ -31,7 +31,6 @@ Errors are MSBuild diagnostics (`path(line,col): error NQxxxx: message`). They s
 | NQ1004 | SPARQL file missing |
 | NQ1005 | SPARQL syntax error |
 | NQ1006 | Endpoint path collides with an existing `GET`/`HEAD` route |
-| NQ1007 | Parameter collides with the `format` query parameter |
 | NQ1008 | MCP tool name collision |
 | NQ1009 | Frame file missing |
 | NQ1010 | Frame is not valid JSON |

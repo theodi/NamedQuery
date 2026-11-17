@@ -118,14 +118,6 @@ public sealed class ValidatorTests
     }
 
     [TestMethod]
-    public void ReservedParameterIsReported()
-    {
-        Validate(Fixture("Reserved")).Should().ContainSingle().Which.Should().Match<Diagnostic>(diagnostic =>
-            diagnostic.Code == DiagnosticCodes.FormatParameterCollision &&
-            diagnostic.Message.Contains("format (reserved)"));
-    }
-
-    [TestMethod]
     public void ToolNameCollisionIsReported()
     {
         Validate(Fixture("ToolName")).Should().ContainSingle().Which.Should().Match<Diagnostic>(diagnostic =>

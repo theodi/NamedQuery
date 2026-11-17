@@ -1,7 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Routing.Template;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -30,15 +27,6 @@ internal class Validator(IServiceProvider services)
         {
             return [new Diagnostic(DiagnosticCodes.Internal, "", e.Message)];
         }
-    }
-
-    private static bool ReadsAsFormat(FormatFilter filter, string name)
-    {
-        var probe = Guid.NewGuid().ToString();
-        var http = new DefaultHttpContext();
-        http.Request.QueryString = QueryString.Create(name, probe);
-
-        return filter.GetFormat(new ActionContext(http, new RouteData(), new ActionDescriptor())) == probe;
     }
 
     private static ShapesGraph Shapes()
@@ -83,7 +71,6 @@ internal class Validator(IServiceProvider services)
         .. FrameFilesExist(),
         .. FrameFilesValid(),
         .. EndpointPathsDoNotCollideWithWebRoutes(),
-        .. ParameterNamesDoNotCollideWithFormatFilter(),
         .. ToolNamesDoNotCollide(),
     ];
 
@@ -245,26 +232,6 @@ internal class Validator(IServiceProvider services)
             .SelectMany(path => routes
                 .Where(route => new TemplateMatcher(new RouteTemplate(route.RoutePattern), new RouteValueDictionary(route.RoutePattern.Defaults)).TryMatch($"/{path}", []))
                 .Select(route => Located(DiagnosticCodes.RouteCollision, ManifestName, $"Endpoint path collides with route: {path} ({route.DisplayName})", $"\"{path}\"")));
-    }
-
-    private IEnumerable<Diagnostic> ParameterNamesDoNotCollideWithFormatFilter()
-    {
-        if (ConformingManifestGraph() is null)
-        {
-            return [];
-        }
-
-        var formatFilters = services.GetRequiredService<EndpointDataSource>().Endpoints
-            .Single(route => route.Metadata.GetMetadata<ControllerActionDescriptor>()?.ControllerTypeInfo == typeof(EndpointController))
-            .Metadata
-            .OfType<FormatFilterAttribute>()
-            .Select(attribute => (FormatFilter)attribute.CreateInstance(services))
-            .ToList();
-
-        return resources.Manifest.Node.Endpoint
-            .SelectMany(endpoint => endpoint.Parameters
-                .Where(parameter => formatFilters.Any(filter => ReadsAsFormat(filter, parameter.Name)))
-                .Select(parameter => Located(DiagnosticCodes.FormatParameterCollision, ManifestName, $"Endpoint parameter collides with format query string parameter: {parameter.Name} ({endpoint.Path})", $"\"{parameter.Name}\"")));
     }
 
     private IEnumerable<Diagnostic> ToolNamesDoNotCollide()

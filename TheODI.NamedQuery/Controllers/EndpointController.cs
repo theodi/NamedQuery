@@ -6,7 +6,6 @@ namespace TheODI.NamedQuery.Controllers;
 
 [Route($$"""/{**{{RouteParameter}}:{{ManifestEndpointConstraint.Name}}}""")]
 [AllowSynchronousIO]
-[FormatFilter]
 internal class EndpointController
 {
     internal const string RouteParameter = "path";

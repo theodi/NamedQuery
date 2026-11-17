@@ -108,8 +108,6 @@ GET /triples-by-object?value=example
 Accept: application/sparql-results+json
 ```
 
-or pick the format in the URL: `/triples-by-object?value=example&format=csv`.
-
 ## Manifest reference
 
 Vocabulary: `http://example.org/namedquery/`. The manifest has exactly one node with:
@@ -141,7 +139,7 @@ Each parameter:
 | `:example` | yes | Example value (OpenAPI, MCP) |
 | `:datatype` | no | Datatype of the bound literal, an IRI such as `xsd:integer`; default `xsd:string` |
 
-Every parameter must be supplied exactly once; otherwise the response is `400 Bad Request`. `format` is reserved.
+Every parameter must be supplied exactly once; otherwise the response is `400 Bad Request`.
 
 ## What gets mapped
 
@@ -151,7 +149,7 @@ Every parameter must be supplied exactly once; otherwise the response is `400 Ba
 | `/mcp` | MCP server (Streamable HTTP); one read-only tool per endpoint, returning `SELECT` and `ASK` results as TSV and graphs as Turtle |
 | `/{path}` | Each endpoint, `GET` only |
 
-Response formats are negotiated from `Accept`, or chosen with `format=csv|jsonld|ttl|rdf|nt|html`. SPARQL endpoint failures become `502` and timeouts `504`, with problem details.
+Response formats are negotiated from `Accept`. SPARQL endpoint failures become `502` and timeouts `504`, with problem details.
 
 ## Build-time validation
 

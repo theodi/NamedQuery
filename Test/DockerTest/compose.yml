@@ -20,11 +20,6 @@ services:
       context: ../..
       additional_contexts:
         endpoint-definition-folder: Fixtures/Colliding
-  reserved:
-    build:
-      context: ../..
-      additional_contexts:
-        endpoint-definition-folder: Fixtures/Reserved
   tool-name:
     build:
       context: ../..
