@@ -239,6 +239,35 @@ public sealed class ValidatorTests
     }
 
     [TestMethod]
+    [DataRow("SELECT * WHERE { ?s ?p ?o }")]
+    [DataRow("SELECT * WHERE { ?s ?p ?Value }")]
+    [DataRow("SELECT * WHERE { ?s ?p \"?value\" } # ?value")]
+    public void UnusedParameterIsReported(string sparql)
+    {
+        using var directory = new TempDefinitions(
+            Manifest("unused", extras: """:parameter [ :name "value" ; :description "d" ; :example "x" ] ;"""),
+            sparql);
+
+        var diagnostic = Validate(directory.Provider).Should().ContainSingle().Subject;
+
+        diagnostic.Code.Should().Be(DiagnosticCodes.ParameterUnused);
+        diagnostic.Message.Should().Contain("value (q.sparql)");
+        diagnostic.Line.Should().NotBeNull();
+    }
+
+    [TestMethod]
+    [DataRow("SELECT * WHERE { ?s ?p ?value }")]
+    [DataRow("SELECT * WHERE { ?s ?p $value }")]
+    public void UsedParameterHasNoDiagnostics(string sparql)
+    {
+        using var directory = new TempDefinitions(
+            Manifest("used", extras: """:parameter [ :name "value" ; :description "d" ; :example "x" ] ;"""),
+            sparql);
+
+        Validate(directory.Provider).Should().BeEmpty();
+    }
+
+    [TestMethod]
     public void HostPostOnlyRouteDoesNotCollide()
     {
         Validate(Fixture("Valid"), app => app.MapPost("/docker-test", () => "host")).Should().BeEmpty();

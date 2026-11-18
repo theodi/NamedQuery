@@ -134,7 +134,7 @@ Each parameter:
 
 | Property | Required | Meaning |
 |---|---|---|
-| `:name` | yes | Query string parameter name and SPARQL variable name; letters, digits and `_` only; unique per endpoint, case-insensitive |
+| `:name` | yes | Query string parameter name and SPARQL variable name; letters, digits and `_` only; unique per endpoint, case-insensitive; the variable must appear in the query |
 | `:description` | yes | Description (OpenAPI, MCP) |
 | `:example` | yes | Example value (OpenAPI, MCP) |
 | `:datatype` | no | Datatype of the bound literal, an IRI such as `xsd:integer`; default `xsd:string` |

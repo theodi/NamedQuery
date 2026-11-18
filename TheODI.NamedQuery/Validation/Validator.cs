@@ -6,6 +6,7 @@ using TheODI.NamedQuery.Controllers;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Parsing.Handlers;
+using VDS.RDF.Parsing.Tokens;
 using VDS.RDF.Shacl;
 
 namespace TheODI.NamedQuery.Validation;
@@ -68,6 +69,7 @@ internal class Validator(IServiceProvider services)
         .. ManifestConformsToShapes(),
         .. SparqlFilesExist(),
         .. SparqlFilesValid(),
+        .. ParametersUsedInSparql(),
         .. FrameFilesExist(),
         .. FrameFilesValid(),
         .. EndpointPathsDoNotCollideWithWebRoutes(),
@@ -156,6 +158,51 @@ internal class Validator(IServiceProvider services)
             catch (RdfParseException e)
             {
                 return [ParseError(DiagnosticCodes.SparqlSyntax, path, $"Endpoint SPARQL is not valid SPARQL: {e.Message}", e)];
+            }
+        }
+    }
+
+    private IEnumerable<Diagnostic> ParametersUsedInSparql()
+    {
+        if (ConformingManifestGraph() is null)
+        {
+            return [];
+        }
+
+        return resources.Manifest.Node.Endpoint
+            .SelectMany(endpoint => SparqlVariables(endpoint.SparqlResourceName) is { } variables
+                ? endpoint.Parameters
+                    .Where(parameter => !variables.Contains(parameter.Name))
+                    .Select(parameter => Located(DiagnosticCodes.ParameterUnused, ManifestName, $"Parameter not used in endpoint SPARQL: {parameter.Name} ({endpoint.SparqlResourceName})", $"\"{parameter.Name}\""))
+                : []);
+    }
+
+    private HashSet<string>? SparqlVariables(string path)
+    {
+        if (resources.Reader(path) is not { } reader)
+        {
+            return null;
+        }
+
+        using (reader)
+        {
+            try
+            {
+                var tokeniser = new SparqlTokeniser(reader, SparqlQuerySyntax.Sparql_1_1);
+                var variables = new HashSet<string>(StringComparer.Ordinal);
+                for (var token = tokeniser.GetNextToken(); token.TokenType != Token.EOF; token = tokeniser.GetNextToken())
+                {
+                    if (token.TokenType == Token.VARIABLE)
+                    {
+                        variables.Add(token.Value[1..]);
+                    }
+                }
+
+                return variables;
+            }
+            catch (RdfParseException)
+            {
+                return null;
             }
         }
     }

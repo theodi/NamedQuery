@@ -34,3 +34,4 @@ Errors are MSBuild diagnostics (`path(line,col): error NQxxxx: message`). They s
 | NQ1008 | MCP tool name collision |
 | NQ1009 | Frame file missing |
 | NQ1010 | Frame is not valid JSON |
+| NQ1011 | Parameter not used as a variable in the endpoint SPARQL |
