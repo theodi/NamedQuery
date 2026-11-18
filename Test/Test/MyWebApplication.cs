@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Testing.Handlers;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -12,11 +13,12 @@ internal class MyWebApplication
     private readonly WebApplication app;
     private HttpClient? client;
 
-    internal MyWebApplication(Action<IHttpClientBuilder>? configureSparql = null)
+    internal MyWebApplication(Action<IHttpClientBuilder>? configureSparql = null, IReadOnlyDictionary<string, string?>? configuration = null)
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
         builder.Configuration["NamedQuery:SparqlEndpoint"] = "http://sparql.test/";
+        builder.Configuration.AddInMemoryCollection(configuration ?? new Dictionary<string, string?>());
         builder.Services.AddNamedQuery(options => options.Definitions = new ManifestEmbeddedFileProvider(typeof(MyWebApplication).Assembly));
         builder.Services.ConfigureHttpClientDefaults(configureSparql ?? (client => client.ConfigurePrimaryHttpMessageHandler(() => new SparqlStub())));
 

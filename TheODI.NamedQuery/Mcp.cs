@@ -15,8 +15,6 @@ namespace TheODI.NamedQuery;
 
 internal class Mcp(Resources resources, QueryService queryService)
 {
-    internal const string Route = "/mcp";
-
     private static readonly IRdfWriter graphWriter = new CompressingTurtleWriter();
     private static readonly ISparqlResultsWriter resultsWriter = new SparqlTsvWriter();
 

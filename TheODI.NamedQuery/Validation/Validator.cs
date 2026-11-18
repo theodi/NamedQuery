@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing.Template;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TheODI.NamedQuery.Controllers;
@@ -73,6 +74,7 @@ internal class Validator(IServiceProvider services)
         .. FrameFilesExist(),
         .. FrameFilesValid(),
         .. EndpointPathsDoNotCollideWithWebRoutes(),
+        .. EndpointPathsDoNotCollideWithMcpPath(),
         .. ToolNamesDoNotCollide(),
     ];
 
@@ -279,6 +281,24 @@ internal class Validator(IServiceProvider services)
             .SelectMany(path => routes
                 .Where(route => new TemplateMatcher(new RouteTemplate(route.RoutePattern), new RouteValueDictionary(route.RoutePattern.Defaults)).TryMatch($"/{path}", []))
                 .Select(route => Located(DiagnosticCodes.RouteCollision, ManifestName, $"Endpoint path collides with route: {path} ({route.DisplayName})", $"\"{path}\"")));
+    }
+
+    // The stateless MCP route only accepts POST, so it is not among the GET routes checked above, but an endpoint at the same path would answer the GET that MCP clients may send to open a stream.
+    private IEnumerable<Diagnostic> EndpointPathsDoNotCollideWithMcpPath()
+    {
+        var options = services.GetRequiredService<IOptions<NamedQueryOptions>>().Value;
+
+        if (!options.Rest || !options.Mcp || ConformingManifestGraph() is null)
+        {
+            return [];
+        }
+
+        var mcpPath = options.McpPath.Trim('/');
+
+        return resources.Manifest.Node.Endpoint
+            .Select(endpoint => endpoint.Path)
+            .Where(path => string.Equals(path.Trim('/'), mcpPath, StringComparison.OrdinalIgnoreCase))
+            .Select(path => Located(DiagnosticCodes.RouteCollision, ManifestName, $"Endpoint path collides with MCP path: {path} ({options.McpPath})", $"\"{path}\""));
     }
 
     private IEnumerable<Diagnostic> ToolNamesDoNotCollide()

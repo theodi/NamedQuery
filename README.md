@@ -35,6 +35,8 @@ docker build --build-context endpoint-definition-folder=ExampleEndpointDefinitio
 docker run --rm -p 8080:8080 -e NamedQuery__SparqlEndpoint=https://example.com/sparql named-query
 ```
 
+The REST API and the MCP server are both served by default. To serve only one, add `-e NamedQuery__Mcp=false` (REST API only) or `-e NamedQuery__Rest=false` (MCP server only). The MCP server is at `/mcp` unless `NamedQuery__McpPath` says otherwise, for example `/` when it's the only thing served.
+
 # Run locally
 
 Serves the endpoint definitions in `App/LocalDevelopmentEndpointDefinitions`.
@@ -59,7 +61,7 @@ A release also deploys the docs site to [GitHub Pages](https://theodi.github.io/
 
 # MCP
 
-Each endpoint is also exposed as a read-only tool on the [MCP](https://modelcontextprotocol.io) server at `/mcp` (Streamable HTTP). Tool names are endpoint paths with characters other than letters, digits, `_` and `-` replaced by `_`.
+Each endpoint is also exposed as a read-only tool on the [MCP](https://modelcontextprotocol.io) server at `/mcp` (Streamable HTTP; the path is set by `NamedQuery:McpPath`). Tool names are endpoint paths with characters other than letters, digits, `_` and `-` replaced by `_`.
 
 For example, to connect a client that only supports local servers:
 

@@ -1,12 +1,13 @@
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Routing.Patterns;
 using System.ComponentModel.DataAnnotations;
 
 namespace TheODI.NamedQuery;
 
-/// <summary>Options for serving named SPARQL queries: which SPARQL endpoint to query and where the endpoint definitions come from.</summary>
+/// <summary>Options for serving named SPARQL queries: which SPARQL endpoint to query, where the endpoint definitions come from, and whether they are served as a REST API, an MCP server or both.</summary>
 /// <remarks>
 /// <para>The options are bound from the <c>NamedQuery</c> configuration section (<see cref="SectionName"/>), then the delegate passed to <see cref="Microsoft.Extensions.DependencyInjection.NamedQueryServiceCollectionExtensions.AddNamedQuery"/> is applied, so code takes precedence over configuration.</para>
-/// <para>Both <see cref="SparqlEndpoint"/> and <see cref="Definitions"/> are required. They are validated when the host starts, and startup fails with an <see cref="Microsoft.Extensions.Options.OptionsValidationException"/> if either is missing.</para>
+/// <para>Both <see cref="SparqlEndpoint"/> and <see cref="Definitions"/> are required, at least one of <see cref="Rest"/> and <see cref="Mcp"/> must be <see langword="true"/>, and <see cref="McpPath"/> must be a valid path. They are validated when the host starts, and startup fails with an <see cref="Microsoft.Extensions.Options.OptionsValidationException"/> otherwise.</para>
 /// </remarks>
 /// <example>
 /// <para>The SPARQL endpoint usually comes from configuration, for example <c>appsettings.json</c>:</para>
@@ -22,7 +23,7 @@ namespace TheODI.NamedQuery;
 /// builder.Services.AddNamedQuery(options => options.Definitions = new ManifestEmbeddedFileProvider(typeof(Program).Assembly));
 /// </code>
 /// </example>
-public class NamedQueryOptions
+public class NamedQueryOptions : IValidatableObject
 {
     /// <summary>The name of the configuration section the options are bound from: <c>NamedQuery</c>.</summary>
     public const string SectionName = "NamedQuery";
@@ -110,4 +111,59 @@ public class NamedQueryOptions
     /// </example>
     [Required]
     public required IFileProvider Definitions { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether the endpoints are served as a REST API, with the OpenAPI description at <c>/</c> and each endpoint at its path. Defaults to <see langword="true"/>.</summary>
+    /// <remarks>
+    /// <para>Typically set from configuration as <c>NamedQuery:Rest</c>, for example with the environment variable <c>NamedQuery__Rest=false</c> to serve only the MCP server.</para>
+    /// <para>Turning it off removes only this library's controllers. The host application's own controllers are still mapped.</para>
+    /// </remarks>
+    public bool Rest { get; set; } = true;
+
+    /// <summary>Gets or sets a value indicating whether the endpoints are served as tools on the MCP server at <see cref="McpPath"/>. Defaults to <see langword="true"/>.</summary>
+    /// <remarks>
+    /// <para>Typically set from configuration as <c>NamedQuery:Mcp</c>, for example with the environment variable <c>NamedQuery__Mcp=false</c> to serve only the REST API.</para>
+    /// <para>To leave out individual endpoints instead, set <c>:mcp false</c> on them in the manifest.</para>
+    /// </remarks>
+    public bool Mcp { get; set; } = true;
+
+    /// <summary>Gets or sets the URL path of the MCP server. Defaults to <c>/mcp</c>.</summary>
+    /// <remarks>
+    /// <para>Typically set from configuration as <c>NamedQuery:McpPath</c>. It must start with <c>/</c> and must not contain route parameters.</para>
+    /// <para>It can be <c>/</c> only when <see cref="Rest"/> is <see langword="false"/>, because the REST API serves its OpenAPI description there. When the REST API is on, it must not be the path of an endpoint in the manifest; build-time validation reports such a collision as <c>NQ1006</c>.</para>
+    /// </remarks>
+    public string McpPath { get; set; } = "/mcp";
+
+    /// <inheritdoc/>
+    IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+    {
+        if (!Rest && !Mcp)
+        {
+            yield return new ValidationResult($"At least one of {nameof(Rest)} and {nameof(Mcp)} must be true.", [nameof(Rest), nameof(Mcp)]);
+        }
+
+        if (!McpPath.StartsWith('/'))
+        {
+            yield return new ValidationResult($"{nameof(McpPath)} must start with '/'.", [nameof(McpPath)]);
+        }
+        else if (!IsLiteralRoute(McpPath))
+        {
+            yield return new ValidationResult($"{nameof(McpPath)} must be a path without route parameters.", [nameof(McpPath)]);
+        }
+        else if (Rest && Mcp && McpPath.Trim('/').Length == 0)
+        {
+            yield return new ValidationResult($"{nameof(McpPath)} can be '/' only when {nameof(Rest)} is false, because the OpenAPI description is served there.", [nameof(McpPath), nameof(Rest)]);
+        }
+    }
+
+    private static bool IsLiteralRoute(string path)
+    {
+        try
+        {
+            return RoutePatternFactory.Parse(path).Parameters.Count == 0;
+        }
+        catch (RoutePatternException)
+        {
+            return false;
+        }
+    }
 }

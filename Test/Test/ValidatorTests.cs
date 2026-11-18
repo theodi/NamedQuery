@@ -169,6 +169,16 @@ public sealed class ValidatorTests
     }
 
     [TestMethod]
+    public void McpPathCollisionIsReported()
+    {
+        var diagnostics = Validate(Fixture("Valid"), mcpPath: "/docker-test");
+
+        diagnostics.Should().ContainSingle().Which.Should().Match<Diagnostic>(diagnostic =>
+            diagnostic.Code == DiagnosticCodes.RouteCollision &&
+            diagnostic.Message.Contains("Endpoint path collides with MCP path: docker-test (/docker-test)"));
+    }
+
+    [TestMethod]
     [DataRow("value", "value")]
     [DataRow("value", "Value")]
     public void DuplicateParameterNameIsReported(string first, string second)
@@ -304,11 +314,16 @@ public sealed class ValidatorTests
         diagnostics.Should().NotContain(diagnostic => diagnostic.Code == DiagnosticCodes.Internal);
     }
 
-    private static IReadOnlyList<Diagnostic> Validate(IFileProvider definitions, Action<WebApplication>? map = null)
+    private static IReadOnlyList<Diagnostic> Validate(IFileProvider definitions, Action<WebApplication>? map = null, string? mcpPath = null)
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
         builder.Configuration["NamedQuery:SparqlEndpoint"] = "http://sparql.test/";
+        if (mcpPath is not null)
+        {
+            builder.Configuration["NamedQuery:McpPath"] = mcpPath;
+        }
+
         builder.Services.AddNamedQuery(options => options.Definitions = definitions);
 
         var app = builder.Build();

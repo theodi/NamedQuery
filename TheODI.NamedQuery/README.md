@@ -6,6 +6,8 @@ Serve SPARQL queries as named HTTP endpoints from an ASP.NET Core app. You descr
 - publishes an OpenAPI description
 - exposes every endpoint as a read-only tool on an MCP server
 
+The REST API and the MCP server are both on by default, and either can be turned off.
+
 ## Install
 
 ```shell
@@ -101,6 +103,17 @@ app.Run();
 
 Or set the environment variable `NamedQuery__SparqlEndpoint`, or pass `--NamedQuery:SparqlEndpoint=https://example.com/sparql`.
 
+To serve only one interface, turn the other off with `NamedQuery:Rest` or `NamedQuery:Mcp` (both default `true`):
+
+| Setting | Serves |
+|---|---|
+| `NamedQuery:Mcp=false` | REST API only: the OpenAPI description and the endpoints |
+| `NamedQuery:Rest=false` | MCP server only. Your own controllers are still mapped. |
+
+Startup fails if both are `false`.
+
+The MCP server is at `/mcp` by default. Set `NamedQuery:McpPath` to serve it elsewhere, for example `/` when the REST API is off. The path must start with `/`, can't contain route parameters, and can be `/` only when `NamedQuery:Rest` is `false`. When the REST API is on, build-time validation reports an endpoint at the same path as `NQ1006`.
+
 ### 5. Call it
 
 ```http
@@ -145,9 +158,9 @@ Every parameter must be supplied exactly once; otherwise the response is `400 Ba
 
 | Route | |
 |---|---|
-| `/` | OpenAPI description (JSON) |
-| `/mcp` | MCP server (Streamable HTTP); one read-only tool per endpoint, returning `SELECT` and `ASK` results as TSV and graphs as Turtle |
-| `/{path}` | Each endpoint, `GET` only |
+| `/` | OpenAPI description (JSON), unless `NamedQuery:Rest` is `false` |
+| `/mcp` (`NamedQuery:McpPath`) | Unless `NamedQuery:Mcp` is `false`, MCP server (Streamable HTTP); one read-only tool per endpoint, returning `SELECT` and `ASK` results as TSV and graphs as Turtle |
+| `/{path}` | Each endpoint, `GET` only, unless `NamedQuery:Rest` is `false` |
 
 Response formats are negotiated from `Accept`. SPARQL endpoint failures become `502` and timeouts `504`, with problem details.
 
