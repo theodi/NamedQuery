@@ -20,7 +20,7 @@ internal class SparqlFormatter : TextOutputFormatter
     internal static IEnumerable<string> MediaTypes => MimeTypesHelper.Definitions
         .Where(static definition => definition.CanWriteSparqlResults)
         .Select(static definition => definition.CanonicalMimeType)
-        .Distinct();
+        .Except(MimeTypesHelper.RdfXml);
 
     public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
     {

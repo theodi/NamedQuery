@@ -8,7 +8,7 @@ public sealed class ContentNegotiationTests
 {
     private static readonly MyWebApplication app = new();
 
-    public static IEnumerable<object[]> ResultsMediaTypes => MediaTypes(definition => definition.CanWriteSparqlResults);
+    public static IEnumerable<object[]> ResultsMediaTypes => MediaTypes(definition => definition.CanWriteSparqlResults && !MimeTypesHelper.RdfXml.Contains(definition.CanonicalMimeType));
 
     public static IEnumerable<object[]> GraphMediaTypes => MediaTypes(definition => definition.CanWriteRdf || definition.CanWriteRdfDatasets);
 
@@ -48,10 +48,16 @@ public sealed class ContentNegotiationTests
     public async Task FramedJsonLd()=> await ServesAs("endpoint5", "application/ld+json");
 
     [TestMethod]
-    public async Task UnknownFormatIsNotAcceptable()
+    [DataRow("endpoint2", "image/png")]
+    [DataRow("endpoint1", "application/rdf+xml")]
+    [DataRow("endpoint2", "application/rdf+xml")]
+    [DataRow("endpoint1", "application/ld+json")]
+    [DataRow("endpoint1", "application/vnd.example+json")]
+    [DataRow("endpoint2", "application/vnd.example+json")]
+    public async Task UnsupportedFormatIsNotAcceptable(string path, string mediaType)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, "endpoint2");
-        request.Headers.Accept.ParseAdd("image/png");
+        using var request = new HttpRequestMessage(HttpMethod.Get, path);
+        request.Headers.Accept.ParseAdd(mediaType);
 
         var response = await app.Client.SendAsync(request, TestContext.CancellationToken);
 
