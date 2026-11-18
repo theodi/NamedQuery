@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using ModelContextProtocol.Server;
+using System.Net;
 using TheODI.NamedQuery;
 using TheODI.NamedQuery.Constraints;
 using TheODI.NamedQuery.Controllers;
@@ -20,7 +21,7 @@ public static class NamedQueryServiceCollectionExtensions
     /// <remarks>
     /// <para>Call it once in <c>Program.cs</c>, on <c>builder.Services</c> before <c>builder.Build()</c>, then call <see cref="Microsoft.AspNetCore.Builder.NamedQueryWebApplicationExtensions.UseNamedQuery"/> on the built application.</para>
     /// <para>The SPARQL endpoint usually comes from configuration (<c>appsettings.json</c>, environment variables or command-line arguments) as <c>NamedQuery:SparqlEndpoint</c>. If it or the definitions are missing, the application fails to start; see <see cref="NamedQueryOptions"/>.</para>
-    /// <para>It registers MVC controllers, CORS and the MCP server for you whether or not <see cref="NamedQueryOptions.Rest"/> and <see cref="NamedQueryOptions.Mcp"/> are turned on, so you don't need to call <c>AddControllers</c>, <c>AddCors</c> or <c>AddMcpServer</c> yourself. Its settings apply to the whole application: your own controllers get the same output formatters, <c>RespectBrowserAcceptHeader</c> and <c>ReturnHttpNotAcceptable</c>, and the default CORS policy allows any origin, method and header.</para>
+    /// <para>It registers MVC controllers, CORS and the MCP server for you whether or not <see cref="NamedQueryOptions.Rest"/> and <see cref="NamedQueryOptions.Mcp"/> are turned on, so you don't need to call <c>AddControllers</c>, <c>AddCors</c> or <c>AddMcpServer</c> yourself. Requests to the SPARQL endpoint ask for gzip, Brotli or deflate compression and are decompressed transparently, unless the primary HTTP message handler already has decompression configured. Its settings apply to the whole application: your own controllers get the same output formatters, <c>RespectBrowserAcceptHeader</c> and <c>ReturnHttpNotAcceptable</c>, and the default CORS policy allows any origin, method and header.</para>
     /// </remarks>
     /// <example>
     /// <para>A complete <c>Program.cs</c>, with the definitions embedded in the application (see <see cref="NamedQueryOptions.Definitions"/>) and the SPARQL endpoint in configuration:</para>
@@ -59,7 +60,8 @@ public static class NamedQueryServiceCollectionExtensions
         });
         services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
         services.AddOptions<NamedQueryOptions>().BindConfiguration(NamedQueryOptions.SectionName).Configure(configure).ValidateDataAnnotations().ValidateOnStart();
-        services.AddHttpClient<DotNetRDF.ISparqlQueryClient, SparqlQueryClient>();
+        services.AddHttpClient<DotNetRDF.ISparqlQueryClient, SparqlQueryClient>()
+            .ConfigurePrimaryHttpMessageHandler(static (handler, _) => EnableDecompression(handler));
         services.AddScoped<Context>();
         services.AddSingleton<Resources>();
         services.AddTransient<QueryService>();
@@ -72,5 +74,20 @@ public static class NamedQueryServiceCollectionExtensions
             .WithCallToolHandler((request, ct) => request.Services!.GetRequiredService<Mcp>().CallTool(request, ct));
 
         return services;
+    }
+
+    // Asks the SPARQL endpoint for compressed results (Accept-Encoding) and decompresses them, unless decompression is already configured on the handler.
+    private static void EnableDecompression(HttpMessageHandler handler)
+    {
+        switch (handler)
+        {
+            case SocketsHttpHandler { AutomaticDecompression: DecompressionMethods.None } sockets:
+                sockets.AutomaticDecompression = DecompressionMethods.All;
+                break;
+
+            case HttpClientHandler { SupportsAutomaticDecompression: true, AutomaticDecompression: DecompressionMethods.None } client:
+                client.AutomaticDecompression = DecompressionMethods.All;
+                break;
+        }
     }
 }
