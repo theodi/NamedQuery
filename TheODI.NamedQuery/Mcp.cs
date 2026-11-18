@@ -46,9 +46,12 @@ internal class Mcp(Resources resources, QueryService queryService)
         var endpoint = ToolEndpoints.SingleOrDefault(endpoint => endpoint.ToolName == name)
             ?? throw new McpProtocolException($"Unknown tool: {name}", McpErrorCode.InvalidParams);
 
-        var arguments = (request.Params.Arguments ?? new Dictionary<string, JsonElement>()).ToDictionary(
-            static argument => argument.Key,
-            static argument => argument.Value.ValueKind == JsonValueKind.String ? argument.Value.GetString()! : argument.Value.GetRawText());
+        // A null argument counts as missing rather than as the text "null".
+        var arguments = (request.Params.Arguments ?? new Dictionary<string, JsonElement>())
+            .Where(static argument => argument.Value.ValueKind is not JsonValueKind.Null)
+            .ToDictionary(
+                static argument => argument.Key,
+                static argument => argument.Value.ValueKind == JsonValueKind.String ? argument.Value.GetString()! : argument.Value.GetRawText());
 
         var missing = endpoint.Parameters.Select(static parameter => parameter.Name).Where(name => !arguments.ContainsKey(name)).ToList();
         if (missing.Count != 0)

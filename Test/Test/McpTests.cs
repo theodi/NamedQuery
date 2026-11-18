@@ -89,11 +89,14 @@ public sealed class McpTests
     }
 
     [TestMethod]
-    public async Task MissingArgumentIsToolError()
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task MissingArgumentIsToolError(bool sendNull)
     {
         await using var client = await Client(app);
 
-        var result = await client.CallToolAsync("endpoint6", cancellationToken: TestContext.CancellationToken);
+        var arguments = sendNull ? new Dictionary<string, object?> { ["value"] = null } : null;
+        var result = await client.CallToolAsync("endpoint6", arguments, cancellationToken: TestContext.CancellationToken);
 
         result.IsError.Should().BeTrue();
         result.Content.OfType<TextContentBlock>().Single().Text.Should().Be("Missing required arguments: value");
