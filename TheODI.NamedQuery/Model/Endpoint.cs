@@ -15,6 +15,8 @@ internal partial class Endpoint
 
     public string ToolName => InvalidToolNameCharacter().Replace(Path, "_");
 
+    public bool IsMcpTool => Mcp ?? true;
+
     [GeneratedRegex("[^A-Za-z0-9_-]")]
     private static partial Regex InvalidToolNameCharacter();
 }
