@@ -18,7 +18,7 @@ internal partial class Endpoint : GraphWrapperNode
 
     public string Description => this.Singular(Vocabulary.Description, ValueMappings.As<string>, throwWhenMissing: true)!;
 
-    public bool IsMcpTool => this.Singular(Vocabulary.Mcp, static node => node is null ? (bool?)null : node.AsValuedNode().AsBoolean()) is not false;
+    public bool? Mcp => this.Singular(Vocabulary.Mcp, ValueMappings.As<bool?>);
 
     public ISet<Parameter> Parameters => this.Objects(Vocabulary.Parameter, Parameter.Wrap, Parameter.Wrap);
 
