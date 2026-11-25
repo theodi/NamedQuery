@@ -17,7 +17,7 @@ internal class Mcp(Resources resources, QueryService queryService)
     internal const string Route = "/mcp";
 
     private static readonly IRdfWriter graphWriter = new CompressingTurtleWriter();
-    private static readonly ISparqlResultsWriter resultsWriter = new SparqlHtmlWriter();
+    private static readonly ISparqlResultsWriter resultsWriter = new SparqlTsvWriter();
 
     internal ValueTask<ListToolsResult> ListTools(RequestContext<ListToolsRequestParams> _, CancellationToken __) =>
         ValueTask.FromResult(new ListToolsResult

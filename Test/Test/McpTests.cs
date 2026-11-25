@@ -43,17 +43,29 @@ public sealed class McpTests
     }
 
     [TestMethod]
-    [DataRow("endpoint2", "True")]
-    [DataRow("endpoint3_something", "True")]
-    [DataRow("endpoint4", "<urn:example:s>")]
-    public async Task CallingToolReturnsResult(string name, string expected)
+    [DataRow("endpoint2")]
+    [DataRow("endpoint3_something")]
+    public async Task CallingToolReturnsResultsAsTsv(string name)
     {
         await using var client = await Client(app);
 
         var result = await client.CallToolAsync(name, cancellationToken: TestContext.CancellationToken);
 
         result.IsError.Should().NotBeTrue();
-        result.Content.OfType<TextContentBlock>().Single().Text.Should().Contain(expected);
+        result.Content.OfType<TextContentBlock>().Single().Text.Should().Be("True");
+    }
+
+    [TestMethod]
+    [DataRow("endpoint4")]
+    [DataRow("endpoint5")]
+    public async Task CallingToolReturnsGraphAsTurtle(string name)
+    {
+        await using var client = await Client(app);
+
+        var result = await client.CallToolAsync(name, cancellationToken: TestContext.CancellationToken);
+
+        result.IsError.Should().NotBeTrue();
+        result.Content.OfType<TextContentBlock>().Single().Text.Should().Contain("<urn:example:s> <urn:example:p> <urn:example:o>.");
     }
 
     [TestMethod]
