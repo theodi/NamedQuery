@@ -1,6 +1,7 @@
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using TheODI.NamedQuery.Filters;
@@ -19,16 +20,30 @@ internal class Mcp(Resources resources, QueryService queryService)
     private static readonly IRdfWriter graphWriter = new CompressingTurtleWriter();
     private static readonly ISparqlResultsWriter resultsWriter = new SparqlHtmlWriter();
 
+    private IEnumerable<Model.Endpoint> ToolEndpoints => resources.Manifest.Node.Endpoint.Where(static endpoint => endpoint.IsMcpTool);
+
+    internal static void Configure(McpServerOptions options, Resources resources)
+    {
+        var manifest = resources.Manifest.Node;
+
+        options.ServerInfo = new()
+        {
+            Name = manifest.Name,
+            Version = typeof(Mcp).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion,
+        };
+        options.ServerInstructions = manifest.Description;
+    }
+
     internal ValueTask<ListToolsResult> ListTools(RequestContext<ListToolsRequestParams> _, CancellationToken __) =>
         ValueTask.FromResult(new ListToolsResult
         {
-            Tools = [.. resources.Manifest.Node.Endpoint.Select(Tool)],
+            Tools = [.. ToolEndpoints.Select(Tool)],
         });
 
     internal async ValueTask<CallToolResult> CallTool(RequestContext<CallToolRequestParams> request, CancellationToken ct)
     {
         var name = request.Params!.Name;
-        var endpoint = resources.Manifest.Node.Endpoint.SingleOrDefault(endpoint => endpoint.ToolName == name)
+        var endpoint = ToolEndpoints.SingleOrDefault(endpoint => endpoint.ToolName == name)
             ?? throw new McpProtocolException($"Unknown tool: {name}", McpErrorCode.InvalidParams);
 
         var arguments = (request.Params.Arguments ?? new Dictionary<string, JsonElement>()).ToDictionary(

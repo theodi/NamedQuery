@@ -8,6 +8,10 @@
 @{
     ViewData["Title"] = "{home}";
 }
+@if (Resources.Manifest.Node.Description is { } description)
+{
+    <p>@description</p>
+}
 <ul>
     <li>
         <span>{openapi}</span>

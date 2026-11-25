@@ -150,6 +150,20 @@ _:prefixes :declare [
 ] .
 
 [
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:mcp ;
+    :datatype xsd:boolean ;
+    :message "Endpoint MCP flag must be xsd:boolean literal" ;
+] .
+
+[
+	:targetSubjectsOf nq:path, nq:sparql ;
+    :path nq:mcp ;
+    :maxCount 1 ;
+    :message "Endpoint must have at most one MCP flag" ;
+] .
+
+[
 	:targetSubjectsOf nq:endpoint ;
     :path nq:name ;
     :datatype xsd:string ;
@@ -168,6 +182,20 @@ _:prefixes :declare [
     :path nq:name ;
     :maxCount 1 ;
     :message "Manifest must have at most one name" ;
+] .
+
+[
+	:targetSubjectsOf nq:endpoint ;
+    :path nq:description ;
+    :datatype xsd:string ;
+    :message "Manifest description must be string literal" ;
+] .
+
+[
+	:targetSubjectsOf nq:endpoint ;
+    :path nq:description ;
+    :maxCount 1 ;
+    :message "Manifest must have at most one description" ;
 ] .
 
 [

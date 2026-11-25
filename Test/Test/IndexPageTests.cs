@@ -24,6 +24,14 @@ public sealed class IndexPageTests
     }
 
     [TestMethod]
+    public async Task ShowsManifestDescription()
+    {
+        var html = await app.Client.GetStringAsync("", TestContext.CancellationToken);
+
+        html.Should().Contain("<p>Endpoints for testing.</p>");
+    }
+
+    [TestMethod]
     public async Task ShowsEndpointNameAndDescription()
     {
         var html = await app.Client.GetStringAsync("", TestContext.CancellationToken);

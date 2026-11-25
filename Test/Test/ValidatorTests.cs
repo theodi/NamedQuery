@@ -133,6 +133,39 @@ public sealed class ValidatorTests
     }
 
     [TestMethod]
+    public void ToolNameCollisionIsIgnoredWhenExcludedFromMcp()
+    {
+        using var directory = new TempDefinitions("""
+            PREFIX : <http://example.org/namedquery/>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+            [
+                :name "tool name" ;
+                :endpoint
+                    [ :path "tool/name" ; :sparql "./q.sparql"^^xsd:anyURI ; :name "a" ; :description "a" ; :mcp false ],
+                    [ :path "tool_name" ; :sparql "./q.sparql"^^xsd:anyURI ; :name "b" ; :description "b" ] ;
+            ] .
+            """, "ASK {}");
+
+        Validate(directory.Provider).Should().BeEmpty();
+    }
+
+    [TestMethod]
+    public void NonBooleanMcpFlagIsReported()
+    {
+        using var directory = new TempDefinitions("""
+            PREFIX : <http://example.org/namedquery/>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+            [ :name "m" ; :endpoint [ :path "m" ; :sparql "./q.sparql"^^xsd:anyURI ; :name "m" ; :description "m" ; :mcp "no" ] ] .
+            """, "ASK {}");
+
+        Validate(directory.Provider).Should().ContainSingle().Which.Should().Match<Diagnostic>(diagnostic =>
+            diagnostic.Code == DiagnosticCodes.ShapeViolation &&
+            diagnostic.Message.Contains("Endpoint MCP flag must be xsd:boolean literal"));
+    }
+
+    [TestMethod]
     public void HostGetRouteCollisionIsReported()
     {
         var diagnostics = Validate(Fixture("Valid"), app => app.MapGet("/docker-test", () => "host"));
